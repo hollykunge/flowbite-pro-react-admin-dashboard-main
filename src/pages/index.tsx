@@ -45,7 +45,7 @@ const SalesThisWeek: FC = function () {
         <div className="flex flex-1 items-center justify-end text-base font-bold text-green-600 dark:text-green-400">
           12.5%
           <svg
-            className="h-5 w-5"
+            className="size-5"
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +68,7 @@ const SalesThisWeek: FC = function () {
           >
             Sales Report
             <svg
-              className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
+              className="ml-1 size-4 sm:size-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -263,7 +263,7 @@ const NewProductsThisWeek: FC = function () {
         <div className="ml-5 flex w-0 flex-1 items-center justify-end text-base font-bold text-green-600 dark:text-green-400">
           14.6%
           <svg
-            className="h-5 w-5"
+            className="size-5"
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -286,7 +286,7 @@ const NewProductsThisWeek: FC = function () {
           >
             Products Report
             <svg
-              className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
+              className="ml-1 size-4 sm:size-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -418,7 +418,7 @@ const VisitorsThisWeek: FC = function () {
         <div className="ml-5 flex w-0 flex-1 items-center justify-end text-base font-bold text-green-600 dark:text-green-400">
           32.9%
           <svg
-            className="h-5 w-5"
+            className="size-5"
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -441,7 +441,7 @@ const VisitorsThisWeek: FC = function () {
           >
             Visits Report
             <svg
-              className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
+              className="ml-1 size-4 sm:size-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -537,7 +537,7 @@ const UserSignupsThisWeek: FC = function () {
         <div className="ml-5 flex w-0 flex-1 items-center justify-end text-base font-bold text-red-600 dark:text-red-400">
           -2.7%
           <svg
-            className="h-5 w-5"
+            className="size-5"
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -560,7 +560,7 @@ const UserSignupsThisWeek: FC = function () {
           >
             Users Report
             <svg
-              className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
+              className="ml-1 size-4 sm:size-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -707,7 +707,7 @@ const SessionsByCountry: FC = function () {
         <li className="w-full items-center sm:flex">
           <div className="mb-3 flex items-center sm:mb-0">
             <svg
-              className="h-4 w-4"
+              className="size-4"
               viewBox="0 0 26 18"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -817,7 +817,7 @@ const SessionsByCountry: FC = function () {
         <li className="w-full items-center sm:flex">
           <div className="mb-3 flex items-center sm:mb-0">
             <svg
-              className="h-4 w-4"
+              className="size-4"
               viewBox="0 0 26 18"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -891,7 +891,7 @@ const SessionsByCountry: FC = function () {
         <li className="w-full items-center sm:flex">
           <div className="mb-3 flex items-center sm:mb-0">
             <svg
-              className="h-4 w-4"
+              className="size-4"
               viewBox="0 0 26 18"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -959,7 +959,7 @@ const SessionsByCountry: FC = function () {
         <li className="w-full items-center sm:flex">
           <div className="mb-3 flex items-center sm:mb-0">
             <svg
-              className="h-4 w-4"
+              className="size-4"
               viewBox="0 0 26 18"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -1027,7 +1027,7 @@ const SessionsByCountry: FC = function () {
         <li className="w-full items-center sm:flex">
           <div className="mb-3 flex items-center sm:mb-0">
             <svg
-              className="h-4 w-4"
+              className="size-4"
               viewBox="0 0 26 18"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -1160,7 +1160,7 @@ const SessionsByCountry: FC = function () {
         <li className="w-full items-center sm:flex">
           <div className="mb-3 flex items-center sm:mb-0">
             <svg
-              className="h-4 w-4"
+              className="size-4"
               viewBox="0 0 26 18"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -1247,7 +1247,7 @@ const SessionsByCountry: FC = function () {
           >
             Location Overview
             <svg
-              className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
+              className="ml-1 size-4 sm:size-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -1341,7 +1341,7 @@ const LatestCustomers: FC = function () {
             <div className="flex items-center space-x-4">
               <div className="shrink-0">
                 <img
-                  className="h-8 w-8 rounded-full"
+                  className="size-8 rounded-full"
                   src="../images/users/neil-sims.png"
                   alt=""
                 />
@@ -1363,7 +1363,7 @@ const LatestCustomers: FC = function () {
             <div className="flex items-center space-x-4">
               <div className="shrink-0">
                 <img
-                  className="h-8 w-8 rounded-full"
+                  className="size-8 rounded-full"
                   src="../images/users/bonnie-green.png"
                   alt=""
                 />
@@ -1385,7 +1385,7 @@ const LatestCustomers: FC = function () {
             <div className="flex items-center space-x-4">
               <div className="shrink-0">
                 <img
-                  className="h-8 w-8 rounded-full"
+                  className="size-8 rounded-full"
                   src="../images/users/michael-gough.png"
                   alt=""
                 />
@@ -1407,7 +1407,7 @@ const LatestCustomers: FC = function () {
             <div className="flex items-center space-x-4">
               <div className="shrink-0">
                 <img
-                  className="h-8 w-8 rounded-full"
+                  className="size-8 rounded-full"
                   src="../images/users/thomas-lean.png"
                   alt=""
                 />
@@ -1429,7 +1429,7 @@ const LatestCustomers: FC = function () {
             <div className="flex items-center space-x-4">
               <div className="shrink-0">
                 <img
-                  className="h-8 w-8 rounded-full"
+                  className="size-8 rounded-full"
                   src="../images/users/lana-byrd.png"
                   alt=""
                 />
@@ -1458,7 +1458,7 @@ const LatestCustomers: FC = function () {
           >
             Sales Report
             <svg
-              className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
+              className="ml-1 size-4 sm:size-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -1493,13 +1493,13 @@ const AcquisitionOverview: FC = function () {
             <div className="overflow-hidden shadow sm:rounded-lg">
               <Table className="min-w-full table-fixed">
                 <Table.Head>
-                  <Table.HeadCell className="whitespace-nowrap rounded-l border-x-0 bg-gray-50 py-3 px-4 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
+                  <Table.HeadCell className="whitespace-nowrap rounded-l border-x-0 bg-gray-50 px-4 py-3 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
                     Top Channels
                   </Table.HeadCell>
-                  <Table.HeadCell className="whitespace-nowrap border-x-0 bg-gray-50 py-3 px-4 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
+                  <Table.HeadCell className="whitespace-nowrap border-x-0 bg-gray-50 px-4 py-3 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
                     Users
                   </Table.HeadCell>
-                  <Table.HeadCell className="min-w-[140px] whitespace-nowrap rounded-r border-x-0 bg-gray-50 py-3 px-4 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
+                  <Table.HeadCell className="min-w-[140px] whitespace-nowrap rounded-r border-x-0 bg-gray-50 px-4 py-3 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
                     Acquisition
                   </Table.HeadCell>
                 </Table.Head>
@@ -1645,7 +1645,7 @@ const AcquisitionOverview: FC = function () {
           >
             Acquisition Report
             <svg
-              className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
+              className="ml-1 size-4 sm:size-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -1826,7 +1826,7 @@ const Transactions: FC = function () {
                       $5000
                     </Table.Cell>
                     <Table.Cell className="flex whitespace-nowrap p-4">
-                      <span className="mr-2 rounded-md bg-purple-100 py-0.5 px-2.5 text-xs font-medium text-purple-800 dark:bg-purple-200">
+                      <span className="mr-2 rounded-md bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800 dark:bg-purple-200">
                         In progress
                       </span>
                     </Table.Cell>
@@ -1903,7 +1903,7 @@ const Transactions: FC = function () {
                       $11,436
                     </Table.Cell>
                     <Table.Cell className="flex whitespace-nowrap p-4">
-                      <span className="mr-2 rounded-md bg-purple-100 py-0.5 px-2.5 text-xs font-medium text-purple-800 dark:bg-purple-200">
+                      <span className="mr-2 rounded-md bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800 dark:bg-purple-200">
                         In progress
                       </span>
                     </Table.Cell>
@@ -1938,7 +1938,7 @@ const Transactions: FC = function () {
           >
             Transactions Report
             <svg
-              className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
+              className="ml-1 size-4 sm:size-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
