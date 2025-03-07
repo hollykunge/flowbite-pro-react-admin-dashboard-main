@@ -1,4 +1,15 @@
+import { Button } from "flowbite-react";
 import type { FC, FormEvent, KeyboardEvent, ChangeEvent } from "react";
+import { BiSend } from "react-icons/bi";
+import { HiOutlinePhotograph } from "react-icons/hi";
+import { MdOutlineEmojiEmotions } from "react-icons/md";
+import { FiFile } from "react-icons/fi";
+import { AiOutlineAudio } from "react-icons/ai";
+
+/**
+ * 消息密级类型
+ */
+export type MessageSecurityLevel = "非密" | "秘密" | "机密";
 
 /**
  * 消息输入组件属性接口
@@ -16,6 +27,14 @@ interface MessageInputProps {
    * 发送消息的回调函数
    */
   onSendMessage: () => void;
+  /**
+   * 消息密级
+   */
+  securityLevel: MessageSecurityLevel;
+  /**
+   * 消息密级变化时的回调函数
+   */
+  onSecurityLevelChange: (level: MessageSecurityLevel) => void;
 }
 
 /**
@@ -27,6 +46,8 @@ const MessageInput: FC<MessageInputProps> = ({
   message,
   onMessageChange,
   onSendMessage,
+  securityLevel,
+  onSecurityLevelChange,
 }) => {
   /**
    * 处理表单提交事件
@@ -46,19 +67,23 @@ const MessageInput: FC<MessageInputProps> = ({
     }
   };
 
+  /**
+   * 处理密级变更事件
+   */
+  const handleSecurityLevelChange = (level: MessageSecurityLevel) => {
+    onSecurityLevelChange(level);
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="my-0 w-full">
-      <label htmlFor="chat" className="sr-only">
-        您的消息
-      </label>
-      <div className="flex flex-col rounded-lg bg-gray-50 dark:bg-gray-700">
+    <form onSubmit={handleSubmit} className="my-3 w-full">
+      <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
         {/* 消息输入区域 */}
-        <div className="px-3 py-2">
+        <div className="px-4 py-3">
           <textarea
             id="chat"
             rows={1}
-            className="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-            placeholder="您的消息..."
+            className="block w-full resize-none border-0 bg-transparent p-0 text-sm text-gray-900 focus:outline-none focus:ring-0 dark:text-white dark:placeholder:text-gray-400"
+            placeholder="输入您的消息..."
             value={message}
             onChange={onMessageChange}
             onKeyPress={handleKeyPress}
@@ -66,80 +91,109 @@ const MessageInput: FC<MessageInputProps> = ({
         </div>
 
         {/* 功能按钮和发送按钮区域 */}
-        <div className="flex items-center justify-between border-t border-gray-200 px-3 py-2 dark:border-gray-600">
+        <div className="flex items-center justify-between border-t border-gray-200 p-1 dark:border-gray-700">
           {/* 左侧功能按钮 */}
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center space-x-1">
             <button
               type="button"
-              className="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              title="上传图片"
             >
-              <svg
-                className="size-5"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 18"
-              >
-                <path
-                  fill="currentColor"
-                  d="M13 5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0ZM7.565 7.423 4.5 14h11.518l-2.516-3.71L11 13 7.565 7.423Z"
-                />
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M18 1H2a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"
-                />
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0ZM7.565 7.423 4.5 14h11.518l-2.516-3.71L11 13 7.565 7.423Z"
-                />
-              </svg>
+              <HiOutlinePhotograph />
               <span className="sr-only">上传图片</span>
             </button>
             <button
               type="button"
-              className="cursor-pointer rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              title="添加表情"
             >
-              <svg
-                className="size-5"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13.408 7.5h.01m-6.876 0h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM4.6 11a5.5 5.5 0 0 0 10.81 0H4.6Z"
-                />
-              </svg>
+              <MdOutlineEmojiEmotions />
               <span className="sr-only">添加表情</span>
+            </button>
+            <button
+              type="button"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              title="添加文件"
+            >
+              <FiFile />
+              <span className="sr-only">添加文件</span>
+            </button>
+            <button
+              type="button"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              title="录制语音"
+            >
+              <AiOutlineAudio />
+              <span className="sr-only">录制语音</span>
             </button>
           </div>
 
-          {/* 右侧发送按钮 */}
-          <button
-            type="submit"
-            className="inline-flex cursor-pointer justify-center rounded-lg bg-primary-700 px-4 py-2 text-center text-sm font-medium text-white hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-          >
-            发送
-            <svg
-              className="ml-1 size-4 rotate-90 rtl:-rotate-90"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 18 20"
+          {/* 右侧发送按钮和密级选择 */}
+          <div className="flex items-center space-x-2">
+            {/* 密级选择单选按钮 */}
+            <div
+              className="flex items-center space-x-2"
+              role="radiogroup"
+              aria-label="消息密级选择"
             >
-              <path d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
-            </svg>
-          </button>
+              <div className="flex items-center">
+                <input
+                  id="security-normal"
+                  type="radio"
+                  name="security-level"
+                  value="非密"
+                  checked={securityLevel === "非密"}
+                  onChange={() => handleSecurityLevelChange("非密")}
+                  className="size-3 border-gray-300 text-green-600 focus:ring-2 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-green-600"
+                />
+                <label
+                  htmlFor="security-normal"
+                  className="ml-1 cursor-pointer rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-600 dark:bg-green-900/30 dark:text-green-500"
+                >
+                  非密
+                </label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  id="security-secret"
+                  type="radio"
+                  name="security-level"
+                  value="秘密"
+                  checked={securityLevel === "秘密"}
+                  onChange={() => handleSecurityLevelChange("秘密")}
+                  className="size-3 border-gray-300 text-yellow-600 focus:ring-2 focus:ring-yellow-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-yellow-600"
+                />
+                <label
+                  htmlFor="security-secret"
+                  className="ml-1 cursor-pointer rounded-md bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-500"
+                >
+                  秘密
+                </label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  id="security-confidential"
+                  type="radio"
+                  name="security-level"
+                  value="机密"
+                  checked={securityLevel === "机密"}
+                  onChange={() => handleSecurityLevelChange("机密")}
+                  className="size-3 border-gray-300 text-orange-600 focus:ring-2 focus:ring-orange-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-orange-600"
+                />
+                <label
+                  htmlFor="security-confidential"
+                  className="ml-1 cursor-pointer rounded-md bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-500"
+                >
+                  机密
+                </label>
+              </div>
+            </div>
+
+            <Button size="xs">
+              <BiSend className="mr-2 size-5" />
+              发送
+            </Button>
+          </div>
         </div>
       </div>
     </form>

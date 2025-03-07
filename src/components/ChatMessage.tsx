@@ -1,5 +1,6 @@
 import type { FC } from "react";
 import { useState } from "react";
+import type { MessageSecurityLevel } from "./MessageInput";
 
 /**
  * 聊天消息组件属性接口
@@ -23,6 +24,7 @@ import { useState } from "react";
  * @property {(content: string) => void} [onSaveEdit] - 保存编辑事件处理函数
  * @property {() => void} [onCancelEdit] - 取消编辑事件处理函数
  * @property {boolean} [isEdited] - 消息是否被编辑过
+ * @property {MessageSecurityLevel} [securityLevel] - 消息密级
  */
 interface ChatMessageProps {
   avatarSrc: string;
@@ -54,6 +56,7 @@ interface ChatMessageProps {
   onSaveEdit?: (content: string) => void;
   onCancelEdit?: () => void;
   isEdited?: boolean;
+  securityLevel?: MessageSecurityLevel;
 }
 
 /**
@@ -85,6 +88,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
   onSaveEdit,
   onCancelEdit,
   isEdited = false,
+  securityLevel = "非密",
 }) => {
   // 编辑状态
   const [isEditing, setIsEditing] = useState(false);
@@ -108,6 +112,23 @@ const ChatMessage: FC<ChatMessageProps> = ({
     setIsEditing(false);
     setEditedMessage(message);
     if (onCancelEdit) onCancelEdit();
+  };
+
+  /**
+   * 获取密级标签的样式
+   * 根据密级返回对应的颜色样式
+   */
+  const getSecurityLevelStyle = () => {
+    switch (securityLevel) {
+      case "非密":
+        return "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500";
+      case "秘密":
+        return "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-500";
+      case "机密":
+        return "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-500";
+      default:
+        return "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500";
+    }
   };
 
   // 渲染消息内容
@@ -506,7 +527,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
           </span>
         </div>
         <div
-          className={`flex flex-col rounded-xl p-4 ${
+          className={`relative flex flex-col rounded-xl p-3 ${
             isOwn
               ? "rounded-br-none bg-blue-500 text-white"
               : "rounded-tl-none bg-gray-100 dark:bg-gray-700"
@@ -529,11 +550,20 @@ const ChatMessage: FC<ChatMessageProps> = ({
           {renderMessageContent()}
           {renderReactions()}
         </div>
-        {status && (
-          <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-            {status}
+        <div
+          className={`flex items-center ${isOwn ? "justify-end" : "justify-start"}`}
+        >
+          {status && (
+            <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+              {status}
+            </span>
+          )}
+          <span
+            className={`ml-2 rounded-md px-1.5 py-0.5 text-xs font-medium ${getSecurityLevelStyle()}`}
+          >
+            {securityLevel}
           </span>
-        )}
+        </div>
       </div>
       <button
         id="dropdownMenuIconButton"

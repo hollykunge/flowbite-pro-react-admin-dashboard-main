@@ -6,6 +6,7 @@ import NavbarSidebarLayout from "../layouts/navbar-sidebar";
 import ChatMessage from "../components/ChatMessage";
 import ChatFileMessage from "../components/ChatFileMessage";
 import ChatVoiceMessage from "../components/ChatVoiceMessage";
+import type { MessageSecurityLevel } from "../components/MessageInput";
 import MessageInput from "../components/MessageInput";
 
 /**
@@ -34,7 +35,98 @@ interface MessageType {
   };
   reactions?: string[];
   isEdited?: boolean;
+  securityLevel: MessageSecurityLevel;
 }
+
+/**
+ * 自定义抽屉组件
+ */
+const SettingsDrawer: FC<{
+  isOpen: boolean;
+  onClose: () => void;
+}> = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="absolute inset-0 z-50 overflow-hidden">
+      <div
+        className="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+        onClick={onClose}
+        onKeyDown={(e) => e.key === "Escape" && onClose()}
+        tabIndex={0}
+        role="button"
+        aria-label="关闭设置面板"
+      ></div>
+      <div className="absolute inset-y-0 right-0 flex max-w-full">
+        <div className="relative w-screen max-w-xs">
+          <div className="flex h-full flex-col overflow-y-auto bg-white py-4 shadow-xl dark:bg-gray-800">
+            <div className="px-4">
+              <div className="flex items-start justify-between">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+                  聊天设置
+                </h2>
+                <div className="ml-3 flex h-7 items-center">
+                  <button
+                    type="button"
+                    className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                    onClick={onClose}
+                  >
+                    <span className="sr-only">关闭面板</span>
+                    <svg
+                      className="size-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="relative mt-4 flex-1 px-4">
+              <div className="space-y-4">
+                <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                  在这里您可以调整聊天设置，管理通知，以及自定义您的聊天体验。
+                </p>
+                <div className="grid grid-cols-1 gap-3">
+                  <button className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
+                    通知设置
+                  </button>
+                  <button className="inline-flex items-center rounded-lg bg-primary-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                    高级设置&nbsp;
+                    <svg
+                      className="ms-2 size-3.5 rtl:rotate-180"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 14 10"
+                    >
+                      <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M1 5h12m0 0L9 1m4 4L9 9"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 /**
  * 研讨页面组件
@@ -47,6 +139,7 @@ const DiscussionPage: FC = function () {
   const [activeTab, setActiveTab] = useState("messages");
   const [messageFilter, setMessageFilter] = useState("all");
   const [replyingTo, setReplyingTo] = useState<MessageType | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // 禁用外部框架的垂直滚动
   useEffect(() => {
@@ -230,6 +323,7 @@ const DiscussionPage: FC = function () {
       time: "10:30",
       status: "已读",
       messageType: "text",
+      securityLevel: "非密",
     },
     {
       id: 2,
@@ -239,6 +333,7 @@ const DiscussionPage: FC = function () {
       time: "10:32",
       status: "已读",
       messageType: "text",
+      securityLevel: "非密",
     },
     {
       id: 3,
@@ -248,6 +343,7 @@ const DiscussionPage: FC = function () {
       time: "10:35",
       status: "已读",
       messageType: "text",
+      securityLevel: "非密",
     },
     {
       id: 4,
@@ -258,6 +354,7 @@ const DiscussionPage: FC = function () {
       status: "已读",
       messageType: "text",
       isOwn: true,
+      securityLevel: "非密",
     },
     {
       id: 5,
@@ -267,6 +364,7 @@ const DiscussionPage: FC = function () {
       time: "10:38",
       status: "已读",
       messageType: "text",
+      securityLevel: "非密",
     },
     {
       id: 6,
@@ -276,6 +374,7 @@ const DiscussionPage: FC = function () {
       time: "10:39",
       status: "已读",
       messageType: "image",
+      securityLevel: "非密",
     },
     {
       id: 7,
@@ -290,6 +389,7 @@ const DiscussionPage: FC = function () {
         sender: "王五",
         message: "主要是API集成部分出现了兼容性问题",
       },
+      securityLevel: "非密",
     },
     {
       id: 8,
@@ -299,6 +399,7 @@ const DiscussionPage: FC = function () {
       time: "10:42",
       status: "已读",
       messageType: "file",
+      securityLevel: "非密",
     },
     {
       id: 9,
@@ -308,6 +409,7 @@ const DiscussionPage: FC = function () {
       time: "10:45",
       status: "已读",
       messageType: "voice",
+      securityLevel: "非密",
     },
     {
       id: 10,
@@ -318,6 +420,7 @@ const DiscussionPage: FC = function () {
       status: "已读",
       messageType: "text",
       isOwn: true,
+      securityLevel: "非密",
     },
     {
       id: 11,
@@ -331,6 +434,7 @@ const DiscussionPage: FC = function () {
         sender: "我",
         message: "我已经修复了API问题，大家可以更新代码测试一下",
       },
+      securityLevel: "非密",
     },
     {
       id: 13,
@@ -344,6 +448,7 @@ const DiscussionPage: FC = function () {
         sender: "张三",
         message: "../images/users/neil-sims.png",
       },
+      securityLevel: "非密",
     },
     {
       id: 14,
@@ -354,6 +459,7 @@ const DiscussionPage: FC = function () {
       status: "已读",
       messageType: "voice",
       isOwn: true,
+      securityLevel: "非密",
     },
     {
       id: 15,
@@ -364,6 +470,7 @@ const DiscussionPage: FC = function () {
       status: "已读",
       messageType: "file",
       isOwn: true,
+      securityLevel: "非密",
     },
     {
       id: 16,
@@ -374,6 +481,7 @@ const DiscussionPage: FC = function () {
       status: "已读",
       messageType: "image",
       isOwn: true,
+      securityLevel: "非密",
     },
   ]);
 
@@ -477,6 +585,7 @@ const DiscussionPage: FC = function () {
         status: "已发送",
         messageType: "link",
         isOwn: true,
+        securityLevel: "非密",
       };
       setDiscussions([...discussions, newMessage]);
       setLinkUrl("");
@@ -494,8 +603,8 @@ const DiscussionPage: FC = function () {
   };
 
   // 发送新消息的处理函数
-  const handleSendMessage = (overrideType?: MessageType["messageType"]) => {
-    if (message.trim() !== "") {
+  const handleSendMessage = () => {
+    if (message.trim()) {
       const newMessage: MessageType = {
         id: discussions.length + 1,
         sender: "我",
@@ -506,7 +615,7 @@ const DiscussionPage: FC = function () {
           minute: "2-digit",
         }),
         status: "已发送",
-        messageType: overrideType || messageType,
+        messageType: messageType,
         isOwn: true, // 标记为自己发送的消息
         reactions: [],
         ...(replyingTo && {
@@ -515,6 +624,7 @@ const DiscussionPage: FC = function () {
             message: replyingTo.content,
           },
         }),
+        securityLevel: securityLevel, // 使用当前选择的密级
       };
       setDiscussions([...discussions, newMessage]);
       setMessage("");
@@ -578,6 +688,19 @@ const DiscussionPage: FC = function () {
   const handleMessageFilterChange = (filter: string) => {
     setMessageFilter(filter);
   };
+
+  // 处理设置抽屉的打开和关闭
+  const handleOpenSettings = () => {
+    setIsSettingsOpen(true);
+  };
+
+  const handleCloseSettings = () => {
+    setIsSettingsOpen(false);
+  };
+
+  // 添加状态来管理消息密级
+  const [securityLevel, setSecurityLevel] =
+    useState<MessageSecurityLevel>("非密");
 
   return (
     <NavbarSidebarLayout isFooter={false}>
@@ -900,7 +1023,7 @@ const DiscussionPage: FC = function () {
             </div>
           </div>
 
-          <div className="flex h-full w-3/4 flex-col overflow-hidden">
+          <div className="flex h-full w-3/4 flex-col overflow-hidden bg-transparent">
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-2 dark:border-gray-700 dark:bg-gray-800">
               <div className="flex items-center gap-3">
                 {/* 会话头像 */}
@@ -946,7 +1069,13 @@ const DiscussionPage: FC = function () {
                   <HiUserAdd className="size-4" />
                 </Button>
                 {/* 设置按钮 */}
-                <Button size="xs" color="gray" pill iconOnly>
+                <Button
+                  size="xs"
+                  color="gray"
+                  pill
+                  iconOnly
+                  onClick={handleOpenSettings}
+                >
                   <HiCog className="size-4" />
                 </Button>
               </div>
@@ -955,9 +1084,17 @@ const DiscussionPage: FC = function () {
             <div
               ref={chatContainerRef}
               onScroll={handleScroll}
-              className="flex-1 overflow-y-auto overflow-x-hidden px-4 [scrollbar-width:thin] [&.scrolling]:opacity-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/0 hover:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600/0 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1.5"
+              className="relative flex-1 overflow-y-auto overflow-x-hidden bg-transparent px-4 [scrollbar-width:thin] [&.scrolling]:opacity-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/0 hover:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600/0 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1.5"
             >
-              <div className="min-h-full rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+              {/* 设置抽屉 - 放在聊天容器内部 */}
+              {isSettingsOpen && (
+                <SettingsDrawer
+                  isOpen={isSettingsOpen}
+                  onClose={handleCloseSettings}
+                />
+              )}
+
+              <div className="min-h-full rounded-lg p-4">
                 {/* 消息列表 - 支持丰富的消息类型 */}
                 {discussions.map((msg) =>
                   msg.messageType === "file" ? (
@@ -1013,6 +1150,7 @@ const DiscussionPage: FC = function () {
                       replyTo={msg.replyTo}
                       reactions={msg.reactions}
                       isEdited={msg.isEdited}
+                      securityLevel={msg.securityLevel}
                       onReply={() => handleReplyMessage(msg.id)}
                       onForward={() => handleForwardMessage(msg.id)}
                       onCopy={() => handleCopyMessage(msg.id)}
@@ -1034,7 +1172,7 @@ const DiscussionPage: FC = function () {
             <div className="mt-auto">
               {/* 回复预览 */}
               {replyingTo && (
-                <div className="flex items-center justify-between bg-gray-50 p-2 dark:bg-gray-700">
+                <div className="mx-4 mb-2 flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
                   <div className="flex items-center">
                     <div className="mr-2 h-4 w-0.5 bg-gray-300 dark:bg-gray-600"></div>
                     <div>
@@ -1048,7 +1186,7 @@ const DiscussionPage: FC = function () {
                   </div>
                   <button
                     onClick={handleCancelReply}
-                    className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    className="rounded-lg p-1 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                   >
                     <svg
                       className="size-4"
@@ -1070,45 +1208,52 @@ const DiscussionPage: FC = function () {
               )}
 
               {/* 消息输入框 */}
-              <MessageInput
-                message={message}
-                onMessageChange={handleMessageChange}
-                onSendMessage={() => handleSendMessage()}
-              />
+              <div className="px-4">
+                <MessageInput
+                  message={message}
+                  onMessageChange={handleMessageChange}
+                  onSendMessage={() => handleSendMessage()}
+                  securityLevel={securityLevel}
+                  onSecurityLevelChange={setSecurityLevel}
+                />
+              </div>
 
               {/* 链接输入 */}
               {showLinkInput && (
-                <div className="border-t border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-700">
-                  <div className="flex flex-col space-y-2">
+                <div className="mx-4 mb-4 mt-2 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                  <div className="mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    添加链接
+                  </div>
+                  <div className="flex flex-col space-y-3">
                     <input
                       type="text"
                       value={linkUrl}
                       onChange={(e) => setLinkUrl(e.target.value)}
                       placeholder="输入链接URL"
-                      className="w-full rounded-md border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                      className="w-full rounded-lg border border-gray-300 p-2.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     />
                     <input
                       type="text"
                       value={linkTitle}
                       onChange={(e) => setLinkTitle(e.target.value)}
                       placeholder="输入链接标题（可选）"
-                      className="w-full rounded-md border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                      className="w-full rounded-lg border border-gray-300 p-2.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     />
                     <div className="flex justify-end space-x-2">
                       <button
                         type="button"
                         onClick={handleCancelLink}
-                        className="rounded-md bg-gray-200 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500"
+                        className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
                       >
                         取消
                       </button>
                       <button
                         type="button"
                         onClick={handleSendLink}
-                        className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-white hover:bg-blue-600"
+                        className="rounded-lg bg-primary-700 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                         disabled={!linkUrl.trim()}
                       >
-                        发送链接
+                        添加链接
                       </button>
                     </div>
                   </div>
