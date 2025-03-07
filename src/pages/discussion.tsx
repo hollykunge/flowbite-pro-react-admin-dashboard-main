@@ -1,13 +1,13 @@
 import { Button } from "flowbite-react";
-import type { FC, ChangeEvent } from "react";
-import { HiSearch, HiUserAdd, HiCog } from "react-icons/hi";
-import { useState, useRef, useEffect } from "react";
-import NavbarSidebarLayout from "../layouts/navbar-sidebar";
-import ChatMessage from "../components/ChatMessage";
+import type { ChangeEvent, FC } from "react";
+import { useEffect, useRef, useState } from "react";
+import { HiCog, HiSearch, HiUserAdd } from "react-icons/hi";
 import ChatFileMessage from "../components/ChatFileMessage";
+import ChatMessage from "../components/ChatMessage";
 import ChatVoiceMessage from "../components/ChatVoiceMessage";
 import type { MessageSecurityLevel } from "../components/MessageInput";
 import MessageInput from "../components/MessageInput";
+import NavbarSidebarLayout from "../layouts/navbar-sidebar";
 
 /**
  * 消息类型定义
@@ -868,7 +868,7 @@ const DiscussionPage: FC = function () {
                           key={item.id}
                           className={`flex w-full items-center justify-between px-4 py-3 text-left hover:cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${
                             activeDiscussionId === item.id
-                              ? "bg-gray-100 dark:bg-gray-700"
+                              ? "bg-blue-50 dark:bg-blue-900/30"
                               : ""
                           }`}
                           onClick={() => handleSelectDiscussion(item.id)}
