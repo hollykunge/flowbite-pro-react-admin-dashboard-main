@@ -59,10 +59,21 @@ const flowbiteTheme: CustomFlowbiteTheme = {
     },
     item: {
       base: "flex items-center justify-center rounded-lg p-2 text-base font-medium text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700",
+      icon: {
+        base: "h-6 w-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white",
+        active: "text-blue-600 dark:text-blue-500",
+      },
     },
     collapse: {
       button:
         "group flex w-full items-center rounded-lg p-2 text-base font-medium text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700",
+      icon: {
+        base: "h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white",
+        open: {
+          off: "",
+          on: "text-blue-600 dark:text-blue-500",
+        },
+      },
     },
   },
   textarea: {

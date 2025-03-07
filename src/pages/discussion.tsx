@@ -195,6 +195,7 @@ const DiscussionPage: FC = function () {
       category: "recent",
       members: 5,
       tag: "团队",
+      securityLevel: "非密" as MessageSecurityLevel,
     },
     {
       id: 2,
@@ -207,6 +208,7 @@ const DiscussionPage: FC = function () {
       category: "recent",
       members: 2,
       tag: "私聊",
+      securityLevel: "秘密" as MessageSecurityLevel,
     },
     {
       id: 3,
@@ -220,6 +222,7 @@ const DiscussionPage: FC = function () {
       category: "recent",
       members: 3,
       tag: "项目",
+      securityLevel: "机密" as MessageSecurityLevel,
     },
     {
       id: 4,
@@ -232,6 +235,7 @@ const DiscussionPage: FC = function () {
       category: "recent",
       members: 0,
       tag: "",
+      securityLevel: "非密" as MessageSecurityLevel,
     },
     {
       id: 5,
@@ -245,6 +249,7 @@ const DiscussionPage: FC = function () {
       category: "recent",
       members: 0,
       tag: "",
+      securityLevel: "秘密" as MessageSecurityLevel,
     },
     {
       id: 6,
@@ -258,6 +263,7 @@ const DiscussionPage: FC = function () {
       category: "recent",
       members: 0,
       tag: "",
+      securityLevel: "非密" as MessageSecurityLevel,
     },
     {
       id: 7,
@@ -271,6 +277,7 @@ const DiscussionPage: FC = function () {
       category: "recent",
       members: 0,
       tag: "",
+      securityLevel: "机密" as MessageSecurityLevel,
     },
     {
       id: 9,
@@ -285,6 +292,7 @@ const DiscussionPage: FC = function () {
       category: "recent",
       members: 0,
       tag: "",
+      securityLevel: "秘密" as MessageSecurityLevel,
     },
     {
       id: 10,
@@ -297,6 +305,7 @@ const DiscussionPage: FC = function () {
       category: "recent",
       members: 0,
       tag: "",
+      securityLevel: "非密" as MessageSecurityLevel,
     },
     {
       id: 11,
@@ -310,6 +319,7 @@ const DiscussionPage: FC = function () {
       category: "recent",
       members: 0,
       tag: "",
+      securityLevel: "机密" as MessageSecurityLevel,
     },
   ]);
 
@@ -641,6 +651,7 @@ const DiscussionPage: FC = function () {
                 ? message
                 : `[${messageType === "image" ? "图片" : messageType === "file" ? "文件" : messageType === "voice" ? "语音" : messageType === "link" ? "链接" : "消息"}]`,
             time: "刚刚",
+            securityLevel: securityLevel, // 更新密级
           };
         }
         return item;
@@ -866,7 +877,7 @@ const DiscussionPage: FC = function () {
                       .map((item) => (
                         <button
                           key={item.id}
-                          className={`flex w-full items-center justify-between px-4 py-3 text-left hover:cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                          className={`flex w-full items-center justify-between border-b border-gray-200/70 px-4 py-3 text-left hover:cursor-pointer hover:bg-gray-100 dark:border-gray-700/70 dark:hover:bg-gray-700 ${
                             activeDiscussionId === item.id
                               ? "bg-blue-50 dark:bg-blue-900/30"
                               : ""
@@ -955,19 +966,31 @@ const DiscussionPage: FC = function () {
                             </div>
                           </div>
 
-                          <div
-                            className={`ml-2 shrink-0 ${item.unread > 0 ? "flex flex-col items-end" : ""}`}
-                          >
-                            <span
-                              className={`${item.unread > 0 ? "mb-1" : ""} whitespace-nowrap text-xs text-gray-500 dark:text-gray-400`}
+                          <div className="ml-2 flex w-20 shrink-0 flex-col items-end">
+                            {/* 密级标签 - 上行 */}
+                            <div
+                              className={`mb-1 rounded-md px-2 py-0.5 text-xs font-medium ${
+                                item.securityLevel === "非密"
+                                  ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500"
+                                  : item.securityLevel === "秘密"
+                                    ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-500"
+                                    : "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-500"
+                              }`}
                             >
-                              {item.time}
-                            </span>
-                            {item.unread > 0 && (
-                              <span className="flex size-5 items-center justify-center rounded-full bg-primary-100 p-1 text-xs font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-300">
-                                {item.unread}
+                              {item.securityLevel}
+                            </div>
+
+                            {/* 时间和未读数量 - 下行 */}
+                            <div className="flex items-center">
+                              <span className="whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
+                                {item.time}
                               </span>
-                            )}
+                              {item.unread > 0 && (
+                                <span className="ml-1 flex size-5 items-center justify-center rounded-full bg-primary-100 p-1 text-xs font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-300">
+                                  {item.unread}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </button>
                       ))}
@@ -981,11 +1004,11 @@ const DiscussionPage: FC = function () {
                   <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">
                     通讯录
                   </h3>
-                  <ul className="space-y-2">
+                  <ul>
                     {discussionList.map((item) => (
                       <li
                         key={item.id}
-                        className="flex items-center gap-3 rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        className="mb-1 flex items-center gap-3 rounded-lg border-b border-gray-200/70 p-2 hover:bg-gray-100 dark:border-gray-700/70 dark:hover:bg-gray-700"
                       >
                         <div className="relative shrink-0">
                           <img
@@ -1014,6 +1037,20 @@ const DiscussionPage: FC = function () {
                                 ? "在线"
                                 : "离线"}
                           </p>
+                        </div>
+                        {/* 密级标签 */}
+                        <div className="ml-auto w-20 shrink-0 text-right">
+                          <span
+                            className={`rounded-md px-2 py-0.5 text-xs font-medium ${
+                              item.securityLevel === "非密"
+                                ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500"
+                                : item.securityLevel === "秘密"
+                                  ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-500"
+                                  : "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-500"
+                            }`}
+                          >
+                            {item.securityLevel}
+                          </span>
                         </div>
                       </li>
                     ))}

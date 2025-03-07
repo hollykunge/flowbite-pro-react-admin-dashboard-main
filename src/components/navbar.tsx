@@ -1,13 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { Button, DarkThemeToggle, Dropdown, Navbar } from "flowbite-react";
 import type { FC } from "react";
-import {
-  DarkThemeToggle,
-  Dropdown,
-  Label,
-  Navbar,
-  TextInput,
-  Button,
-} from "flowbite-react";
+import { useState } from "react";
 import {
   HiArchive,
   HiBell,
@@ -32,10 +26,33 @@ const ExampleNavbar: FC = function () {
   const { isOpenOnSmallScreens, isPageWithSidebar, setOpenOnSmallScreens } =
     useSidebarContext();
 
+  // 添加搜索模态框状态
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // 打开搜索模态框
+  const openSearchModal = () => {
+    setIsSearchModalOpen(true);
+  };
+
+  // 关闭搜索模态框
+  const closeSearchModal = () => {
+    setIsSearchModalOpen(false);
+  };
+
+  // 处理搜索提交
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // 这里可以添加搜索逻辑
+    console.log("搜索查询:", searchQuery);
+    closeSearchModal();
+  };
+
   return (
     <Navbar fluid className="py-1">
       <div className="w-full lg:px-4 lg:pl-2">
-        <div className="flex items-center justify-between">
+        <div className="grid grid-cols-3 items-center">
+          {/* 左侧品牌区域 */}
           <div className="flex items-center">
             {isPageWithSidebar && (
               <button
@@ -60,44 +77,193 @@ const ExampleNavbar: FC = function () {
                 Flowbite
               </span>
             </Navbar.Brand>
-            <form className="ml-12 hidden md:block">
-              <Label htmlFor="search" className="sr-only">
-                Search
-              </Label>
-              <TextInput
-                className="text-xs"
-                icon={HiSearch}
-                id="search"
-                name="search"
-                placeholder="Search"
-                required
-                size={28}
-                type="search"
-                sizing="sm"
-              />
+          </div>
+
+          {/* 中间搜索区域 */}
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={openSearchModal}
+              className="hidden h-9 w-64 items-center rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-left text-sm text-gray-500 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 md:flex"
+            >
+              <HiSearch className="mr-2 size-4" />
+              <span>搜索...</span>
+            </button>
+          </div>
+
+          {/* 右侧功能区域 */}
+          <div className="flex items-center justify-end lg:gap-2">
+            <Button
+              outline
+              gradientDuoTone="purpleToPink"
+              size="sm"
+              className="mr-2"
+            >
+              Purple to Pink
+            </Button>
+            <button
+              onClick={openSearchModal}
+              className="cursor-pointer rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:ring-2 focus:ring-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700 dark:focus:ring-gray-700 md:hidden"
+            >
+              <span className="sr-only">Search</span>
+              <HiSearch className="size-5" />
+            </button>
+            <NotificationBellDropdown />
+            <AppDrawerDropdown />
+            <DarkThemeToggle />
+          </div>
+        </div>
+      </div>
+
+      {/* 搜索模态框 */}
+      <div
+        className={`${isSearchModalOpen ? "fixed" : "hidden"} inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50 p-4`}
+      >
+        <div className="mx-auto w-full max-w-2xl rounded-lg bg-white shadow-2xl transition-all dark:bg-gray-800">
+          {/* 搜索输入区域 */}
+          <div className="p-5">
+            <form onSubmit={handleSearchSubmit}>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <HiSearch className="size-5 text-gray-500 dark:text-gray-400" />
+                </div>
+                <input
+                  type="search"
+                  id="modal-search"
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  placeholder="搜索关键词..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={closeSearchModal}
+                  className="absolute right-2.5 top-2.5 rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  <HiX className="size-5" />
+                  <span className="sr-only">关闭</span>
+                </button>
+              </div>
+              <div className="mt-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    type="submit"
+                    className="flex items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  >
+                    <HiSearch className="mr-2 size-4" />
+                    全局搜索
+                  </button>
+                  <Button
+                    type="button"
+                    outline
+                    gradientDuoTone="purpleToPink"
+                    onClick={() => {
+                      console.log("AI搜索:", searchQuery);
+                      closeSearchModal();
+                    }}
+                  >
+                    <svg
+                      className="mr-2 size-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                      <path
+                        fillRule="evenodd"
+                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>
+                    AI搜索
+                  </Button>
+                </div>
+              </div>
             </form>
           </div>
-          <div className="flex items-center lg:gap-2">
-            <div className="flex items-center">
-              <Button
-                outline
-                gradientDuoTone="purpleToBlue"
-                size="sm"
-                className="mr-2"
-              >
-                Purple to Blue
-              </Button>
-              <button
-                onClick={() => setOpenOnSmallScreens(!isOpenOnSmallScreens)}
-                className="cursor-pointer rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:ring-2 focus:ring-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700 dark:focus:ring-gray-700 lg:hidden"
-              >
-                <span className="sr-only">Search</span>
-                <HiSearch className="size-5" />
+
+          {/* 搜索建议区域 */}
+          <div className="border-t border-gray-200 px-5 py-4 dark:border-gray-700">
+            <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
+              热门搜索
+            </h3>
+            <ul className="space-y-2">
+              <li>
+                <a
+                  href="#"
+                  className="flex items-center text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-500"
+                >
+                  <HiSearch className="mr-2 size-4" />
+                  仪表盘设计
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="flex items-center text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-500"
+                >
+                  <HiSearch className="mr-2 size-4" />
+                  用户管理
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="flex items-center text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-500"
+                >
+                  <HiSearch className="mr-2 size-4" />
+                  数据分析
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="flex items-center text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-500"
+                >
+                  <HiSearch className="mr-2 size-4" />
+                  设置选项
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* 最近搜索区域 */}
+          <div className="border-t border-gray-200 px-5 py-4 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                最近搜索
+              </h3>
+              <button className="text-xs text-blue-600 hover:underline dark:text-blue-500">
+                清除全部
               </button>
-              <NotificationBellDropdown />
-              <AppDrawerDropdown />
-              <DarkThemeToggle />
             </div>
+            <ul className="mt-3 space-y-2">
+              <li className="flex items-center justify-between">
+                <a
+                  href="#"
+                  className="flex items-center text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-500"
+                >
+                  <HiSearch className="mr-2 size-4" />
+                  项目统计
+                </a>
+                <button className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <HiX className="size-4 text-gray-400" />
+                </button>
+              </li>
+              <li className="flex items-center justify-between">
+                <a
+                  href="#"
+                  className="flex items-center text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-500"
+                >
+                  <HiSearch className="mr-2 size-4" />
+                  团队成员
+                </a>
+                <button className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <HiX className="size-4 text-gray-400" />
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

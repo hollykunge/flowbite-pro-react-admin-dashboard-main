@@ -1,11 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import type { FC } from "react";
-import { Fragment } from "react";
-import { useState } from "react";
-import NavbarSidebarLayout from "../layouts/navbar-sidebar";
-import kanbanBoards from "../data/kanban.json";
-import { ReactSortable } from "react-sortablejs";
 import { Button, Label, Modal, Textarea, TextInput } from "flowbite-react";
+import type { FC } from "react";
+import { Fragment, useState } from "react";
 import {
   HiArrowsExpand,
   HiClipboard,
@@ -16,6 +12,12 @@ import {
   HiPencilAlt,
   HiPlus,
 } from "react-icons/hi";
+import { ReactSortable } from "react-sortablejs";
+import kanbanBoards from "../data/kanban.json";
+import NavbarSidebarLayout from "../layouts/navbar-sidebar";
+
+// 添加中文字体样式
+import "../styles/chinese-fonts.css";
 
 interface KanbanBoard {
   id: number;
@@ -42,6 +44,26 @@ interface KanbanItemMember {
 const KanbanPage: FC = function () {
   const [list, setList] = useState<KanbanBoard[]>(kanbanBoards);
 
+  // 汉化看板标题
+  const translateBoardTitle = (title: string): string => {
+    switch (title) {
+      case "To Do":
+        return "待办";
+      case "In Progress":
+        return "进行中";
+      case "Done":
+        return "已完成";
+      default:
+        return title;
+    }
+  };
+
+  // 汉化剩余天数
+  const translateDaysLeft = (days: number): string => {
+    if (days === 0) return "已完成";
+    return `剩余 ${days} 天`;
+  };
+
   return (
     <NavbarSidebarLayout isFooter={false}>
       <div className="overflow-x-auto">
@@ -49,8 +71,8 @@ const KanbanPage: FC = function () {
           <div className="mb-6 flex items-start justify-start space-x-4 px-4">
             {list.map((board) => (
               <div key={board.id}>
-                <div className="py-4 text-base font-semibold text-gray-900 dark:text-gray-300">
-                  {board.title}
+                <div className="chinese-font py-4 text-base font-semibold text-gray-900 dark:text-gray-300">
+                  {translateBoardTitle(board.title)}
                 </div>
                 <div className="mb-6 space-y-4">
                   <ReactSortable
@@ -62,9 +84,9 @@ const KanbanPage: FC = function () {
                       setList((list) => {
                         const newList = [...list];
                         const index = newList.findIndex(
-                          (item) => item.id === board.id
+                          (item) => item.id === board.id,
                         );
-                        newList[index]!.tasks = tasks;
+                        newList[index].tasks = tasks;
                         return newList;
                       })
                     }
@@ -75,7 +97,7 @@ const KanbanPage: FC = function () {
                         className="mb-4 w-[28rem] cursor-grab rounded-lg bg-white p-4 shadow-md dark:bg-gray-800"
                       >
                         <div className="flex items-center justify-between pb-4">
-                          <div className="text-base font-semibold text-gray-900 dark:text-white">
+                          <div className="chinese-font text-base font-semibold text-gray-900 dark:text-white">
                             {task.name}
                           </div>
                           <div className="w-8">
@@ -90,7 +112,7 @@ const KanbanPage: FC = function () {
                               className="mb-3 rounded-lg"
                             />
                           )}
-                          <div className="pb-4 text-sm font-normal text-gray-700 dark:text-gray-400">
+                          <div className="chinese-font pb-4 text-sm font-normal text-gray-700 dark:text-gray-400">
                             {task.description}
                           </div>
                           <div className="flex justify-between">
@@ -101,18 +123,18 @@ const KanbanPage: FC = function () {
                                     <img
                                       alt={member.name}
                                       src={`/images/users/${member.avatar}`}
-                                      className="h-7 w-7 rounded-full border-2 border-white dark:border-gray-800"
+                                      className="size-7 rounded-full border-2 border-white dark:border-gray-800"
                                     />
                                   </a>
-                                  <div className="invisible absolute z-50 inline-block rounded-lg bg-gray-900 py-2 px-3 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700">
+                                  <div className="chinese-font invisible absolute z-50 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700">
                                     {member.name}
                                   </div>
                                 </Fragment>
                               ))}
                             </div>
-                            <div className="flex items-center justify-center rounded-lg bg-purple-100 px-3 text-sm font-medium text-purple-800 dark:bg-purple-200">
+                            <div className="chinese-font flex items-center justify-center rounded-lg bg-purple-100 px-3 text-sm font-medium text-purple-800 dark:bg-purple-200">
                               <svg
-                                className="mr-1 h-4 w-4"
+                                className="mr-1 size-4"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -123,7 +145,7 @@ const KanbanPage: FC = function () {
                                   clipRule="evenodd"
                                 ></path>
                               </svg>
-                              7 days left
+                              {translateDaysLeft(task.daysLeft)}
                             </div>
                           </div>
                         </div>
@@ -150,24 +172,24 @@ const EditCardModal: FC = function () {
         onClick={() => setOpen(true)}
         className="flex w-full items-center justify-center rounded-lg border-2 border-transparent py-2 font-semibold text-gray-500 hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-800 dark:hover:border-gray-700 dark:hover:bg-gray-800 dark:hover:text-white"
       >
-        <span className="sr-only">Edit card</span>
+        <span className="sr-only">编辑卡片</span>
         <HiPencilAlt className="text-lg" />
       </button>
       <Modal onClose={() => setOpen(false)} show={isOpen}>
         <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
-          <strong>Edit task</strong>
+          <strong className="chinese-font">编辑任务</strong>
         </Modal.Header>
         <Modal.Body>
-          <div className="mb-3 text-2xl font-semibold leading-none text-gray-900 dark:text-white">
-            Redesign Themesberg Homepage
+          <div className="chinese-font mb-3 text-2xl font-semibold leading-none text-gray-900 dark:text-white">
+            重新设计 Themesberg 主页
           </div>
           <div className="mb-5 flex flex-col items-start justify-center space-y-3">
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              Added by{" "}
+            <div className="chinese-font text-sm text-gray-500 dark:text-gray-400">
+              由{" "}
               <a className="cursor-pointer text-primary-700 no-underline hover:underline dark:text-primary-500">
                 Bonnie Green
-              </a>
-              , 22 hours ago
+              </a>{" "}
+              添加，22 小时前
             </div>
             <div className="flex flex-row flex-wrap">
               <div className="flex items-center justify-start">
@@ -177,7 +199,7 @@ const EditCardModal: FC = function () {
                   className="-mr-3"
                 >
                   <img
-                    className="h-7 w-7 rounded-full border-2 border-white dark:border-gray-800"
+                    className="size-7 rounded-full border-2 border-white dark:border-gray-800"
                     src="../images/users/bonnie-green.png"
                     alt="Bonnie Green"
                   />
@@ -185,7 +207,7 @@ const EditCardModal: FC = function () {
                 <div
                   id="bonnie-tooltip"
                   role="tooltip"
-                  className="invisible absolute z-10 inline-block rounded-lg bg-gray-900 py-2 px-3 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300"
+                  className="chinese-font invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300"
                 >
                   Bonnie Green
                 </div>
@@ -195,7 +217,7 @@ const EditCardModal: FC = function () {
                   className="-mr-3"
                 >
                   <img
-                    className="h-7 w-7 rounded-full border-2 border-white dark:border-gray-800"
+                    className="size-7 rounded-full border-2 border-white dark:border-gray-800"
                     src="../images/users/roberta-casas.png"
                     alt="Roberta Casas"
                   />
@@ -203,7 +225,7 @@ const EditCardModal: FC = function () {
                 <div
                   id="roberta-tooltip"
                   role="tooltip"
-                  className="invisible absolute z-10 inline-block rounded-lg bg-gray-900 py-2 px-3 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300"
+                  className="chinese-font invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300"
                 >
                   Roberta Casas
                 </div>
@@ -213,7 +235,7 @@ const EditCardModal: FC = function () {
                   className="-mr-3"
                 >
                   <img
-                    className="h-7 w-7 rounded-full border-2 border-white dark:border-gray-800"
+                    className="size-7 rounded-full border-2 border-white dark:border-gray-800"
                     src="../images/users/michael-gough.png"
                     alt="Michael Gough"
                   />
@@ -221,34 +243,34 @@ const EditCardModal: FC = function () {
                 <div
                   id="michael-tooltip"
                   role="tooltip"
-                  className="invisible absolute z-10 inline-block rounded-lg bg-gray-900 py-2 px-3 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300"
+                  className="chinese-font invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300"
                 >
                   Michael Gough
                 </div>
               </div>
               <Button
                 color="gray"
-                className="ml-5 font-bold dark:bg-gray-600 [&>*]:py-1"
+                className="chinese-font ml-5 font-bold dark:bg-gray-600 [&>*]:py-1"
               >
                 <div className="flex items-center gap-x-2 text-xs">
                   <HiPlus />
-                  Join
+                  加入
                 </div>
               </Button>
               <Button
                 color="gray"
-                className="ml-3 font-bold dark:bg-gray-600 [&>*]:py-1"
+                className="chinese-font ml-3 font-bold dark:bg-gray-600 [&>*]:py-1"
               >
                 <div className="flex items-center gap-x-2 text-xs">
                   <HiPaperClip />
-                  Attachment
+                  附件
                 </div>
               </Button>
             </div>
           </div>
-          <div className="mb-2 inline-flex items-center text-center text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="chinese-font mb-2 inline-flex items-center text-center text-lg font-semibold text-gray-900 dark:text-white">
             <svg
-              className="mr-1 h-5 w-5"
+              className="mr-1 size-5"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
@@ -259,44 +281,41 @@ const EditCardModal: FC = function () {
                 clipRule="evenodd"
               ></path>
             </svg>
-            Description
+            描述
           </div>
-          <div className="mb-4 space-y-2 text-base text-gray-500 dark:text-gray-400">
+          <div className="chinese-font mb-4 space-y-2 text-base text-gray-500 dark:text-gray-400">
             <p>
-              I made some wireframes that we would like you to follow since we
-              are building it in Google’s Material Design (Please learn more
-              about this and see how to improve standard material design into
-              something beautiful). But besides that, you can just do it how you
-              like.
+              我制作了一些线框图，我们希望您遵循这些线框图，因为我们正在使用
+              Google 的 Material Design
+              构建它（请了解更多相关信息，并了解如何将标准 Material Design
+              改进为更美观的设计）。除此之外，您可以按照自己的喜好进行设计。
             </p>
             <p>
-              Next Friday should be done. Next Monday we should deliver the
-              first iteration. Make sure, we have a good result to be delivered
-              by the day.
+              下周五应该完成。下周一我们应该交付第一个迭代版本。请确保我们在当天交付一个好的结果。
             </p>
-            <div className="w-max cursor-pointer text-sm font-semibold text-primary-700 hover:underline dark:text-primary-500">
-              Show Full Description
+            <div className="chinese-font w-max cursor-pointer text-sm font-semibold text-primary-700 hover:underline dark:text-primary-500">
+              显示完整描述
             </div>
           </div>
           <div className="mb-4 w-full rounded-lg border border-gray-100 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
             <div className="p-4">
               <label htmlFor="compose-mail" className="sr-only">
-                Your comment
+                您的评论
               </label>
               <textarea
                 id="compose-mail"
                 rows={4}
-                className="block w-full border-0 bg-gray-100 px-0 text-base text-gray-900 focus:ring-0 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400"
-                placeholder="Write a comment..."
+                className="chinese-font block w-full border-0 bg-gray-100 px-0 text-base text-gray-900 focus:ring-0 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400"
+                placeholder="写下评论..."
               ></textarea>
             </div>
             <div className="flex items-center justify-between border-t p-4 dark:border-gray-600">
               <button
                 type="button"
-                className="inline-flex items-center rounded-lg bg-primary-700 py-1.5 px-3 text-center text-xs font-semibold text-white hover:bg-primary-800"
+                className="chinese-font inline-flex items-center rounded-lg bg-primary-700 px-3 py-1.5 text-center text-xs font-semibold text-white hover:bg-primary-800"
               >
                 <svg
-                  className="mr-1 h-4 w-4"
+                  className="mr-1 size-4"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
@@ -307,7 +326,7 @@ const EditCardModal: FC = function () {
                     clipRule="evenodd"
                   ></path>
                 </svg>
-                Post comment
+                发表评论
               </button>
 
               <div className="flex space-x-1 pl-0 sm:pl-2">
@@ -316,7 +335,7 @@ const EditCardModal: FC = function () {
                   className="inline-flex cursor-pointer justify-center rounded p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   <svg
-                    className="h-6 w-6"
+                    className="size-6"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
@@ -333,7 +352,7 @@ const EditCardModal: FC = function () {
                   className="inline-flex cursor-pointer justify-center rounded p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   <svg
-                    className="h-6 w-6"
+                    className="size-6"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -354,17 +373,17 @@ const EditCardModal: FC = function () {
             <div className="flex items-center space-x-3">
               <a href="#" className="shrink-0">
                 <img
-                  className="h-7 w-7 rounded-full"
+                  className="size-7 rounded-full"
                   src="../images/users/michael-gough.png"
                   alt="Micheal Gough"
                 />
               </a>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                <p className="chinese-font truncate text-sm font-semibold text-gray-900 dark:text-white">
                   Micheal Gough
                 </p>
-                <p className="truncate text-sm font-normal text-gray-500 dark:text-gray-400">
-                  Product Manager
+                <p className="chinese-font truncate text-sm font-normal text-gray-500 dark:text-gray-400">
+                  产品经理
                 </p>
               </div>
               <a
@@ -372,7 +391,7 @@ const EditCardModal: FC = function () {
                 className="rounded-lg p-1 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
               >
                 <svg
-                  className="h-4 w-4"
+                  className="size-4"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
@@ -381,47 +400,65 @@ const EditCardModal: FC = function () {
                 </svg>
               </a>
             </div>
-            <ul className="list-outside list-disc pl-6 text-xs text-gray-500 dark:text-gray-400">
+            <ul className="chinese-font list-outside list-disc pl-6 text-xs text-gray-500 dark:text-gray-400">
               <li>
-                Latest clicks/conversions. Where you currently have the logo for
-                merchant, we should instead have a logo that represent the
-                referring traffic sources (ex. Google or Facebook). So we’re
-                actually missing a column that should say “Source”. And there
-                should be no icon for the merchants.
+                最新点击/转化。在您当前放置商家徽标的位置，我们应该使用代表引荐流量来源的徽标（例如
+                Google 或
+                Facebook）。所以我们实际上缺少一个应该标记为"来源"的列。并且商家不应该有图标。
               </li>
             </ul>
           </div>
         </Modal.Body>
         <Modal.Footer>
           <div className="grid w-full grid-cols-2 items-center gap-3 sm:grid-cols-5">
-            <Button color="primary" onClick={() => setOpen(false)}>
+            <Button
+              color="primary"
+              onClick={() => setOpen(false)}
+              className="chinese-font"
+            >
               <div className="flex items-center gap-x-2">
                 <HiClipboard className="text-xl" />
-                Save
+                保存
               </div>
             </Button>
-            <Button color="gray" onClick={() => setOpen(false)}>
+            <Button
+              color="gray"
+              onClick={() => setOpen(false)}
+              className="chinese-font"
+            >
               <div className="flex items-center gap-x-2">
                 <HiArrowsExpand className="text-xl" />
-                Move
+                移动
               </div>
             </Button>
-            <Button color="gray" onClick={() => setOpen(false)}>
+            <Button
+              color="gray"
+              onClick={() => setOpen(false)}
+              className="chinese-font"
+            >
               <div className="flex items-center gap-x-2">
                 <HiClipboardCopy className="text-xl" />
-                Copy
+                复制
               </div>
             </Button>
-            <Button color="gray" onClick={() => setOpen(false)}>
+            <Button
+              color="gray"
+              onClick={() => setOpen(false)}
+              className="chinese-font"
+            >
               <div className="flex items-center gap-x-2">
                 <HiFolder className="text-xl" />
-                Archive
+                归档
               </div>
             </Button>
-            <Button color="gray" onClick={() => setOpen(false)}>
+            <Button
+              color="gray"
+              onClick={() => setOpen(false)}
+              className="chinese-font"
+            >
               <div className="flex items-center gap-x-2">
                 <HiEye className="text-xl" />
-                Watch
+                关注
               </div>
             </Button>
           </div>
@@ -438,10 +475,10 @@ const AddAnotherCardModal: FC = function () {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex w-full items-center justify-center whitespace-nowrap rounded-lg border-2 border-dashed border-gray-200 px-5 py-2 font-semibold text-gray-500 hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-800 dark:hover:border-gray-700 dark:hover:bg-gray-800 dark:hover:text-white"
+        className="chinese-font flex w-full items-center justify-center whitespace-nowrap rounded-lg border-2 border-dashed border-gray-200 px-5 py-2 font-semibold text-gray-500 hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-800 dark:hover:border-gray-700 dark:hover:bg-gray-800 dark:hover:text-white"
       >
         <svg
-          className="h-6 w-6"
+          className="size-6"
           fill="currentColor"
           viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg"
@@ -452,36 +489,45 @@ const AddAnotherCardModal: FC = function () {
             clipRule="evenodd"
           />
         </svg>
-        Add another card
+        添加新卡片
       </button>
       <Modal onClose={() => setOpen(false)} show={isOpen}>
         <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
-          <strong>Add new task</strong>
+          <strong className="chinese-font">添加新任务</strong>
         </Modal.Header>
         <Modal.Body>
           <form>
             <div className="mb-4 grid grid-cols-1 gap-y-2">
-              <Label htmlFor="taskName">Task name</Label>
+              <Label htmlFor="taskName" className="chinese-font">
+                任务名称
+              </Label>
               <TextInput
                 id="taskName"
                 name="taskName"
-                placeholder="Redesign homepage"
+                placeholder="重新设计主页"
+                className="chinese-font"
               />
             </div>
             <div className="mb-4 grid grid-cols-1 gap-y-2">
-              <Label htmlFor="description">Enter a description</Label>
+              <Label htmlFor="description" className="chinese-font">
+                输入描述
+              </Label>
               <Textarea
                 id="description"
                 name="description"
-                placeholder="On line 672 you ..."
+                placeholder="在第 672 行，你需要..."
                 rows={6}
+                className="chinese-font"
               />
             </div>
             <div className="flex w-full items-center justify-center">
-              <label className="flex h-32 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 text-gray-500 hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-700 dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white">
+              <label
+                htmlFor="fileUpload"
+                className="chinese-font flex h-32 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 text-gray-500 hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-700 dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white"
+              >
                 <div className="flex items-center justify-center space-x-2">
                   <svg
-                    className="h-8 w-8"
+                    className="size-8"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -494,23 +540,31 @@ const AddAnotherCardModal: FC = function () {
                       d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                     ></path>
                   </svg>
-                  <p className="text-base">Drop files to upload</p>
+                  <p className="chinese-font text-base">拖放文件上传</p>
                 </div>
-                <input type="file" className="hidden" />
+                <input type="file" id="fileUpload" className="hidden" />
               </label>
             </div>
           </form>
         </Modal.Body>
         <Modal.Footer>
           <div className="flex items-center gap-x-3">
-            <Button color="primary" onClick={() => setOpen(false)}>
+            <Button
+              color="primary"
+              onClick={() => setOpen(false)}
+              className="chinese-font"
+            >
               <div className="flex items-center gap-x-2">
                 <HiPlus className="text-lg" />
-                Add card
+                添加卡片
               </div>
             </Button>
-            <Button color="gray" onClick={() => setOpen(false)}>
-              Close
+            <Button
+              color="gray"
+              onClick={() => setOpen(false)}
+              className="chinese-font"
+            >
+              关闭
             </Button>
           </div>
         </Modal.Footer>
