@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>悬浮窗</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: transparent;
+      font-family: 'Arial', sans-serif;
+      user-select: none;
+    }
+    
+    .floating-container {
+      width: 300px;
+      height: 200px;
+      background-color: rgba(30, 41, 59, 0.85);
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header {
+      height: 32px;
+      background-color: rgba(15, 23, 42, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      cursor: move;
+      -webkit-app-region: drag;
+      app-region: drag;
+    }
+    
+    .title {
+      color: #fff;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .controls {
+      display: flex;
+      -webkit-app-region: no-drag;
+      app-region: no-drag;
+    }
+    
+    .control-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 4px;
+      cursor: pointer;
+      color: #fff;
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 14px;
+    }
+    
+    .control-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .pin-btn.active {
+      color: #3b82f6;
+    }
+    
+    .close-btn:hover {
+      background-color: rgba(239, 68, 68, 0.7);
+    }
+    
+    .content {
+      flex: 1;
+      padding: 15px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .app-logo {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 15px;
+    }
+    
+    .app-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .app-description {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+    }
+    
+    .footer {
+      height: 30px;
+      background-color: rgba(15, 23, 42, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-container">
+    <div class="header">
+      <div class="title">Flowbite 悬浮窗</div>
+      <div class="controls">
+        <button id="pinBtn" class="control-btn pin-btn" title="固定窗口">📌</button>
+        <button id="closeBtn" class="control-btn close-btn" title="关闭窗口">✕</button>
+      </div>
+    </div>
+    <div class="content">
+      <img src="https://flowbite.com/docs/images/logo.svg" alt="Logo" class="app-logo">
+      <div class="app-name">Flowbite 应用</div>
+      <div class="app-description">右键点击可以显示更多选项</div>
+    </div>
+    <div class="footer">
+      © 2023 Flowbite - 桌面悬浮窗
+    </div>
+  </div>
+
+  <script>
+    // 获取DOM元素
+    const pinBtn = document.getElementById('pinBtn');
+    const closeBtn = document.getElementById('closeBtn');
+    
+    // 固定状态
+    let isPinned = true;
+    
+    // 固定/取消固定窗口
+    pinBtn.addEventListener('click', () => {
+      isPinned = !isPinned;
+      if (isPinned) {
+        pinBtn.classList.add('active');
+      } else {
+        pinBtn.classList.remove('active');
+      }
+      
+      // 通知主进程更新窗口置顶状态
+      if (window.electron) {
+        window.electron.send('floating-pin', isPinned);
+      }
+    });
+    
+    // 关闭窗口
+    closeBtn.addEventListener('click', () => {
+      if (window.electron) {
+        window.electron.send('floating-close');
+      }
+    });
+    
+    // 初始化固定状态
+    pinBtn.classList.add('active');
+    
+    // 监听来自主进程的消息
+    if (window.electron) {
+      window.electron.receive('make-draggable', () => {
+        console.log('悬浮窗已可拖动');
+      });
+    }
+  </script>
+</body>
+</html> 

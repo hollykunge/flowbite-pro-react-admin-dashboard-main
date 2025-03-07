@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Button, DarkThemeToggle, Dropdown, Navbar } from "flowbite-react";
 import type { FC } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   HiArchive,
   HiBell,
@@ -19,8 +19,88 @@ import {
   HiViewGrid,
   HiX,
 } from "react-icons/hi";
+import {
+  VscChromeClose,
+  VscChromeMaximize,
+  VscChromeMinimize,
+  VscChromeRestore,
+} from "react-icons/vsc";
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
+import "../styles/electron.css";
+
+// 窗口控制按钮组件
+const WindowControls: FC = function () {
+  const [isMaximized, setIsMaximized] = useState(false);
+
+  // 检查窗口是否最大化
+  useEffect(() => {
+    // 如果在Electron环境中
+    if (window.electron) {
+      // 监听窗口状态变化
+      window.electron.receive(
+        "window-maximized-state",
+        (...args: unknown[]) => {
+          if (args.length > 0 && typeof args[0] === "boolean") {
+            setIsMaximized(args[0]);
+          }
+        },
+      );
+    }
+  }, []);
+
+  // 最小化窗口
+  const minimizeWindow = () => {
+    if (window.electron) {
+      window.electron.send("window-minimize");
+    }
+  };
+
+  // 最大化/还原窗口
+  const maximizeWindow = () => {
+    if (window.electron) {
+      window.electron.send("window-maximize");
+      setIsMaximized(!isMaximized);
+    }
+  };
+
+  // 关闭窗口
+  const closeWindow = () => {
+    if (window.electron) {
+      window.electron.send("window-close");
+    }
+  };
+
+  return (
+    <div className="mr-2 flex items-center">
+      <button
+        onClick={minimizeWindow}
+        className="p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+        title="最小化"
+      >
+        <VscChromeMinimize className="size-4" />
+      </button>
+      <button
+        onClick={maximizeWindow}
+        className="p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+        title={isMaximized ? "还原" : "最大化"}
+      >
+        {isMaximized ? (
+          <VscChromeRestore className="size-4" />
+        ) : (
+          <VscChromeMaximize className="size-4" />
+        )}
+      </button>
+      <button
+        onClick={closeWindow}
+        className="p-1.5 text-gray-600 hover:bg-red-100 hover:text-red-600 dark:text-gray-400 dark:hover:bg-red-900 dark:hover:text-red-400"
+        title="关闭"
+      >
+        <VscChromeClose className="size-4" />
+      </button>
+    </div>
+  );
+};
 
 const ExampleNavbar: FC = function () {
   const { isOpenOnSmallScreens, isPageWithSidebar, setOpenOnSmallScreens } =
@@ -49,11 +129,11 @@ const ExampleNavbar: FC = function () {
   };
 
   return (
-    <Navbar fluid className="py-1">
+    <Navbar fluid className="app-drag-region py-1">
       <div className="w-full lg:px-4 lg:pl-2">
         <div className="grid grid-cols-3 items-center">
           {/* 左侧品牌区域 */}
-          <div className="flex items-center">
+          <div className="no-drag flex items-center">
             {isPageWithSidebar && (
               <button
                 onClick={() => setOpenOnSmallScreens(!isOpenOnSmallScreens)}
@@ -67,7 +147,7 @@ const ExampleNavbar: FC = function () {
                 )}
               </button>
             )}
-            <Navbar.Brand href="/">
+            <Navbar.Brand href="/" className="no-drag">
               <img
                 alt=""
                 src="https://flowbite.com/docs/images/logo.svg"
@@ -79,12 +159,12 @@ const ExampleNavbar: FC = function () {
             </Navbar.Brand>
           </div>
 
-          {/* 中间搜索区域 */}
+          {/* 中间搜索区域 - 可拖动 */}
           <div className="flex justify-center">
             <button
               type="button"
               onClick={openSearchModal}
-              className="hidden h-9 w-64 items-center rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-left text-sm text-gray-500 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 md:flex"
+              className="no-drag hidden h-9 w-64 items-center rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-left text-sm text-gray-500 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 md:flex"
             >
               <HiSearch className="mr-2 size-4" />
               <span>搜索...</span>
@@ -92,7 +172,7 @@ const ExampleNavbar: FC = function () {
           </div>
 
           {/* 右侧功能区域 */}
-          <div className="flex items-center justify-end lg:gap-2">
+          <div className="no-drag flex items-center justify-end lg:gap-2">
             <Button
               outline
               gradientDuoTone="purpleToPink"
@@ -111,6 +191,7 @@ const ExampleNavbar: FC = function () {
             <NotificationBellDropdown />
             <AppDrawerDropdown />
             <DarkThemeToggle />
+            <WindowControls />
           </div>
         </div>
       </div>

@@ -1,5 +1,4 @@
 {
-  "type": "module",
   "name": "flowbite-react-admin-dashboard",
   "version": "1.1.0",
   "descrption": "flowbite-react admin dashboard",
@@ -17,7 +16,10 @@
     "format": "prettier --check --ignore-path .gitignore --write .",
     "lint": "eslint --ignore-path .gitignore .",
     "preview": "vite preview --host",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "electron:dev": "concurrently --kill-others \"pnpm dev\" \"sleep 5 && electron .\"",
+    "electron:build": "pnpm build && electron-builder",
+    "electron:start": "electron ."
   },
   "engines": {
     "node": ">= 16",
@@ -36,6 +38,7 @@
     "svgmap": "^2.10.1"
   },
   "devDependencies": {
+    "@types/node": "^22.13.9",
     "@types/react": "^18.2.17",
     "@types/react-dom": "^18.2.7",
     "@types/sortablejs": "^1.15.1",
@@ -43,7 +46,11 @@
     "@typescript-eslint/parser": "^6.2.0",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.14",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
+    "electron": "^24.8.8",
+    "electron-builder": "^25.1.8",
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^8.9.0",
     "eslint-plugin-jsx-a11y": "^6.7.1",
@@ -60,13 +67,19 @@
     "tailwindcss": "^3.3.3",
     "typescript": "^5.1.6",
     "vite": "^4.4.7",
-    "vitest": "^0.33.0"
+    "vitest": "^0.33.0",
+    "wait-on": "^8.0.2"
   },
   "private": true,
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -110,6 +123,34 @@
       "react": {
         "version": "detect"
       }
+    }
+  },
+  "main": "electron/main.js",
+  "build": {
+    "appId": "com.yourcompany.flowbite-react-admin",
+    "productName": "Flowbite React Admin Dashboard",
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ],
+    "directories": {
+      "buildResources": "public",
+      "output": "release"
+    },
+    "mac": {
+      "category": "public.app-category.business"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Office"
     }
   }
 }

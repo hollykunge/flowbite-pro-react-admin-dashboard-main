@@ -1,0 +1,4 @@
+# 忽略Electron相关文件
+electron/*.js
+node_modules
+dist 
