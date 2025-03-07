@@ -13,7 +13,7 @@ const NavbarSidebarLayout: FC<PropsWithChildren<NavbarSidebarLayoutProps>> =
     return (
       <SidebarProvider>
         <Navbar />
-        <div className="flex items-start pt-16">
+        <div className="flex h-full items-start pt-12">
           <Sidebar />
           <MainContent isFooter={isFooter}>{children}</MainContent>
         </div>
@@ -36,7 +36,7 @@ const MainContent: FC<PropsWithChildren<NavbarSidebarLayoutProps>> = function ({
     >
       {children}
       {isFooter && (
-        <div className="mx-4 mt-4">
+        <div className="mx-4">
           <MainContentFooter />
         </div>
       )}
@@ -47,7 +47,7 @@ const MainContent: FC<PropsWithChildren<NavbarSidebarLayoutProps>> = function ({
 const MainContentFooter: FC = function () {
   return (
     <>
-      <p className="my-8 text-center text-sm text-gray-500 dark:text-gray-300"></p>
+      <p className="text-center text-sm text-gray-500 dark:text-gray-300"></p>
     </>
   );
 };

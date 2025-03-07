@@ -47,88 +47,100 @@ const MessageInput: FC<MessageInputProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={handleSubmit} className="my-0 w-full">
       <label htmlFor="chat" className="sr-only">
         您的消息
       </label>
-      <div className="flex items-center rounded-lg bg-gray-50 px-3 py-2 dark:bg-gray-700">
-        <button
-          type="button"
-          className="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-        >
-          <svg
-            className="size-5"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 20 18"
+      <div className="flex flex-col rounded-lg bg-gray-50 dark:bg-gray-700">
+        {/* 消息输入区域 */}
+        <div className="px-3 py-2">
+          <textarea
+            id="chat"
+            rows={1}
+            className="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            placeholder="您的消息..."
+            value={message}
+            onChange={onMessageChange}
+            onKeyPress={handleKeyPress}
+          ></textarea>
+        </div>
+
+        {/* 功能按钮和发送按钮区域 */}
+        <div className="flex items-center justify-between border-t border-gray-200 px-3 py-2 dark:border-gray-600">
+          {/* 左侧功能按钮 */}
+          <div className="flex items-center space-x-2">
+            <button
+              type="button"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+            >
+              <svg
+                className="size-5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 18"
+              >
+                <path
+                  fill="currentColor"
+                  d="M13 5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0ZM7.565 7.423 4.5 14h11.518l-2.516-3.71L11 13 7.565 7.423Z"
+                />
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M18 1H2a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"
+                />
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0ZM7.565 7.423 4.5 14h11.518l-2.516-3.71L11 13 7.565 7.423Z"
+                />
+              </svg>
+              <span className="sr-only">上传图片</span>
+            </button>
+            <button
+              type="button"
+              className="cursor-pointer rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+            >
+              <svg
+                className="size-5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13.408 7.5h.01m-6.876 0h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM4.6 11a5.5 5.5 0 0 0 10.81 0H4.6Z"
+                />
+              </svg>
+              <span className="sr-only">添加表情</span>
+            </button>
+          </div>
+
+          {/* 右侧发送按钮 */}
+          <button
+            type="submit"
+            className="inline-flex cursor-pointer justify-center rounded-lg bg-primary-700 px-4 py-2 text-center text-sm font-medium text-white hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
           >
-            <path
+            发送
+            <svg
+              className="ml-1 size-4 rotate-90 rtl:-rotate-90"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
-              d="M13 5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0ZM7.565 7.423 4.5 14h11.518l-2.516-3.71L11 13 7.565 7.423Z"
-            />
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M18 1H2a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"
-            />
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0ZM7.565 7.423 4.5 14h11.518l-2.516-3.71L11 13 7.565 7.423Z"
-            />
-          </svg>
-          <span className="sr-only">上传图片</span>
-        </button>
-        <button
-          type="button"
-          className="cursor-pointer rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-        >
-          <svg
-            className="size-5"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 20 20"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13.408 7.5h.01m-6.876 0h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM4.6 11a5.5 5.5 0 0 0 10.81 0H4.6Z"
-            />
-          </svg>
-          <span className="sr-only">添加表情</span>
-        </button>
-        <textarea
-          id="chat"
-          rows={1}
-          className="mx-4 block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-          placeholder="您的消息..."
-          value={message}
-          onChange={onMessageChange}
-          onKeyPress={handleKeyPress}
-        ></textarea>
-        <button
-          type="submit"
-          className="inline-flex cursor-pointer justify-center rounded-full p-2 text-blue-600 hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600"
-        >
-          <svg
-            className="size-5 rotate-90 rtl:-rotate-90"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 18 20"
-          >
-            <path d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
-          </svg>
-          <span className="sr-only">发送消息</span>
-        </button>
+              viewBox="0 0 18 20"
+            >
+              <path d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
+            </svg>
+          </button>
+        </div>
       </div>
     </form>
   );

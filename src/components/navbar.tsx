@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import type { FC } from "react";
 import {
-  Avatar,
   DarkThemeToggle,
   Dropdown,
   Label,
   Navbar,
   TextInput,
+  Button,
 } from "flowbite-react";
 import {
   HiArchive,
@@ -33,20 +33,20 @@ const ExampleNavbar: FC = function () {
     useSidebarContext();
 
   return (
-    <Navbar fluid>
-      <div className="w-full p-3 lg:px-5 lg:pl-3">
+    <Navbar fluid className="py-1">
+      <div className="w-full lg:px-4 lg:pl-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             {isPageWithSidebar && (
               <button
                 onClick={() => setOpenOnSmallScreens(!isOpenOnSmallScreens)}
-                className="mr-3 cursor-pointer rounded p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:inline"
+                className="mr-2 cursor-pointer rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:inline"
               >
                 <span className="sr-only">Toggle sidebar</span>
                 {isOpenOnSmallScreens && isSmallScreen() ? (
-                  <HiX className="h-6 w-6" />
+                  <HiX className="size-5" />
                 ) : (
-                  <HiMenuAlt1 className="h-6 w-6" />
+                  <HiMenuAlt1 className="size-5" />
                 )}
               </button>
             )}
@@ -54,42 +54,49 @@ const ExampleNavbar: FC = function () {
               <img
                 alt=""
                 src="https://flowbite.com/docs/images/logo.svg"
-                className="mr-3 h-6 sm:h-8"
+                className="mr-2 h-5 sm:h-6"
               />
-              <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">
+              <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
                 Flowbite
               </span>
             </Navbar.Brand>
-            <form className="ml-16 hidden md:block">
+            <form className="ml-12 hidden md:block">
               <Label htmlFor="search" className="sr-only">
                 Search
               </Label>
               <TextInput
+                className="text-xs"
                 icon={HiSearch}
                 id="search"
                 name="search"
                 placeholder="Search"
                 required
-                size={32}
+                size={28}
                 type="search"
+                sizing="sm"
               />
             </form>
           </div>
-          <div className="flex items-center lg:gap-3">
+          <div className="flex items-center lg:gap-2">
             <div className="flex items-center">
+              <Button
+                outline
+                gradientDuoTone="purpleToBlue"
+                size="sm"
+                className="mr-2"
+              >
+                Purple to Blue
+              </Button>
               <button
                 onClick={() => setOpenOnSmallScreens(!isOpenOnSmallScreens)}
-                className="cursor-pointer rounded p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:ring-2 focus:ring-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700 dark:focus:ring-gray-700 lg:hidden"
+                className="cursor-pointer rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:ring-2 focus:ring-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700 dark:focus:ring-gray-700 lg:hidden"
               >
                 <span className="sr-only">Search</span>
-                <HiSearch className="h-6 w-6" />
+                <HiSearch className="size-5" />
               </button>
               <NotificationBellDropdown />
               <AppDrawerDropdown />
               <DarkThemeToggle />
-            </div>
-            <div className="hidden lg:block">
-              <UserDropdown />
             </div>
           </div>
         </div>
@@ -104,33 +111,33 @@ const NotificationBellDropdown: FC = function () {
       arrowIcon={false}
       inline
       label={
-        <span className="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+        <span className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700">
           <span className="sr-only">Notifications</span>
-          <HiBell className="text-2xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white " />
+          <HiBell className="text-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white " />
         </span>
       }
     >
-      <div className="max-w-[24rem]">
-        <div className="block rounded-t-xl bg-gray-50 py-2 px-4 text-center text-base font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+      <div className="max-w-[22rem]">
+        <div className="block rounded-t-xl bg-gray-50 px-3 py-1.5 text-center text-sm font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-400">
           Notifications
         </div>
         <div>
           <a
             href="#"
-            className="flex border-y py-3 px-4 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600"
+            className="flex border-y px-3 py-2 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600"
           >
             <div className="shrink-0">
               <img
                 alt=""
                 src="../images/users/bonnie-green.png"
-                className="h-11 w-11 rounded-full"
+                className="size-9 rounded-full"
               />
-              <div className="absolute -mt-5 ml-6 flex h-5 w-5 items-center justify-center rounded-full border border-white bg-primary-700 dark:border-gray-700">
+              <div className="absolute -mt-4 ml-5 flex size-4 items-center justify-center rounded-full border border-white bg-primary-700 dark:border-gray-700">
                 <NewMessageIcon />
               </div>
             </div>
-            <div className="w-full pl-3">
-              <div className="mb-1.5 text-sm font-normal text-gray-500 dark:text-gray-400">
+            <div className="w-full pl-2">
+              <div className="mb-1 text-xs font-normal text-gray-500 dark:text-gray-400">
                 New message from&nbsp;
                 <span className="font-semibold text-gray-900 dark:text-white">
                   Bonnie Green
@@ -144,20 +151,20 @@ const NotificationBellDropdown: FC = function () {
           </a>
           <a
             href="#"
-            className="flex border-b py-3 px-4 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600"
+            className="flex border-b px-3 py-2 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600"
           >
             <div className="shrink-0">
               <img
                 alt=""
                 src="../images/users/jese-leos.png"
-                className="h-11 w-11 rounded-full"
+                className="size-11 rounded-full"
               />
-              <div className="absolute -mt-5 ml-6 flex h-5 w-5 items-center justify-center rounded-full border border-white bg-gray-900 dark:border-gray-700">
+              <div className="absolute -mt-5 ml-6 flex size-5 items-center justify-center rounded-full border border-white bg-gray-900 dark:border-gray-700">
                 <NewFollowIcon />
               </div>
             </div>
-            <div className="w-full pl-3">
-              <div className="mb-1.5 text-sm font-normal text-gray-500 dark:text-gray-400">
+            <div className="w-full pl-2">
+              <div className="mb-1 text-xs font-normal text-gray-500 dark:text-gray-400">
                 <span className="font-semibold text-gray-900 dark:text-white">
                   Jese Leos
                 </span>
@@ -174,20 +181,20 @@ const NotificationBellDropdown: FC = function () {
           </a>
           <a
             href="#"
-            className="flex border-b py-3 px-4 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600"
+            className="flex border-b px-3 py-2 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600"
           >
             <div className="shrink-0">
               <img
                 alt=""
                 src="../images/users/joseph-mcfall.png"
-                className="h-11 w-11 rounded-full"
+                className="size-11 rounded-full"
               />
-              <div className="absolute -mt-5 ml-6 flex h-5 w-5 items-center justify-center rounded-full border border-white bg-red-600 dark:border-gray-700">
+              <div className="absolute -mt-5 ml-6 flex size-5 items-center justify-center rounded-full border border-white bg-red-600 dark:border-gray-700">
                 <NewLoveIcon />
               </div>
             </div>
-            <div className="w-full pl-3">
-              <div className="mb-1.5 text-sm font-normal text-gray-500 dark:text-gray-400">
+            <div className="w-full pl-2">
+              <div className="mb-1 text-xs font-normal text-gray-500 dark:text-gray-400">
                 <span className="font-semibold text-gray-900 dark:text-white">
                   Joseph Mcfall
                 </span>
@@ -204,20 +211,20 @@ const NotificationBellDropdown: FC = function () {
           </a>
           <a
             href="#"
-            className="flex border-b py-3 px-4 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600"
+            className="flex border-b px-3 py-2 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600"
           >
             <div className="shrink-0">
               <img
                 alt=""
                 src="../images/users/leslie-livingston.png"
-                className="h-11 w-11 rounded-full"
+                className="size-11 rounded-full"
               />
-              <div className="absolute -mt-5 ml-6 flex h-5 w-5 items-center justify-center rounded-full border border-white bg-green-400 dark:border-gray-700">
+              <div className="absolute -mt-5 ml-6 flex size-5 items-center justify-center rounded-full border border-white bg-green-400 dark:border-gray-700">
                 <NewMentionIcon />
               </div>
             </div>
-            <div className="w-full pl-3">
-              <div className="mb-1.5 text-sm font-normal text-gray-500 dark:text-gray-400">
+            <div className="w-full pl-2">
+              <div className="mb-1 text-xs font-normal text-gray-500 dark:text-gray-400">
                 <span className="font-semibold text-gray-900 dark:text-white">
                   Leslie Livingston
                 </span>
@@ -234,20 +241,20 @@ const NotificationBellDropdown: FC = function () {
           </a>
           <a
             href="#"
-            className="flex py-3 px-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+            className="flex px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
           >
             <div className="shrink-0">
               <img
                 alt=""
                 src="../images/users/robert-brown.png"
-                className="h-11 w-11 rounded-full"
+                className="size-11 rounded-full"
               />
-              <div className="absolute -mt-5 ml-6 flex h-5 w-5 items-center justify-center rounded-full border border-white bg-purple-500 dark:border-gray-700">
+              <div className="absolute -mt-5 ml-6 flex size-5 items-center justify-center rounded-full border border-white bg-purple-500 dark:border-gray-700">
                 <NewVideoIcon />
               </div>
             </div>
-            <div className="w-full pl-3">
-              <div className="mb-1.5 text-sm font-normal text-gray-500 dark:text-gray-400">
+            <div className="w-full pl-2">
+              <div className="mb-1 text-xs font-normal text-gray-500 dark:text-gray-400">
                 <span className="font-semibold text-gray-900 dark:text-white">
                   Robert Brown
                 </span>
@@ -262,10 +269,10 @@ const NotificationBellDropdown: FC = function () {
         </div>
         <a
           href="#"
-          className="block rounded-b-xl bg-gray-50 py-2 text-center text-base font-normal text-gray-900 hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:hover:underline"
+          className="block rounded-b-xl bg-gray-50 px-3 py-1.5 text-center text-xs font-normal text-gray-900 hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:hover:underline"
         >
-          <div className="inline-flex items-center gap-x-2">
-            <HiEye className="h-6 w-6" />
+          <div className="inline-flex items-center gap-x-1.5">
+            <HiEye className="size-4" />
             <span>View all</span>
           </div>
         </a>
@@ -277,7 +284,7 @@ const NotificationBellDropdown: FC = function () {
 const NewMessageIcon: FC = function () {
   return (
     <svg
-      className="h-3 w-3 text-white"
+      className="size-2.5 text-white"
       fill="currentColor"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -291,7 +298,7 @@ const NewMessageIcon: FC = function () {
 const NewFollowIcon: FC = function () {
   return (
     <svg
-      className="h-3 w-3 text-white"
+      className="size-2.5 text-white"
       fill="currentColor"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -304,7 +311,7 @@ const NewFollowIcon: FC = function () {
 const NewLoveIcon: FC = function () {
   return (
     <svg
-      className="h-3 w-3 text-white"
+      className="size-2.5 text-white"
       fill="currentColor"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -321,7 +328,7 @@ const NewLoveIcon: FC = function () {
 const NewMentionIcon: FC = function () {
   return (
     <svg
-      className="h-3 w-3 text-white"
+      className="size-2.5 text-white"
       fill="currentColor"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -338,7 +345,7 @@ const NewMentionIcon: FC = function () {
 const NewVideoIcon: FC = function () {
   return (
     <svg
-      className="h-3 w-3 text-white"
+      className="size-2.5 text-white"
       fill="currentColor"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -354,130 +361,98 @@ const AppDrawerDropdown: FC = function () {
       arrowIcon={false}
       inline
       label={
-        <span className="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+        <span className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700">
           <span className="sr-only">Apps</span>
-          <HiViewGrid className="text-2xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
+          <HiViewGrid className="text-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
         </span>
       }
     >
-      <div className="block rounded-t-lg border-b bg-gray-50 py-2 px-4 text-center text-base font-medium text-gray-700 dark:border-b-gray-600 dark:bg-gray-700 dark:text-white">
+      <div className="block rounded-t-lg border-b bg-gray-50 px-3 py-1.5 text-center text-sm font-medium text-gray-700 dark:border-b-gray-600 dark:bg-gray-700 dark:text-white">
         Apps
       </div>
-      <div className="grid grid-cols-3 gap-4 p-4">
+      <div className="grid grid-cols-3 gap-3 p-3">
         <a
           href="#"
-          className="block rounded-lg p-4 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
+          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
         >
-          <HiShoppingBag className="mx-auto mb-1 h-7 w-7 text-gray-500 dark:text-white" />
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <HiShoppingBag className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
+          <div className="text-xs font-medium text-gray-900 dark:text-white">
             Sales
           </div>
         </a>
         <a
           href="#"
-          className="block rounded-lg p-4 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
+          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
         >
-          <HiUsers className="mx-auto mb-1 h-7 w-7 text-gray-500 dark:text-white" />
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <HiUsers className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
+          <div className="text-xs font-medium text-gray-900 dark:text-white">
             Users
           </div>
         </a>
         <a
           href="#"
-          className="block rounded-lg p-4 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
+          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
         >
-          <HiInbox className="mx-auto mb-1 h-7 w-7 text-gray-500 dark:text-white" />
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <HiInbox className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
+          <div className="text-xs font-medium text-gray-900 dark:text-white">
             Inbox
           </div>
         </a>
         <a
           href="#"
-          className="block rounded-lg p-4 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
+          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
         >
-          <HiUserCircle className="mx-auto mb-1 h-7 w-7 text-gray-500 dark:text-white" />
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <HiUserCircle className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
+          <div className="text-xs font-medium text-gray-900 dark:text-white">
             Profile
           </div>
         </a>
         <a
           href="#"
-          className="block rounded-lg p-4 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
+          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
         >
-          <HiCog className="mx-auto mb-1 h-7 w-7 text-gray-500 dark:text-white" />
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <HiCog className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
+          <div className="text-xs font-medium text-gray-900 dark:text-white">
             Settings
           </div>
         </a>
         <a
           href="#"
-          className="block rounded-lg p-4 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
+          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
         >
-          <HiArchive className="mx-auto mb-1 h-7 w-7 text-gray-500 dark:text-white" />
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <HiArchive className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
+          <div className="text-xs font-medium text-gray-900 dark:text-white">
             Products
           </div>
         </a>
         <a
           href="#"
-          className="block rounded-lg p-4 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
+          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
         >
-          <HiCurrencyDollar className="mx-auto mb-1 h-7 w-7 text-gray-500 dark:text-white" />
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <HiCurrencyDollar className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
+          <div className="text-xs font-medium text-gray-900 dark:text-white">
             Pricing
           </div>
         </a>
         <a
           href="#"
-          className="block rounded-lg p-4 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
+          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
         >
-          <HiOutlineTicket className="mx-auto mb-1 h-7 w-7 text-gray-500 dark:text-white" />
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <HiOutlineTicket className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
+          <div className="text-xs font-medium text-gray-900 dark:text-white">
             Billing
           </div>
         </a>
         <a
           href="#"
-          className="block rounded-lg p-4 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
+          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
         >
-          <HiLogout className="mx-auto mb-1 h-7 w-7 text-gray-500 dark:text-white" />
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <HiLogout className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
+          <div className="text-xs font-medium text-gray-900 dark:text-white">
             Logout
           </div>
         </a>
       </div>
-    </Dropdown>
-  );
-};
-
-const UserDropdown: FC = function () {
-  return (
-    <Dropdown
-      arrowIcon={false}
-      inline
-      label={
-        <span>
-          <span className="sr-only">User menu</span>
-          <Avatar
-            alt=""
-            img="../images/users/neil-sims.png"
-            rounded
-            size="sm"
-          />
-        </span>
-      }
-    >
-      <Dropdown.Header>
-        <span className="block text-sm">Neil Sims</span>
-        <span className="block truncate text-sm font-medium">
-          neil.sims@flowbite.com
-        </span>
-      </Dropdown.Header>
-      <Dropdown.Item>Dashboard</Dropdown.Item>
-      <Dropdown.Item>Settings</Dropdown.Item>
-      <Dropdown.Item>Earnings</Dropdown.Item>
-      <Dropdown.Divider />
-      <Dropdown.Item>Sign out</Dropdown.Item>
     </Dropdown>
   );
 };

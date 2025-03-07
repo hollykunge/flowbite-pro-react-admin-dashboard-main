@@ -10,14 +10,20 @@ interface SidebarContextProps {
   setOpenOnSmallScreens: (isOpen: boolean) => void;
 }
 
-const SidebarContext = createContext<SidebarContextProps>(undefined!);
+const defaultContext: SidebarContextProps = {
+  isOpenOnSmallScreens: false,
+  isPageWithSidebar: true,
+  setOpenOnSmallScreens: () => {},
+};
+
+const SidebarContext = createContext<SidebarContextProps>(defaultContext);
 
 export function SidebarProvider({ children }: PropsWithChildren) {
   const location = isBrowser() ? window.location.pathname : "/";
   const [isOpen, setOpen] = useState(
     isBrowser()
       ? window.localStorage.getItem("isSidebarOpen") === "true"
-      : false
+      : false,
   );
 
   // Save latest state to localStorage
@@ -67,7 +73,7 @@ export function useSidebarContext(): SidebarContextProps {
 
   if (typeof context === "undefined") {
     throw new Error(
-      "useSidebarContext should be used within the SidebarContext provider!"
+      "useSidebarContext should be used within the SidebarContext provider!",
     );
   }
 

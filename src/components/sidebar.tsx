@@ -1,20 +1,17 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import classNames from "classnames";
-import { Dropdown, Sidebar, TextInput, Tooltip } from "flowbite-react";
+import { Avatar, Dropdown, Sidebar, TextInput } from "flowbite-react";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import {
-  HiAdjustments,
   HiChartPie,
-  HiCog,
+  HiChat,
   HiInboxIn,
+  HiOfficeBuilding,
   HiSearch,
   HiUsers,
   HiViewGrid,
-  HiChat,
-  HiOfficeBuilding,
 } from "react-icons/hi";
-
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
 
@@ -158,34 +155,73 @@ const ExampleSidebar: FC = function () {
               </Sidebar.ItemGroup>
             </Sidebar.Items>
           </div>
-          <BottomMenu />
+          <UserProfileMenu />
         </div>
       </Sidebar>
     </div>
   );
 };
 
-const BottomMenu: FC = function () {
+/**
+ * 用户个人资料菜单组件，显示在侧边栏底部
+ * 包含用户头像和下拉菜单选项
+ * 在侧边栏最小化时只显示头像
+ */
+const UserProfileMenu: FC = function () {
+  const { isOpenOnSmallScreens } = useSidebarContext();
+  const isSidebarCollapsed = isOpenOnSmallScreens && !isSmallScreen();
+
   return (
-    <div className="flex items-center justify-center gap-x-5">
-      <button className="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700">
-        <span className="sr-only">Tweaks</span>
-        <HiAdjustments className="text-2xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white " />
-      </button>
-      <div>
-        <Tooltip content="Settings page">
-          <a
-            href="/users/settings"
-            className="inline-flex cursor-pointer justify-center rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white"
+    <div
+      className={classNames(
+        "flex items-center justify-center py-4",
+        isSidebarCollapsed ? "px-2" : "gap-x-3 px-3",
+      )}
+    >
+      <Dropdown
+        arrowIcon={false}
+        inline
+        label={
+          <div
+            className={classNames(
+              "flex cursor-pointer items-center",
+              isSidebarCollapsed ? "" : "gap-x-3",
+            )}
           >
-            <span className="sr-only">Settings page</span>
-            <HiCog className="text-2xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
-          </a>
-        </Tooltip>
-      </div>
-      <div>
-        <LanguageDropdown />
-      </div>
+            <div className="overflow-hidden rounded-full transition-all duration-200 hover:ring-2 hover:ring-blue-500 dark:hover:ring-blue-600">
+              <Avatar
+                alt="用户头像"
+                img="../images/users/neil-sims.png"
+                rounded
+                size="sm"
+                className="transition-transform duration-200 hover:scale-110"
+              />
+            </div>
+            {!isSidebarCollapsed && (
+              <div className="hidden text-left lg:block">
+                <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                  Neil Sims
+                </div>
+                <div className="truncate text-xs text-gray-500 dark:text-gray-400">
+                  neil.sims@flowbite.com
+                </div>
+              </div>
+            )}
+          </div>
+        }
+      >
+        <Dropdown.Header>
+          <span className="block text-sm">Neil Sims</span>
+          <span className="block truncate text-sm font-medium">
+            neil.sims@flowbite.com
+          </span>
+        </Dropdown.Header>
+        <Dropdown.Item>仪表盘</Dropdown.Item>
+        <Dropdown.Item>设置</Dropdown.Item>
+        <Dropdown.Item>收益</Dropdown.Item>
+        <Dropdown.Divider />
+        <Dropdown.Item>退出登录</Dropdown.Item>
+      </Dropdown>
     </div>
   );
 };
@@ -380,3 +416,4 @@ const LanguageDropdown: FC = function () {
 };
 
 export default ExampleSidebar;
+export { LanguageDropdown };
