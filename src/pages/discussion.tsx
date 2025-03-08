@@ -141,6 +141,14 @@ const DiscussionPage: FC = function () {
   const [replyingTo, setReplyingTo] = useState<MessageType | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  // 添加组织导航状态
+  const [organizationLevel, setOrganizationLevel] = useState<
+    "institute" | "department"
+  >("institute");
+  const [selectedInstitute, setSelectedInstitute] = useState<number | null>(
+    null,
+  );
+
   // 禁用外部框架的垂直滚动
   useEffect(() => {
     // 获取主内容区域元素
@@ -713,6 +721,18 @@ const DiscussionPage: FC = function () {
   const [securityLevel, setSecurityLevel] =
     useState<MessageSecurityLevel>("非密");
 
+  // 处理研究院点击事件
+  const handleInstituteClick = (instituteId: number) => {
+    setSelectedInstitute(instituteId);
+    setOrganizationLevel("department");
+  };
+
+  // 处理返回上级组织
+  const handleBackToInstitutes = () => {
+    setSelectedInstitute(null);
+    setOrganizationLevel("institute");
+  };
+
   return (
     <NavbarSidebarLayout isFooter={false}>
       <div className="flex h-full flex-col">
@@ -725,7 +745,7 @@ const DiscussionPage: FC = function () {
               >
                 <li role="presentation">
                   <button
-                    className={`flex w-full items-center justify-center rounded-t-lg border-b px-3 py-2 ${
+                    className={`flex w-full items-center justify-center rounded-t-lg border-b px-3 py-4 ${
                       activeTab === "messages"
                         ? "border-primary-600 text-primary-600 dark:border-primary-500 dark:text-primary-500"
                         : "border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-900 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-white"
@@ -760,7 +780,7 @@ const DiscussionPage: FC = function () {
                 </li>
                 <li role="presentation">
                   <button
-                    className={`flex w-full items-center justify-center rounded-t-lg border-b px-3 py-2 ${
+                    className={`flex w-full items-center justify-center rounded-t-lg border-b px-3 py-4 ${
                       activeTab === "contacts"
                         ? "border-primary-600 text-primary-600 dark:border-primary-500 dark:text-primary-500"
                         : "border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-900 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-white"
@@ -803,6 +823,50 @@ const DiscussionPage: FC = function () {
                       <div className="flex space-x-2">
                         <button
                           className={`rounded-full p-1 ${
+                            messageFilter === "unread"
+                              ? "bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400"
+                              : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                          }`}
+                          onClick={() => handleMessageFilterChange("unread")}
+                          title="未读消息"
+                        >
+                          <svg
+                            className="size-4"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M9 7a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H9Z" />
+                            <path d="M7 5a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1H7V5Zm0 3h10v8a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3V8Z" />
+                          </svg>
+                        </button>
+                        <button
+                          className={`rounded-full p-1 ${
+                            messageFilter === "group"
+                              ? "bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400"
+                              : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                          }`}
+                          onClick={() => handleMessageFilterChange("group")}
+                          title="群组消息"
+                        >
+                          <svg
+                            className="size-4"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M15 11.25a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5Z" />
+                            <path d="M16.25 7.5a3.25 3.25 0 1 1-6.5 0 3.25 3.25 0 0 1 6.5 0Z" />
+                            <path d="M18 16.5h-4.74c-.28-.9-.71-1.72-1.26-2.44.4-.19.79-.31 1.16-.31h5.5a2.75 2.75 0 0 1 0 5.5h-1a.75.75 0 0 1 0-1.5h1a1.25 1.25 0 1 0 0-2.5v1.25a.75.75 0 0 1-1.5 0v-1.25a.75.75 0 0 1 .75-.75h.09Z" />
+                            <path d="M9 11.25a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5Z" />
+                            <path d="M10.25 7.5a3.25 3.25 0 1 1-6.5 0 3.25 3.25 0 0 1 6.5 0Z" />
+                            <path d="M6 16.5h4.74c.28-.9.71-1.72 1.26-2.44-.4-.19-.79-.31-1.16-.31h-5.5a2.75 2.75 0 0 0 0 5.5h1a.75.75 0 0 0 0-1.5h-1a1.25 1.25 0 1 1 0-2.5v1.25a.75.75 0 0 0 1.5 0v-1.25a.75.75 0 0 0-.75-.75H6Z" />
+                          </svg>
+                        </button>
+                        <button
+                          className={`rounded-full p-1 ${
                             messageFilter === "all"
                               ? "bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400"
                               : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
@@ -818,48 +882,6 @@ const DiscussionPage: FC = function () {
                             viewBox="0 0 24 24"
                           >
                             <path d="M4 7a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Zm0 5a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Zm0 5a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Z" />
-                          </svg>
-                        </button>
-                        <button
-                          className={`rounded-full p-1 ${
-                            messageFilter === "unread"
-                              ? "bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400"
-                              : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
-                          }`}
-                          onClick={() => handleMessageFilterChange("unread")}
-                          title="未读消息"
-                        >
-                          <svg
-                            className="size-4"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M7.978 4a2.553 2.553 0 0 0-1.926.877C4.233 6.7 3.699 8.751 4.153 10.814c.44 1.995 1.778 3.893 3.456 5.572 1.68 1.679 3.577 3.018 5.57 3.459 2.062.456 4.115-.073 5.94-1.885a2.556 2.556 0 0 0 .001-3.861l-1.21-1.21a2.689 2.689 0 0 0-3.802 0l-.617.618a.806.806 0 0 1-1.14 0l-1.854-1.855a.807.807 0 0 1 0-1.14l.618-.62a2.692 2.692 0 0 0 0-3.803l-1.21-1.211A2.555 2.555 0 0 0 7.978 4Z" />
-                          </svg>
-                        </button>
-                        <button
-                          className={`rounded-full p-1 ${
-                            messageFilter === "media"
-                              ? "bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400"
-                              : "text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
-                          }`}
-                          onClick={() => handleMessageFilterChange("media")}
-                          title="媒体消息"
-                        >
-                          <svg
-                            className="size-4"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12c0 .556-.227 1.06-.593 1.422A.999.999 0 0 1 20.5 20H4a2.002 2.002 0 0 1-2-2V6Zm6.892 12 3.833-5.356-3.99-4.322a1 1 0 0 0-1.549.097L4 12.879V6h16v9.95l-3.257-3.619a1 1 0 0 0-1.557.088L11.2 18H8.892Z"
-                              clipRule="evenodd"
-                            />
                           </svg>
                         </button>
                       </div>
@@ -1001,60 +1023,145 @@ const DiscussionPage: FC = function () {
               {/* 通讯录标签页内容 */}
               {activeTab === "contacts" && (
                 <div className="p-4">
-                  <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">
-                    通讯录
-                  </h3>
-                  <ul>
-                    {discussionList.map((item) => (
-                      <li
-                        key={item.id}
-                        className="mb-1 flex items-center gap-3 rounded-lg border-b border-gray-200/70 p-2 hover:bg-gray-100 dark:border-gray-700/70 dark:hover:bg-gray-700"
-                      >
-                        <div className="relative shrink-0">
-                          <img
-                            className="size-10 rounded-full"
-                            src={item.avatar}
-                            alt={`${item.name} 的头像`}
-                          />
-                          <span
-                            className={`absolute start-7 top-0 size-3.5 rounded-full border-2 border-white dark:border-gray-800 ${
-                              item.isGroup
-                                ? "bg-blue-500"
-                                : item.status === "online"
-                                  ? "bg-green-400"
-                                  : "bg-red-500"
-                            }`}
-                          ></span>
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                            {item.name}
-                          </h4>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {item.isGroup
-                              ? "群组"
-                              : item.status === "online"
-                                ? "在线"
-                                : "离线"}
-                          </p>
-                        </div>
-                        {/* 密级标签 */}
-                        <div className="ml-auto w-20 shrink-0 text-right">
-                          <span
-                            className={`rounded-md px-2 py-0.5 text-xs font-medium ${
-                              item.securityLevel === "非密"
-                                ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500"
-                                : item.securityLevel === "秘密"
-                                  ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-500"
-                                  : "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-500"
-                            }`}
+                  {organizationLevel === "institute" ? (
+                    <ul>
+                      {[...Array(10)].map((_, index) => (
+                        <li
+                          key={index}
+                          className="mb-1 flex items-center gap-3 rounded-lg border-b border-gray-200/70 p-2 hover:bg-gray-100 dark:border-gray-700/70 dark:hover:bg-gray-700"
+                        >
+                          <button
+                            className="flex w-full items-center gap-3"
+                            onClick={() => handleInstituteClick(index + 1)}
+                            aria-label={`查看第${index + 1}研究院详情`}
                           >
-                            {item.securityLevel}
-                          </span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                            <div className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-500">
+                              <svg
+                                className="size-6"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M17.5 3A3.5 3.5 0 0 0 14 6.5v11a3.5 3.5 0 0 0 7 0v-11A3.5 3.5 0 0 0 17.5 3Zm0 2a1.5 1.5 0 0 1 1.5 1.5v11a1.5 1.5 0 0 1-3 0v-11A1.5 1.5 0 0 1 17.5 5ZM10 3a1 1 0 0 0-1 1v15a1 1 0 1 0 2 0V4a1 1 0 0 0-1-1ZM3.5 8A3.5 3.5 0 0 0 0 11.5v6A3.5 3.5 0 0 0 3.5 21a3.5 3.5 0 0 0 3.5-3.5v-6A3.5 3.5 0 0 0 3.5 8Zm0 2a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-3 0v-6A1.5 1.5 0 0 1 3.5 10Z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <h4 className="text-left text-sm font-medium text-gray-900 dark:text-white">
+                                第{index + 1}研究院
+                              </h4>
+                              <p className="text-left text-xs text-gray-500 dark:text-gray-400">
+                                {(index + 1) * 15} 成员
+                              </p>
+                            </div>
+                            {/* 展开按钮 */}
+                            <div className="ml-auto shrink-0 text-right">
+                              <span className="rounded-full p-1 text-gray-500">
+                                <svg
+                                  className="size-5"
+                                  aria-hidden="true"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 5l7 7-7 7"
+                                  />
+                                </svg>
+                              </span>
+                            </div>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <>
+                      {/* 返回按钮 */}
+                      <div className="mb-4">
+                        <button
+                          onClick={handleBackToInstitutes}
+                          className="flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                        >
+                          <svg
+                            className="mr-1 size-4"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 19l-7-7 7-7"
+                            />
+                          </svg>
+                          返回研究院列表
+                        </button>
+                      </div>
+
+                      {/* 研究所列表 */}
+                      <h4 className="mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        第{selectedInstitute}研究院下属研究所
+                      </h4>
+                      <ul>
+                        {[...Array(10)].map((_, index) => (
+                          <li
+                            key={index}
+                            className="mb-1 flex items-center gap-3 rounded-lg border-b border-gray-200/70 p-2 hover:bg-gray-100 dark:border-gray-700/70 dark:hover:bg-gray-700"
+                          >
+                            <div className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500">
+                              <svg
+                                className="size-6"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M11.5 8.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0Z" />
+                                <path d="M11.5 8.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0ZM14 1a1 1 0 0 0-.867.5 1 1 0 0 1-1.731 0A1 1 0 0 0 10 1a1 1 0 0 0-.867.5 1 1 0 0 1-1.731 0A1 1 0 0 0 6 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-4Z" />
+                                <path d="M13 14.5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-6a1 1 0 0 1-1-1v-7Z" />
+                                <path d="M19 14.5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1V16H9.5A1.5 1.5 0 0 0 8 17.5v4A1.5 1.5 0 0 0 9.5 23H13v-8.5Z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-medium text-gray-900 dark:text-white">
+                                第{index + 1}研究所
+                              </h4>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {(index + 1) * 8} 成员
+                              </p>
+                            </div>
+                            {/* 展开按钮 */}
+                            <div className="ml-auto shrink-0 text-right">
+                              <button className="rounded-full p-1 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700">
+                                <svg
+                                  className="size-5"
+                                  aria-hidden="true"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 5l7 7-7 7"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
                 </div>
               )}
             </div>

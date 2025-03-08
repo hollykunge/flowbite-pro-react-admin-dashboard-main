@@ -15,165 +15,614 @@
     }
     
     .floating-container {
-      width: 300px;
-      height: 200px;
+      width: 240px;
+      height: 64px;
       background-color: rgba(30, 41, 59, 0.85);
       border-radius: 12px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
       display: flex;
-      flex-direction: column;
+      align-items: center;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
     }
     
-    .header {
-      height: 32px;
-      background-color: rgba(15, 23, 42, 0.9);
+    /* 亮色模式样式 */
+    .light-mode .floating-container {
+      background-color: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .floating-container.expanded {
+      width: 480px;
+      height: 600px;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    /* 搜索模式的样式 */
+    .search-header {
       display: flex;
       align-items: center;
+      height: 64px;
+      width: 100%;
+    }
+    
+    .icons-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      flex: 1;
+      height: 100%;
+      padding: 0 12px;
+      -webkit-app-region: no-drag;
+      app-region: no-drag;
+      gap: 24px;
+    }
+    
+    .action-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background-color: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    /* 亮色模式图标样式 */
+    .light-mode .action-icon {
+      background-color: rgba(241, 245, 249, 0.7);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .action-icon:hover {
+      background-color: rgba(59, 130, 246, 0.3);
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+    
+    .action-icon svg {
+      width: 24px;
+      height: 24px;
+      color: white;
+    }
+    
+    /* 亮色模式SVG颜色 */
+    .light-mode .action-icon svg {
+      color: #1e293b;
+    }
+    
+    /* 聊天模式的样式 */
+    .chat-header {
+      display: none;
+      height: 64px;
+      width: 100%;
+      background-color: rgba(15, 23, 42, 0.7);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0 12px;
+      align-items: center;
       justify-content: space-between;
-      padding: 0 10px;
-      cursor: move;
+      box-sizing: border-box;
+    }
+    
+    /* 亮色模式聊天头部 */
+    .light-mode .chat-header {
+      background-color: rgba(241, 245, 249, 0.7);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .floating-container.expanded .chat-header {
+      display: flex;
+    }
+    
+    .floating-container.expanded .search-header {
+      display: none;
+    }
+    
+    .chat-title-container {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+    
+    .chat-title {
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      margin-left: 12px;
+    }
+    
+    /* 亮色模式聊天标题 */
+    .light-mode .chat-title {
+      color: #1e293b;
+    }
+    
+    .close-button {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background-color: rgba(59, 130, 246, 0.2);
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      margin-left: 8px;
+    }
+    
+    /* 亮色模式关闭按钮 */
+    .light-mode .close-button {
+      background-color: rgba(59, 130, 246, 0.2);
+      color: #1e293b;
+    }
+    
+    .close-button:hover {
+      background-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    .chat-messages {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      color: white;
+    }
+    
+    /* 亮色模式消息文本 */
+    .light-mode .chat-messages {
+      color: #1e293b;
+    }
+    
+    .floating-container.expanded .chat-messages {
+      display: block;
+    }
+    
+    .message {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .message-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      margin-right: 8px;
+      background-color: #3b82f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+    }
+    
+    .user-avatar {
+      background-color: #6366f1;
+    }
+    
+    .message-sender {
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .message-content {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    .user-message .message-content {
+      padding-left: 36px;
+    }
+    
+    .ai-message .message-content {
+      background-color: rgba(59, 130, 246, 0.1);
+      border-radius: 8px;
+      padding: 12px;
+      margin-left: 36px;
+    }
+    
+    /* 亮色模式AI消息背景 */
+    .light-mode .ai-message .message-content {
+      background-color: rgba(59, 130, 246, 0.05);
+    }
+    
+    .chat-input-container {
+      display: none;
+      height: 72px;
+      padding: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      box-sizing: border-box;
+    }
+    
+    /* 亮色模式输入容器边框 */
+    .light-mode .chat-input-container {
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .floating-container.expanded .chat-input-container {
+      display: block;
+    }
+    
+    .chat-input-wrapper {
+      display: flex;
+      background-color: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    /* 亮色模式输入框包装器 */
+    .light-mode .chat-input-wrapper {
+      background-color: rgba(241, 245, 249, 0.7);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .chat-input {
+      flex: 1;
+      height: 48px;
+      background-color: transparent;
+      border: none;
+      color: white;
+      padding: 0 16px;
+      font-size: 14px;
+      outline: none;
+    }
+    
+    /* 亮色模式输入框 */
+    .light-mode .chat-input {
+      color: #1e293b;
+    }
+    
+    .send-button {
+      width: 48px;
+      height: 48px;
+      background-color: #3b82f6;
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    
+    .send-button:hover {
+      background-color: #2563eb;
+    }
+    
+    .icon-container {
+      width: 52px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       -webkit-app-region: drag;
       app-region: drag;
+      cursor: move;
+      padding-left: 6px;
     }
     
-    .title {
-      color: #fff;
-      font-size: 14px;
-      font-weight: bold;
+    .app-logo {
+      width: 40px;
+      height: 40px;
     }
     
-    .controls {
+    .input-container {
+      flex: 1;
+      height: 100%;
       display: flex;
+      align-items: center;
+      padding: 6px 12px 6px 6px;
       -webkit-app-region: no-drag;
       app-region: no-drag;
     }
     
-    .control-btn {
-      width: 24px;
-      height: 24px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-left: 4px;
-      cursor: pointer;
-      color: #fff;
-      background: none;
-      border: none;
-      outline: none;
-      font-size: 14px;
-    }
-    
-    .control-btn:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .pin-btn.active {
-      color: #3b82f6;
-    }
-    
-    .close-btn:hover {
-      background-color: rgba(239, 68, 68, 0.7);
-    }
-    
-    .content {
-      flex: 1;
-      padding: 15px;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .app-logo {
-      width: 60px;
-      height: 60px;
-      margin-bottom: 15px;
-    }
-    
-    .app-name {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-    
-    .app-description {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.7);
-      text-align: center;
-    }
-    
-    .footer {
-      height: 30px;
+    .search-input {
+      width: 100%;
+      height: 40px;
       background-color: rgba(15, 23, 42, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: white;
+      padding: 0 12px;
+      font-size: 14px;
+      outline: none;
+    }
+    
+    /* 亮色模式搜索输入框 */
+    .light-mode .search-input {
+      background-color: rgba(241, 245, 249, 0.7);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      color: #1e293b;
+    }
+    
+    .search-input:focus {
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    }
+    
+    .search-input::placeholder {
       color: rgba(255, 255, 255, 0.5);
-      font-size: 11px;
+    }
+    
+    /* 亮色模式占位符 */
+    .light-mode .search-input::placeholder {
+      color: rgba(30, 41, 59, 0.5);
     }
   </style>
 </head>
 <body>
-  <div class="floating-container">
-    <div class="header">
-      <div class="title">Flowbite 悬浮窗</div>
-      <div class="controls">
-        <button id="pinBtn" class="control-btn pin-btn" title="固定窗口">📌</button>
-        <button id="closeBtn" class="control-btn close-btn" title="关闭窗口">✕</button>
+  <div class="floating-container" id="floatingContainer">
+    <!-- 搜索模式的头部 -->
+    <div class="search-header">
+      <div class="icon-container" id="dragHandle">
+        <img src="https://flowbite.com/docs/images/logo.svg" alt="Logo" class="app-logo">
+      </div>
+      <div class="icons-container">
+        <div class="action-icon" id="chatIcon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </div>
+        <div class="action-icon" id="pdfIcon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+            <line x1="9" y1="11" x2="15" y2="11"></line>
+            <line x1="9" y1="19" x2="12" y2="19"></line>
+          </svg>
+        </div>
+        <div class="action-icon" id="linkIcon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+        </div>
       </div>
     </div>
-    <div class="content">
-      <img src="https://flowbite.com/docs/images/logo.svg" alt="Logo" class="app-logo">
-      <div class="app-name">Flowbite 应用</div>
-      <div class="app-description">右键点击可以显示更多选项</div>
+    
+    <!-- 聊天模式的头部 -->
+    <div class="chat-header">
+      <div class="chat-title-container">
+        <div class="icon-container" id="chatDragHandle">
+          <img src="https://flowbite.com/docs/images/logo.svg" alt="Logo" class="app-logo">
+        </div>
+        <div class="chat-title">AI 助手</div>
+      </div>
+      <button class="close-button" id="closeChat">×</button>
     </div>
-    <div class="footer">
-      © 2023 Flowbite - 桌面悬浮窗
+    
+    <!-- 聊天消息区域 -->
+    <div class="chat-messages" id="chatMessages">
+      <!-- AI消息示例 -->
+      <div class="message ai-message">
+        <div class="message-header">
+          <div class="avatar">AI</div>
+          <div class="message-sender">AI 助手</div>
+        </div>
+        <div class="message-content">
+          你好！我是AI助手，有什么我可以帮助你的吗？
+        </div>
+      </div>
+      
+      <!-- 用户消息示例 -->
+      <div class="message user-message">
+        <div class="message-header">
+          <div class="avatar user-avatar">U</div>
+          <div class="message-sender">用户</div>
+        </div>
+        <div class="message-content">
+          我想了解一下Flowbite的组件库有哪些特点？
+        </div>
+      </div>
+      
+      <!-- AI回复示例 -->
+      <div class="message ai-message">
+        <div class="message-header">
+          <div class="avatar">AI</div>
+          <div class="message-sender">AI 助手</div>
+        </div>
+        <div class="message-content">
+          Flowbite是一个基于Tailwind CSS的组件库，它提供了许多现成的UI组件，可以帮助开发者快速构建现代化的网页界面。以下是Flowbite的一些主要特点：<br><br>
+          
+          1. 基于Tailwind CSS：完全兼容Tailwind的工作流程<br>
+          2. 开源免费：核心组件库是开源的<br>
+          3. 响应式设计：所有组件都支持响应式布局<br>
+          4. 丰富的组件：包括按钮、表单、导航、模态框等多种组件<br>
+          5. 暗黑模式支持：内置暗黑模式切换功能<br>
+          6. 交互式组件：包含许多JavaScript交互组件<br><br>
+          
+          你对哪方面更感兴趣，需要我详细介绍吗？
+        </div>
+      </div>
+    </div>
+    
+    <!-- 聊天输入区域 -->
+    <div class="chat-input-container">
+      <div class="chat-input-wrapper">
+        <input type="text" class="chat-input" placeholder="输入消息..." id="chatInput">
+        <button class="send-button" id="sendButton">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 
   <script>
     // 获取DOM元素
-    const pinBtn = document.getElementById('pinBtn');
-    const closeBtn = document.getElementById('closeBtn');
+    const chatIcon = document.getElementById('chatIcon');
+    const pdfIcon = document.getElementById('pdfIcon');
+    const linkIcon = document.getElementById('linkIcon');
+    const chatInput = document.getElementById('chatInput');
+    const sendButton = document.getElementById('sendButton');
+    const closeChat = document.getElementById('closeChat');
+    const dragHandle = document.getElementById('dragHandle');
+    const chatDragHandle = document.getElementById('chatDragHandle');
+    const floatingContainer = document.getElementById('floatingContainer');
+    const chatMessages = document.getElementById('chatMessages');
     
-    // 固定状态
-    let isPinned = true;
+    // 主题状态
+    let isDarkMode = true; // 默认为暗色模式
     
-    // 固定/取消固定窗口
-    pinBtn.addEventListener('click', () => {
-      isPinned = !isPinned;
-      if (isPinned) {
-        pinBtn.classList.add('active');
+    // 设置主题
+    function setTheme(dark) {
+      isDarkMode = dark;
+      if (dark) {
+        document.body.classList.remove('light-mode');
       } else {
-        pinBtn.classList.remove('active');
+        document.body.classList.add('light-mode');
       }
+    }
+    
+    // 聊天图标点击事件
+    chatIcon.addEventListener('click', () => {
+      if (window.electron) {
+        window.electron.send('search-focus', true);
+      }
+    });
+    
+    // PDF图标点击事件
+    pdfIcon.addEventListener('click', () => {
+      console.log('PDF图标被点击');
+      if (window.electron) {
+        window.electron.send('open-pdf');
+      }
+    });
+    
+    // 链接图标点击事件
+    linkIcon.addEventListener('click', () => {
+      console.log('链接图标被点击');
+      if (window.electron) {
+        window.electron.send('open-link');
+      }
+    });
+    
+    // 关闭聊天按钮点击事件
+    closeChat.addEventListener('click', () => {
+      if (window.electron) {
+        window.electron.send('search-focus', false);
+      }
+    });
+    
+    // 发送消息按钮点击事件
+    sendButton.addEventListener('click', sendMessage);
+    
+    // 聊天输入框回车事件
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+    
+    // 发送消息函数
+    function sendMessage() {
+      const messageText = chatInput.value.trim();
+      if (messageText) {
+        // 添加用户消息到聊天区域
+        addMessage('用户', messageText, true);
+        
+        // 清空输入框
+        chatInput.value = '';
+        
+        // 模拟AI回复
+        setTimeout(() => {
+          // 使用HTML格式的回复
+          const aiResponse = `这是对"${messageText}"的模拟回复。<br><br>在实际应用中，这里会是AI生成的回复内容，可以包含<b>格式化文本</b>和<a href="#">链接</a>等HTML元素。`;
+          addMessage('AI 助手', aiResponse, false);
+          
+          // 滚动到底部
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 1000);
+      }
+    }
+    
+    // 添加消息到聊天区域
+    function addMessage(sender, content, isUser) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = isUser ? 'message user-message' : 'message ai-message';
       
-      // 通知主进程更新窗口置顶状态
-      if (window.electron) {
-        window.electron.send('floating-pin', isPinned);
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'message-header';
+      
+      const avatarDiv = document.createElement('div');
+      avatarDiv.className = isUser ? 'avatar user-avatar' : 'avatar';
+      avatarDiv.textContent = isUser ? 'U' : 'AI';
+      
+      const senderDiv = document.createElement('div');
+      senderDiv.className = 'message-sender';
+      senderDiv.textContent = sender;
+      
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'message-content';
+      contentDiv.innerHTML = content;
+      
+      headerDiv.appendChild(avatarDiv);
+      headerDiv.appendChild(senderDiv);
+      
+      messageDiv.appendChild(headerDiv);
+      messageDiv.appendChild(contentDiv);
+      
+      chatMessages.appendChild(messageDiv);
+      
+      // 滚动到底部
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // 点击空白区域关闭扩展窗口
+    document.addEventListener('click', (e) => {
+      if (!floatingContainer.contains(e.target)) {
+        if (window.electron) {
+          window.electron.send('search-focus', false);
+        }
       }
     });
-    
-    // 关闭窗口
-    closeBtn.addEventListener('click', () => {
-      if (window.electron) {
-        window.electron.send('floating-close');
-      }
-    });
-    
-    // 初始化固定状态
-    pinBtn.classList.add('active');
     
     // 监听来自主进程的消息
     if (window.electron) {
       window.electron.receive('make-draggable', () => {
         console.log('悬浮窗已可拖动');
       });
+      
+      window.electron.receive('update-ui', (data) => {
+        console.log('更新UI:', data);
+        if (data.expanded) {
+          floatingContainer.classList.add('expanded');
+          // 聊天模式下，聊天输入框获取焦点
+          setTimeout(() => {
+            chatInput.focus();
+          }, 300);
+        } else {
+          floatingContainer.classList.remove('expanded');
+        }
+      });
+      
+      // 监听主题变化
+      window.electron.receive('theme-changed', (dark) => {
+        console.log('收到主题变化:', dark ? '暗色模式' : '亮色模式');
+        setTheme(dark);
+      });
+    }
+    
+    // 初始化主题 - 从localStorage获取当前主题
+    if (localStorage.getItem('theme') === 'dark') {
+      setTheme(true);
+    } else if (localStorage.getItem('theme') === 'light') {
+      setTheme(false);
     }
   </script>
 </body>

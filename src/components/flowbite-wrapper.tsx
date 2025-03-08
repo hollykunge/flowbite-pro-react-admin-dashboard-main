@@ -20,6 +20,11 @@ const PersistFlowbiteThemeToLocalStorage: FC = function () {
 
   useEffect(() => {
     localStorage.setItem("theme", themeMode);
+
+    // 通知Electron主进程主题已更改
+    if (window.electron) {
+      window.electron.send("theme-changed", themeMode === "dark");
+    }
   }, [themeMode]);
 
   return <></>;
