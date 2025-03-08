@@ -246,6 +246,23 @@ function createFloatingWindow() {
     floatingWindow.webContents.on('did-finish-load', () => {
       console.log('悬浮窗口加载完成，设置可拖动');
       floatingWindow.webContents.send('make-draggable');
+      
+      // 如果主窗口已经存在，获取当前主题并设置悬浮窗口主题
+      if (mainWindow && mainWindow.webContents) {
+        console.log('主窗口存在，正在获取主题状态');
+        mainWindow.webContents.executeJavaScript('localStorage.getItem("theme")')
+          .then((theme) => {
+            const isDarkMode = theme === 'dark';
+            console.log('当前主题:', isDarkMode ? '暗色模式' : '亮色模式');
+            console.log('正在通知悬浮窗口更新主题');
+            floatingWindow.webContents.send('theme-changed', isDarkMode);
+          })
+          .catch(err => {
+            console.error('获取主题状态出错:', err);
+          });
+      } else {
+        console.log('主窗口不存在，无法获取主题状态');
+      }
     });
 
     // 悬浮窗口关闭事件
@@ -310,15 +327,19 @@ function createWindow() {
     // 获取当前主题状态并通知悬浮窗口
     if (floatingWindow && floatingWindow.webContents) {
       // 从localStorage中读取主题状态
+      console.log('正在获取主题状态并通知悬浮窗口');
       mainWindow.webContents.executeJavaScript('localStorage.getItem("theme")')
         .then((theme) => {
           const isDarkMode = theme === 'dark';
           console.log('当前主题:', isDarkMode ? '暗色模式' : '亮色模式');
+          console.log('正在通知悬浮窗口更新主题');
           floatingWindow.webContents.send('theme-changed', isDarkMode);
         })
         .catch(err => {
           console.error('获取主题状态出错:', err);
         });
+    } else {
+      console.log('悬浮窗口不存在或未准备好，无法通知主题变化');
     }
   });
   
@@ -419,8 +440,9 @@ app.whenReady().then(() => {
   
   // 延迟创建悬浮窗口，确保主窗口已经创建完成
   setTimeout(() => {
+    console.log('延迟创建悬浮窗口，确保主窗口已经加载完成');
     createFloatingWindow();
-  }, 2000);
+  }, 3000); // 增加延迟时间，确保主窗口有足够时间加载
 });
 
 // 所有窗口关闭时退出应用
@@ -533,6 +555,9 @@ ipcMain.on('theme-changed', (event, isDarkMode) => {
   
   // 通知悬浮窗口更新主题
   if (floatingWindow && floatingWindow.webContents) {
+    console.log('正在通知悬浮窗口更新主题');
     floatingWindow.webContents.send('theme-changed', isDarkMode);
+  } else {
+    console.log('悬浮窗口不存在或未准备好，无法通知主题变化');
   }
 }); 

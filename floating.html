@@ -481,6 +481,7 @@
     
     // 设置主题
     function setTheme(dark) {
+      console.log('设置主题:', dark ? '暗色模式' : '亮色模式');
       isDarkMode = dark;
       if (dark) {
         document.body.classList.remove('light-mode');
@@ -613,16 +614,22 @@
       
       // 监听主题变化
       window.electron.receive('theme-changed', (dark) => {
-        console.log('收到主题变化:', dark ? '暗色模式' : '亮色模式');
+        console.log('收到主题变化通知:', dark ? '暗色模式' : '亮色模式');
         setTheme(dark);
       });
     }
     
-    // 初始化主题 - 从localStorage获取当前主题
-    if (localStorage.getItem('theme') === 'dark') {
-      setTheme(true);
-    } else if (localStorage.getItem('theme') === 'light') {
-      setTheme(false);
+    // 初始化主题 - 尝试从localStorage获取当前主题
+    try {
+      const theme = localStorage.getItem('theme');
+      console.log('从localStorage获取主题:', theme);
+      if (theme === 'dark') {
+        setTheme(true);
+      } else if (theme === 'light') {
+        setTheme(false);
+      }
+    } catch (error) {
+      console.error('获取主题出错:', error);
     }
   </script>
 </body>

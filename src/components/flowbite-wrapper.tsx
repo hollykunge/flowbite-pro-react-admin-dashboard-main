@@ -19,11 +19,18 @@ const PersistFlowbiteThemeToLocalStorage: FC = function () {
   const [themeMode] = useThemeMode();
 
   useEffect(() => {
+    console.log("主题模式变化:", themeMode);
     localStorage.setItem("theme", themeMode);
 
     // 通知Electron主进程主题已更改
     if (window.electron) {
+      console.log(
+        "正在通知Electron主进程主题变化:",
+        themeMode === "dark" ? "暗色模式" : "亮色模式",
+      );
       window.electron.send("theme-changed", themeMode === "dark");
+    } else {
+      console.log("Electron API不可用，无法通知主题变化");
     }
   }, [themeMode]);
 

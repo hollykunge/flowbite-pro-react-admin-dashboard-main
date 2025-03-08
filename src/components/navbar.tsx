@@ -19,6 +19,8 @@ import {
   HiViewGrid,
   HiX,
 } from "react-icons/hi";
+import { LuBrainCircuit } from "react-icons/lu";
+
 import {
   VscChromeClose,
   VscChromeMaximize,
@@ -179,7 +181,8 @@ const ExampleNavbar: FC = function () {
               size="sm"
               className="mr-2"
             >
-              Purple to Pink
+              <LuBrainCircuit className="mr-2 size-5 text-purple-500" />
+              AI意识体
             </Button>
             <button
               onClick={openSearchModal}

@@ -14,7 +14,8 @@ contextBridge.exposeInMainWorld('electron', {
       'search-term',
       'search-focus',
       'open-pdf',
-      'open-link'
+      'open-link',
+      'theme-changed'
     ];
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);

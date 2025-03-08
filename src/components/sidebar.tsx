@@ -3,15 +3,10 @@ import classNames from "classnames";
 import { Avatar, Dropdown, Sidebar, TextInput } from "flowbite-react";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
-import {
-  HiChartPie,
-  HiChat,
-  HiInboxIn,
-  HiOfficeBuilding,
-  HiSearch,
-  HiUsers,
-  HiViewGrid,
-} from "react-icons/hi";
+import { FaPeopleGroup } from "react-icons/fa6";
+import { HiHome, HiSearch, HiViewGrid } from "react-icons/hi";
+import { PiBirdFill, PiChatTeardropDotsFill } from "react-icons/pi";
+
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
 
@@ -20,14 +15,12 @@ const ExampleSidebar: FC = function () {
     useSidebarContext();
 
   const [currentPage, setCurrentPage] = useState("");
-  const [isUsersOpen, setUsersOpen] = useState(true);
 
   useEffect(() => {
     const newPage = window.location.pathname;
 
     setCurrentPage(newPage);
-    setUsersOpen(newPage.includes("/users/"));
-  }, [setCurrentPage, setUsersOpen]);
+  }, [setCurrentPage]);
 
   return (
     <div
@@ -54,7 +47,7 @@ const ExampleSidebar: FC = function () {
               <Sidebar.ItemGroup>
                 <Sidebar.Item
                   href="/"
-                  icon={HiChartPie}
+                  icon={HiHome}
                   active={"/" === currentPage}
                   iconClassName={
                     "/" === currentPage
@@ -86,7 +79,7 @@ const ExampleSidebar: FC = function () {
                 </Sidebar.Item>
                 <Sidebar.Item
                   href="/discussion"
-                  icon={HiChat}
+                  icon={PiChatTeardropDotsFill}
                   active={"/discussion" === currentPage}
                   iconClassName={
                     "/discussion" === currentPage
@@ -103,7 +96,7 @@ const ExampleSidebar: FC = function () {
                 </Sidebar.Item>
                 <Sidebar.Item
                   href="/workspace"
-                  icon={HiOfficeBuilding}
+                  icon={FaPeopleGroup}
                   active={"/workspace" === currentPage}
                   iconClassName={
                     "/workspace" === currentPage
@@ -120,7 +113,7 @@ const ExampleSidebar: FC = function () {
                 </Sidebar.Item>
                 <Sidebar.Item
                   href="/mailing/inbox"
-                  icon={HiInboxIn}
+                  icon={PiBirdFill}
                   active={"/mailing/inbox" === currentPage}
                   iconClassName={
                     "/mailing/inbox" === currentPage
@@ -134,79 +127,8 @@ const ExampleSidebar: FC = function () {
                       : ""
                   }
                 >
-                  Inbox
+                  百灵AI
                 </Sidebar.Item>
-                <Sidebar.Collapse
-                  icon={HiUsers}
-                  label="Users"
-                  open={isUsersOpen}
-                  active={currentPage.includes("/users/")}
-                >
-                  <Sidebar.Item
-                    href="/users/list"
-                    active={"/users/list" === currentPage}
-                    iconClassName={
-                      "/users/list" === currentPage
-                        ? "text-blue-600 dark:text-blue-500"
-                        : ""
-                    }
-                    className={
-                      "/users/list" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Users list
-                  </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/users/profile"
-                    active={"/users/profile" === currentPage}
-                    iconClassName={
-                      "/users/profile" === currentPage
-                        ? "text-blue-600 dark:text-blue-500"
-                        : ""
-                    }
-                    className={
-                      "/users/profile" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Profile
-                  </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/users/feed"
-                    active={"/users/feed" === currentPage}
-                    iconClassName={
-                      "/users/feed" === currentPage
-                        ? "text-blue-600 dark:text-blue-500"
-                        : ""
-                    }
-                    className={
-                      "/users/feed" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Feed
-                  </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/users/settings"
-                    active={"/users/settings" === currentPage}
-                    iconClassName={
-                      "/users/settings" === currentPage
-                        ? "text-blue-600 dark:text-blue-500"
-                        : ""
-                    }
-                    className={
-                      "/users/settings" === currentPage
-                        ? "bg-gray-100 dark:bg-gray-700"
-                        : ""
-                    }
-                  >
-                    Settings
-                  </Sidebar.Item>
-                </Sidebar.Collapse>
               </Sidebar.ItemGroup>
             </Sidebar.Items>
           </div>
