@@ -2,6 +2,7 @@
 import { Button, DarkThemeToggle, Dropdown, Navbar } from "flowbite-react";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
+import { GrClose } from "react-icons/gr";
 import {
   HiArchive,
   HiBell,
@@ -22,11 +23,11 @@ import {
 import { LuBrainCircuit } from "react-icons/lu";
 
 import {
-  VscChromeClose,
-  VscChromeMaximize,
-  VscChromeMinimize,
-  VscChromeRestore,
-} from "react-icons/vsc";
+  FaRegWindowMaximize,
+  FaRegWindowMinimize,
+  FaRegWindowRestore,
+} from "react-icons/fa";
+
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
 import "../styles/electron.css";
@@ -74,31 +75,31 @@ const WindowControls: FC = function () {
   };
 
   return (
-    <div className="mr-2 flex items-center">
+    <div className="flex items-center">
       <button
         onClick={minimizeWindow}
-        className="p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+        className="rounded-md p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
         title="最小化"
       >
-        <VscChromeMinimize className="size-4" />
+        <FaRegWindowMinimize className="size-4" />
       </button>
       <button
         onClick={maximizeWindow}
-        className="p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+        className="rounded-md p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
         title={isMaximized ? "还原" : "最大化"}
       >
         {isMaximized ? (
-          <VscChromeRestore className="size-4" />
+          <FaRegWindowRestore className="size-4" />
         ) : (
-          <VscChromeMaximize className="size-4" />
+          <FaRegWindowMaximize className="size-4" />
         )}
       </button>
       <button
         onClick={closeWindow}
-        className="p-1.5 text-gray-600 hover:bg-red-100 hover:text-red-600 dark:text-gray-400 dark:hover:bg-red-900 dark:hover:text-red-400"
+        className="rounded-md p-1.5 text-gray-600 hover:bg-red-100 hover:text-red-600 dark:text-gray-400 dark:hover:bg-red-900 dark:hover:text-red-400"
         title="关闭"
       >
-        <VscChromeClose className="size-4" />
+        <GrClose className="size-4" />
       </button>
     </div>
   );

@@ -1,4 +1,3 @@
-import { Button } from "flowbite-react";
 import type { ChangeEvent, FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { HiCog, HiSearch, HiUserAdd } from "react-icons/hi";
@@ -1205,23 +1204,27 @@ const DiscussionPage: FC = function () {
               </div>
               <div className="flex items-center gap-2">
                 {/* 查找按钮 */}
-                <Button size="xs" color="gray" pill iconOnly>
-                  <HiSearch className="size-4" />
-                </Button>
-                {/* 添加成员按钮 */}
-                <Button size="xs" color="gray" pill iconOnly>
-                  <HiUserAdd className="size-4" />
-                </Button>
-                {/* 设置按钮 */}
-                <Button
-                  size="xs"
-                  color="gray"
-                  pill
-                  iconOnly
-                  onClick={handleOpenSettings}
+                <button
+                  className="flex size-8 items-center justify-center rounded-full text-gray-500 transition-all hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                  title="查找"
                 >
-                  <HiCog className="size-4" />
-                </Button>
+                  <HiSearch className="size-5" />
+                </button>
+                {/* 添加成员按钮 */}
+                <button
+                  className="flex size-8 items-center justify-center rounded-full text-gray-500 transition-all hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                  title="添加成员"
+                >
+                  <HiUserAdd className="size-5" />
+                </button>
+                {/* 设置按钮 */}
+                <button
+                  className="flex size-8 items-center justify-center rounded-full text-gray-500 transition-all hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                  onClick={handleOpenSettings}
+                  title="设置"
+                >
+                  <HiCog className="size-5" />
+                </button>
               </div>
             </div>
 
