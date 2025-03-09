@@ -49,7 +49,7 @@ const SettingsDrawer: FC<{
   return (
     <div className="absolute inset-0 z-50 overflow-hidden">
       <div
-        className="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+        className="absolute inset-0 bg-gray-500/75 transition-opacity"
         onClick={onClose}
         onKeyDown={(e) => e.key === "Escape" && onClose()}
         tabIndex={0}
@@ -816,9 +816,11 @@ const DiscussionPage: FC = function () {
                   {/* 最新消息分类 - 固定在顶部 */}
                   <div className="sticky top-0 z-10 bg-white px-4 py-1 dark:bg-gray-800">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
-                        最新
-                      </h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+                          最新
+                        </h3>
+                      </div>
                       <div className="flex space-x-2">
                         <button
                           className={`rounded-full p-1 ${
@@ -924,9 +926,17 @@ const DiscussionPage: FC = function () {
                               ></span>
                             </div>
                             <div className="flex min-w-0 flex-1 flex-col leading-tight">
-                              <span className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                                {item.name}
-                              </span>
+                              <div className="flex items-center gap-1">
+                                <span className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                                  {item.name}
+                                </span>
+                                {/* 列表项密级标签 */}
+                                <div
+                                  className={`rounded px-1 py-0.5 text-[10px] font-medium ${item.securityLevel === "机密" ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400" : item.securityLevel === "秘密" ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400" : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"}`}
+                                >
+                                  {item.securityLevel}
+                                </div>
+                              </div>
                               {item.isTyping ? (
                                 <p className="truncate text-sm font-normal text-primary-600 dark:text-primary-500">
                                   {item.lastMessage}
@@ -1182,11 +1192,31 @@ const DiscussionPage: FC = function () {
                   />
                 </div>
                 <div>
-                  <h2 className="text-sm font-medium text-gray-900 dark:text-white sm:text-xl">
-                    {discussionList.find(
-                      (item) => item.id === activeDiscussionId,
-                    )?.name || "研讨"}
-                  </h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-sm font-medium text-gray-900 dark:text-white sm:text-xl">
+                      {discussionList.find(
+                        (item) => item.id === activeDiscussionId,
+                      )?.name || "研讨"}
+                    </h2>
+                    {/* 密级标签 */}
+                    <div
+                      className={`rounded px-1.5 py-0.5 text-xs font-medium ${
+                        discussionList.find(
+                          (item) => item.id === activeDiscussionId,
+                        )?.securityLevel === "机密"
+                          ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                          : discussionList.find(
+                                (item) => item.id === activeDiscussionId,
+                              )?.securityLevel === "秘密"
+                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+                            : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                      }`}
+                    >
+                      {discussionList.find(
+                        (item) => item.id === activeDiscussionId,
+                      )?.securityLevel || "非密"}
+                    </div>
+                  </div>
                   <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                     <span>
                       {discussionList.find(

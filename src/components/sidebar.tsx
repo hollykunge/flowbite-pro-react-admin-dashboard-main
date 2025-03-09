@@ -112,16 +112,16 @@ const ExampleSidebar: FC = function () {
                   协同空间
                 </Sidebar.Item>
                 <Sidebar.Item
-                  href="/mailing/inbox"
+                  href="/aichat"
                   icon={PiBirdFill}
-                  active={"/mailing/inbox" === currentPage}
+                  active={"/aichat" === currentPage}
                   iconClassName={
-                    "/mailing/inbox" === currentPage
+                    "/aichat" === currentPage
                       ? "text-blue-600 dark:text-blue-500"
                       : ""
                   }
                   className={
-                    "/mailing/inbox" === currentPage
+                    "/aichat" === currentPage
                       ? "bg-gray-100 dark:bg-gray-700"
                       : ""
                   }
