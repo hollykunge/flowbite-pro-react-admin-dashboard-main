@@ -12,7 +12,7 @@ interface MessageType {
   content: string;
   time: string;
   status?: string;
-  messageType: 
+  messageType:
     | "text"
     | "image"
     | "file"

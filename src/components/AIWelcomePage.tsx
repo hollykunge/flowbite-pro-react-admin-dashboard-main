@@ -7,7 +7,7 @@ interface AIWelcomePageProps {
 
 /**
  * AI欢迎页面组件
- * 
+ *
  * 显示欢迎信息和功能介绍，用户可以通过输入框发送消息开始对话
  */
 const AIWelcomePage: FC<AIWelcomePageProps> = ({ onSendMessage }) => {
@@ -16,9 +16,18 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({ onSendMessage }) => {
       {/* Logo */}
       <div className="mb-12 flex items-center">
         <div className="mr-4 text-5xl">
-          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M30 0C13.4315 0 0 13.4315 0 30C0 46.5685 13.4315 60 30 60C46.5685 60 60 46.5685 60 30C60 13.4315 46.5685 0 30 0ZM30 10C41.0457 10 50 18.9543 50 30C50 41.0457 41.0457 50 30 50C18.9543 50 10 41.0457 10 30C10 18.9543 18.9543 10 30 10Z" fill="white"/>
-            <path d="M45 30L15 45L15 15L45 30Z" fill="white"/>
+          <svg
+            width="60"
+            height="60"
+            viewBox="0 0 60 60"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M30 0C13.4315 0 0 13.4315 0 30C0 46.5685 13.4315 60 30 60C46.5685 60 60 46.5685 60 30C60 13.4315 46.5685 0 30 0ZM30 10C41.0457 10 50 18.9543 50 30C50 41.0457 41.0457 50 30 50C18.9543 50 10 41.0457 10 30C10 18.9543 18.9543 10 30 10Z"
+              fill="white"
+            />
+            <path d="M45 30L15 45L15 15L45 30Z" fill="white" />
           </svg>
         </div>
         <h1 className="text-5xl font-bold">Grok</h1>
@@ -40,14 +49,14 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({ onSendMessage }) => {
             }}
           />
           <div className="flex items-center gap-4">
-            <button 
+            <button
               className="flex items-center gap-2 rounded-full px-3 py-1 text-gray-400 hover:bg-gray-700"
               onClick={() => onSendMessage("DeepSearch: ")}
             >
               <HiLightningBolt className="text-lg" />
               <span>DeepSearch</span>
             </button>
-            <button 
+            <button
               className="flex items-center gap-2 rounded-full px-3 py-1 text-gray-400 hover:bg-gray-700"
               onClick={() => onSendMessage("Think: ")}
             >
@@ -55,8 +64,19 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({ onSendMessage }) => {
               <span>Think</span>
             </button>
             <button className="rounded-full bg-gray-700 p-2 text-white hover:bg-gray-600">
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                />
               </svg>
             </button>
           </div>
@@ -66,7 +86,9 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({ onSendMessage }) => {
       {/* 功能介绍 */}
       <div className="mb-8">
         <h2 className="mb-2 text-2xl font-bold">Grok 3 is here.</h2>
-        <p className="text-gray-400">Try our new features: DeepSearch and Think</p>
+        <p className="text-gray-400">
+          Try our new features: DeepSearch and Think
+        </p>
       </div>
 
       {/* 功能卡片 */}

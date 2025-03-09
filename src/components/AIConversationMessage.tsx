@@ -11,7 +11,7 @@ interface AIConversationMessageProps {
   /**
    * 消息类型
    */
-  messageType?: 
+  messageType?:
     | "text"
     | "image"
     | "file"
@@ -40,7 +40,6 @@ const AIConversationMessage: FC<AIConversationMessageProps> = ({
   isUser = false,
   onCopy,
 }) => {
-
   /**
    * 复制消息内容
    */

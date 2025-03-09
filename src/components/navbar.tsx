@@ -167,7 +167,7 @@ const ExampleNavbar: FC = function () {
             <button
               type="button"
               onClick={openSearchModal}
-              className="no-drag hidden h-9 w-64 items-center rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-left text-sm text-gray-500 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 md:flex"
+              className="no-drag hidden h-9 w-64 items-center rounded-lg bg-gray-200/90 px-3 py-2 text-left text-sm text-gray-600 hover:bg-gray-300/90 dark:bg-gray-600/90 dark:text-gray-300 dark:hover:bg-gray-500/90 md:flex"
             >
               <HiSearch className="mr-2 size-4" />
               <span>搜索...</span>
@@ -215,7 +215,7 @@ const ExampleNavbar: FC = function () {
                 <input
                   type="search"
                   id="modal-search"
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  className="block w-full rounded-lg bg-gray-200/90 p-4 pl-10 text-sm text-gray-800 focus:ring-blue-500 dark:bg-gray-600/90 dark:text-white dark:placeholder:text-gray-300 dark:focus:ring-blue-500"
                   placeholder="搜索关键词..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}

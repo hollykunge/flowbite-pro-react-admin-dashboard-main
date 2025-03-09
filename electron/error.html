@@ -1,58 +1,84 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>连接错误</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f5f5f5;
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    .container {
-      max-width: 600px;
-      text-align: center;
-      background-color: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      color: #e53e3e;
-      margin-bottom: 20px;
-    }
-    p {
-      margin-bottom: 15px;
-      line-height: 1.5;
-    }
-    button {
-      background-color: #3182ce;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 20px;
-    }
-    button:hover {
-      background-color: #2b6cb0;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>无法连接到开发服务器</h1>
-    <p>Electron 应用无法连接到 Vite 开发服务器 (http://localhost:5173)。</p>
-    <p>请确保 Vite 开发服务器正在运行，然后重试。</p>
-    <button onclick="window.location.reload()">重试</button>
-  </div>
-</body>
-</html> 
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>连接错误</title>
+    <style>
+      body {
+        font-family: "Arial", "Microsoft YaHei", sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .error-container {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+      }
+
+      h1 {
+        color: #e53e3e;
+        margin-bottom: 20px;
+      }
+
+      p {
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+
+      .btn {
+        background-color: #3182ce;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+      }
+
+      .btn:hover {
+        background-color: #2c5282;
+      }
+
+      .icon {
+        font-size: 64px;
+        color: #e53e3e;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-container">
+      <div class="icon">⚠️</div>
+      <h1>无法连接到开发服务器</h1>
+      <p>
+        应用程序无法连接到开发服务器
+        (http://localhost:5173)。请确保开发服务器已启动并正在运行。
+      </p>
+      <p>您可以通过以下步骤解决此问题：</p>
+      <ol style="text-align: left">
+        <li>
+          确保已运行 <code>pnpm dev</code> 或
+          <code>yarn dev</code> 命令启动开发服务器
+        </li>
+        <li>检查端口5173是否被其他应用程序占用</li>
+        <li>检查防火墙设置是否阻止了连接</li>
+      </ol>
+      <p>解决问题后，点击下面的按钮重试连接：</p>
+      <button class="btn" onclick="window.location.reload()">重试连接</button>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+/* 活动项目的图标颜色 */
+.active-sidebar-item svg {
+  color: #3b82f6 !important; /* blue-500 */
+}
+
+/* 暗色模式下活动项目的图标颜色 */
+.dark .active-sidebar-item svg {
+  color: #60a5fa !important; /* blue-400 */
+}

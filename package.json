@@ -17,7 +17,7 @@
     "lint": "eslint --ignore-path .gitignore .",
     "preview": "vite preview --host",
     "typecheck": "tsc",
-    "electron:dev": "concurrently --kill-others \"pnpm dev\" \"sleep 5 && electron .\"",
+    "electron:dev": "concurrently --kill-others \"pnpm dev\" \"cross-env ELECTRON_START_URL=http://localhost:5174 electron .\"",
     "electron:build": "pnpm build && electron-builder",
     "electron:start": "electron ."
   },

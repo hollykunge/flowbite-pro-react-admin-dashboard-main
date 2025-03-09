@@ -121,13 +121,13 @@ const ChatMessage: FC<ChatMessageProps> = ({
   const getSecurityLevelStyle = () => {
     switch (securityLevel) {
       case "非密":
-        return "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500";
+        return "bg-gradient-to-r from-green-50 to-green-100 text-green-600 border border-green-200 dark:from-green-900/30 dark:to-green-800/30 dark:text-green-500 dark:border-green-800/50";
       case "秘密":
-        return "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-500";
+        return "bg-gradient-to-r from-yellow-50 to-yellow-100 text-yellow-600 border border-yellow-200 dark:from-yellow-900/30 dark:to-yellow-800/30 dark:text-yellow-500 dark:border-yellow-800/50";
       case "机密":
-        return "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-500";
+        return "bg-gradient-to-r from-orange-50 to-orange-100 text-orange-600 border border-orange-200 dark:from-orange-900/30 dark:to-orange-800/30 dark:text-orange-500 dark:border-orange-800/50";
       default:
-        return "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500";
+        return "bg-gradient-to-r from-green-50 to-green-100 text-green-600 border border-green-200 dark:from-green-900/30 dark:to-green-800/30 dark:text-green-500 dark:border-green-800/50";
     }
   };
 
@@ -460,14 +460,18 @@ const ChatMessage: FC<ChatMessageProps> = ({
         return (
           <p
             className={`text-sm font-normal ${
-              isOwn ? "text-white" : "text-gray-900 dark:text-white"
+              isOwn
+                ? "text-white drop-shadow-sm"
+                : "text-gray-900 dark:text-white"
             }`}
           >
             {message}
             {isEdited && (
               <span
                 className={`ml-1 text-xs ${
-                  isOwn ? "text-blue-100" : "text-gray-500 dark:text-gray-400"
+                  isOwn
+                    ? "text-blue-100 opacity-80"
+                    : "text-gray-500 dark:text-gray-400"
                 }`}
               >
                 (已编辑)
@@ -508,7 +512,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
     >
       {!isOwn && (
         <img
-          className="size-8 rounded-full"
+          className="size-8 rounded-full border-2 border-white shadow-md dark:border-gray-800"
           src={avatarSrc}
           alt={`${senderName} 的头像`}
         />
@@ -529,8 +533,8 @@ const ChatMessage: FC<ChatMessageProps> = ({
         <div
           className={`relative flex flex-col rounded-xl p-3 ${
             isOwn
-              ? "rounded-br-none bg-blue-500 text-white"
-              : "rounded-tl-none bg-gray-100 dark:bg-gray-700"
+              ? "rounded-br-none bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20 border border-blue-400"
+              : "rounded-tl-none bg-gradient-to-br from-gray-50 to-gray-100 shadow-md shadow-gray-200/50 border border-gray-200 dark:from-gray-700 dark:to-gray-800 dark:border-gray-600 dark:shadow-gray-900/30"
           }`}
         >
           {replyTo && (
@@ -559,7 +563,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
             </span>
           )}
           <span
-            className={`ml-2 rounded-md px-1.5 py-0.5 text-xs font-medium ${getSecurityLevelStyle()}`}
+            className={`ml-2 rounded-md px-1.5 py-0.5 text-xs font-medium shadow-sm ${getSecurityLevelStyle()}`}
           >
             {securityLevel}
           </span>
@@ -569,7 +573,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
         id="dropdownMenuIconButton"
         data-dropdown-toggle="dropdownDots"
         data-dropdown-placement="bottom-start"
-        className="inline-flex items-center self-center rounded-lg bg-white p-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-50 dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800 dark:focus:ring-gray-600"
+        className="inline-flex items-center self-center rounded-lg bg-white p-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-50 dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800 dark:focus:ring-gray-600 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 dark:border-gray-700"
         type="button"
       >
         <svg
@@ -584,7 +588,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
       </button>
       <div
         id="dropdownDots"
-        className="z-10 hidden w-40 divide-y divide-gray-100 rounded-lg bg-white shadow-sm dark:divide-gray-600 dark:bg-gray-700"
+        className="z-10 hidden w-40 divide-y divide-gray-100 rounded-lg bg-white shadow-lg border border-gray-100 dark:divide-gray-600 dark:bg-gray-700 dark:border-gray-600"
       >
         <ul
           className="py-2 text-sm text-gray-700 dark:text-gray-200"

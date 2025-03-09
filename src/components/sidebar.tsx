@@ -10,6 +10,9 @@ import { PiBirdFill, PiChatTeardropDotsFill } from "react-icons/pi";
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
 
+// 添加自定义CSS样式，用于设置活动项目的图标颜色
+import "./sidebar.css";
+
 const ExampleSidebar: FC = function () {
   const { isOpenOnSmallScreens: isSidebarOpenOnSmallScreens } =
     useSidebarContext();
@@ -49,14 +52,10 @@ const ExampleSidebar: FC = function () {
                   href="/"
                   icon={HiHome}
                   active={"/" === currentPage}
-                  iconClassName={
-                    "/" === currentPage
-                      ? "text-blue-600 dark:text-blue-500"
-                      : ""
-                  }
-                  className={
-                    "/" === currentPage ? "bg-gray-100 dark:bg-gray-700" : ""
-                  }
+                  className={classNames({
+                    "bg-gray-100 dark:bg-gray-700": "/" === currentPage,
+                    "active-sidebar-item": "/" === currentPage,
+                  })}
                 >
                   主页
                 </Sidebar.Item>
@@ -64,16 +63,10 @@ const ExampleSidebar: FC = function () {
                   href="/kanban"
                   icon={HiViewGrid}
                   active={"/kanban" === currentPage}
-                  iconClassName={
-                    "/kanban" === currentPage
-                      ? "text-blue-600 dark:text-blue-500"
-                      : ""
-                  }
-                  className={
-                    "/kanban" === currentPage
-                      ? "bg-gray-100 dark:bg-gray-700"
-                      : ""
-                  }
+                  className={classNames({
+                    "bg-gray-100 dark:bg-gray-700": "/kanban" === currentPage,
+                    "active-sidebar-item": "/kanban" === currentPage,
+                  })}
                 >
                   任务
                 </Sidebar.Item>
@@ -81,16 +74,11 @@ const ExampleSidebar: FC = function () {
                   href="/discussion"
                   icon={PiChatTeardropDotsFill}
                   active={"/discussion" === currentPage}
-                  iconClassName={
-                    "/discussion" === currentPage
-                      ? "text-blue-600 dark:text-blue-500"
-                      : ""
-                  }
-                  className={
-                    "/discussion" === currentPage
-                      ? "bg-gray-100 dark:bg-gray-700"
-                      : ""
-                  }
+                  className={classNames({
+                    "bg-gray-100 dark:bg-gray-700":
+                      "/discussion" === currentPage,
+                    "active-sidebar-item": "/discussion" === currentPage,
+                  })}
                 >
                   研讨
                 </Sidebar.Item>
@@ -98,16 +86,11 @@ const ExampleSidebar: FC = function () {
                   href="/workspace"
                   icon={FaPeopleGroup}
                   active={"/workspace" === currentPage}
-                  iconClassName={
-                    "/workspace" === currentPage
-                      ? "text-blue-600 dark:text-blue-500"
-                      : ""
-                  }
-                  className={
-                    "/workspace" === currentPage
-                      ? "bg-gray-100 dark:bg-gray-700"
-                      : ""
-                  }
+                  className={classNames({
+                    "bg-gray-100 dark:bg-gray-700":
+                      "/workspace" === currentPage,
+                    "active-sidebar-item": "/workspace" === currentPage,
+                  })}
                 >
                   协同空间
                 </Sidebar.Item>
@@ -115,16 +98,10 @@ const ExampleSidebar: FC = function () {
                   href="/aichat"
                   icon={PiBirdFill}
                   active={"/aichat" === currentPage}
-                  iconClassName={
-                    "/aichat" === currentPage
-                      ? "text-blue-600 dark:text-blue-500"
-                      : ""
-                  }
-                  className={
-                    "/aichat" === currentPage
-                      ? "bg-gray-100 dark:bg-gray-700"
-                      : ""
-                  }
+                  className={classNames({
+                    "bg-gray-100 dark:bg-gray-700": "/aichat" === currentPage,
+                    "active-sidebar-item": "/aichat" === currentPage,
+                  })}
                 >
                   百灵AI
                 </Sidebar.Item>

@@ -117,7 +117,7 @@ const ModernMessageInput: FC<ModernMessageInputProps> = ({
             <BiSearch className="mr-1 size-4" />
             <span className="text-sm">DeepSearch</span>
           </button>
-          
+
           <button
             type="button"
             className={`flex items-center rounded-full p-1.5 ${
@@ -151,7 +151,7 @@ const ModernMessageInput: FC<ModernMessageInputProps> = ({
           >
             <FiPaperclip className="size-5" />
           </button>
-          
+
           <button
             type="submit"
             className="rounded-full bg-gray-700 p-2 text-white hover:bg-gray-600"
