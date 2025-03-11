@@ -1,7 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Button, DarkThemeToggle, Dropdown, Navbar } from "flowbite-react";
+import {
+  Button,
+  DarkThemeToggle,
+  Dropdown,
+  Navbar,
+  Modal,
+} from "flowbite-react";
 import type { FC } from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GrClose } from "react-icons/gr";
 import {
   HiArchive,
@@ -19,8 +25,17 @@ import {
   HiUsers,
   HiViewGrid,
   HiX,
+  HiCalendar,
 } from "react-icons/hi";
-import { LuBrainCircuit } from "react-icons/lu";
+import { PiBirdDuotone } from "react-icons/pi";
+import { Calendar, Col, Radio, Row, Select } from "antd";
+import type { CalendarProps } from "antd";
+import { createStyles } from "antd-style";
+import classNames from "classnames";
+import dayjs from "dayjs";
+import type { Dayjs } from "dayjs";
+import { HolidayUtil, Lunar } from "lunar-typescript";
+import "antd/dist/reset.css";
 
 import {
   FaRegWindowMaximize,
@@ -32,6 +47,7 @@ import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
 import isLargeScreen from "../helpers/is-large-screen";
 import "../styles/electron.css";
+import "react-calendar/dist/Calendar.css";
 
 // 窗口控制按钮组件
 const WindowControls: FC = function () {
@@ -181,7 +197,7 @@ const ExampleNavbar: FC = function () {
                 className="mr-2 h-5 sm:h-6"
               />
               <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-                Flowbite
+                易知云雀
               </span>
             </Navbar.Brand>
           </div>
@@ -191,7 +207,7 @@ const ExampleNavbar: FC = function () {
             <button
               type="button"
               onClick={openSearchModal}
-              className="no-drag hidden h-9 w-64 items-center rounded-lg bg-gray-200/90 px-3 py-2 text-left text-sm text-gray-600 hover:bg-gray-300/90 dark:bg-gray-600/90 dark:text-gray-300 dark:hover:bg-gray-500/90 md:flex"
+              className="no-drag hidden h-8 w-64 items-center rounded-lg bg-gray-200/90 px-2 py-2 text-left text-sm text-gray-600 hover:bg-gray-300/90 dark:bg-gray-600/90 dark:text-gray-300 dark:hover:bg-gray-500/90 md:flex"
             >
               <HiSearch className="mr-2 size-4" />
               <span>搜索...</span>
@@ -203,11 +219,13 @@ const ExampleNavbar: FC = function () {
             <Button
               outline
               gradientDuoTone="purpleToPink"
-              size="sm"
-              className="mr-2"
+              size="xs"
+              className="mr-2 hover:text-white group"
             >
-              <LuBrainCircuit className="mr-2 size-5 text-purple-500" />
-              AI意识体
+              <PiBirdDuotone className="mr-1 size-5 text-purple-500 group-hover:text-white" />
+              <span className="text-purple-500 group-hover:text-white">
+                AI助手
+              </span>
             </Button>
             <button
               onClick={openSearchModal}
@@ -387,14 +405,14 @@ const NotificationBellDropdown: FC = function () {
       inline
       label={
         <span className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700">
-          <span className="sr-only">Notifications</span>
+          <span className="sr-only">通知</span>
           <HiBell className="text-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white " />
         </span>
       }
     >
       <div className="max-w-[22rem]">
         <div className="block rounded-t-xl bg-gray-50 px-3 py-1.5 text-center text-sm font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-400">
-          Notifications
+          系统通知
         </div>
         <div>
           <a
@@ -402,25 +420,20 @@ const NotificationBellDropdown: FC = function () {
             className="flex border-y px-3 py-2 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600"
           >
             <div className="shrink-0">
-              <img
-                alt=""
-                src="../images/users/bonnie-green.png"
-                className="size-9 rounded-full"
-              />
-              <div className="absolute -mt-4 ml-5 flex size-4 items-center justify-center rounded-full border border-white bg-primary-700 dark:border-gray-700">
-                <NewMessageIcon />
+              <div className="flex size-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+                <HiOutlineTicket className="size-5 text-blue-600 dark:text-blue-300" />
               </div>
             </div>
-            <div className="w-full pl-2">
+            <div className="w-full pl-3">
               <div className="mb-1 text-xs font-normal text-gray-500 dark:text-gray-400">
-                New message from&nbsp;
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  Bonnie Green
+                  系统更新提醒
                 </span>
-                : "Hey, what's up? All set for the presentation?"
+                <br />
+                系统将于今晚22:00进行例行维护更新，预计耗时2小时。
               </div>
               <div className="text-xs font-medium text-primary-700 dark:text-primary-400">
-                a few moments ago
+                10分钟前
               </div>
             </div>
           </a>
@@ -429,28 +442,20 @@ const NotificationBellDropdown: FC = function () {
             className="flex border-b px-3 py-2 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600"
           >
             <div className="shrink-0">
-              <img
-                alt=""
-                src="../images/users/jese-leos.png"
-                className="size-11 rounded-full"
-              />
-              <div className="absolute -mt-5 ml-6 flex size-5 items-center justify-center rounded-full border border-white bg-gray-900 dark:border-gray-700">
-                <NewFollowIcon />
+              <div className="flex size-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
+                <HiUsers className="size-5 text-green-600 dark:text-green-300" />
               </div>
             </div>
-            <div className="w-full pl-2">
+            <div className="w-full pl-3">
               <div className="mb-1 text-xs font-normal text-gray-500 dark:text-gray-400">
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  Jese Leos
+                  团队协作更新
                 </span>
-                &nbsp;and&nbsp;
-                <span className="font-medium text-gray-900 dark:text-white">
-                  5 others
-                </span>
-                &nbsp;started following you.
+                <br />
+                新版团队协作功能已上线，支持实时多人协作。
               </div>
               <div className="text-xs font-medium text-primary-700 dark:text-primary-400">
-                10 minutes ago
+                30分钟前
               </div>
             </div>
           </a>
@@ -459,28 +464,20 @@ const NotificationBellDropdown: FC = function () {
             className="flex border-b px-3 py-2 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600"
           >
             <div className="shrink-0">
-              <img
-                alt=""
-                src="../images/users/joseph-mcfall.png"
-                className="size-11 rounded-full"
-              />
-              <div className="absolute -mt-5 ml-6 flex size-5 items-center justify-center rounded-full border border-white bg-red-600 dark:border-gray-700">
-                <NewLoveIcon />
+              <div className="flex size-10 items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-900">
+                <HiArchive className="size-5 text-yellow-600 dark:text-yellow-300" />
               </div>
             </div>
-            <div className="w-full pl-2">
+            <div className="w-full pl-3">
               <div className="mb-1 text-xs font-normal text-gray-500 dark:text-gray-400">
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  Joseph Mcfall
+                  数据备份完成
                 </span>
-                &nbsp;and&nbsp;
-                <span className="font-medium text-gray-900 dark:text-white">
-                  141 others
-                </span>
-                &nbsp;love your story. See it and view more stories.
+                <br />
+                您的所有工作数据已自动备份至云端存储。
               </div>
               <div className="text-xs font-medium text-primary-700 dark:text-primary-400">
-                44 minutes ago
+                2小时前
               </div>
             </div>
           </a>
@@ -489,28 +486,20 @@ const NotificationBellDropdown: FC = function () {
             className="flex border-b px-3 py-2 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600"
           >
             <div className="shrink-0">
-              <img
-                alt=""
-                src="../images/users/leslie-livingston.png"
-                className="size-11 rounded-full"
-              />
-              <div className="absolute -mt-5 ml-6 flex size-5 items-center justify-center rounded-full border border-white bg-green-400 dark:border-gray-700">
-                <NewMentionIcon />
+              <div className="flex size-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900">
+                <HiCog className="size-5 text-purple-600 dark:text-purple-300" />
               </div>
             </div>
-            <div className="w-full pl-2">
+            <div className="w-full pl-3">
               <div className="mb-1 text-xs font-normal text-gray-500 dark:text-gray-400">
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  Leslie Livingston
+                  系统功能优化
                 </span>
-                &nbsp;mentioned you in a comment:&nbsp;
-                <span className="font-medium text-primary-700 dark:text-primary-500">
-                  @bonnie.green
-                </span>
-                &nbsp;what do you say?
+                <br />
+                性能优化更新已完成，系统运行速度提升30%。
               </div>
               <div className="text-xs font-medium text-primary-700 dark:text-primary-400">
-                1 hour ago
+                4小时前
               </div>
             </div>
           </a>
@@ -519,25 +508,20 @@ const NotificationBellDropdown: FC = function () {
             className="flex px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
           >
             <div className="shrink-0">
-              <img
-                alt=""
-                src="../images/users/robert-brown.png"
-                className="size-11 rounded-full"
-              />
-              <div className="absolute -mt-5 ml-6 flex size-5 items-center justify-center rounded-full border border-white bg-purple-500 dark:border-gray-700">
-                <NewVideoIcon />
+              <div className="flex size-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900">
+                <HiInbox className="size-5 text-red-600 dark:text-red-300" />
               </div>
             </div>
-            <div className="w-full pl-2">
+            <div className="w-full pl-3">
               <div className="mb-1 text-xs font-normal text-gray-500 dark:text-gray-400">
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  Robert Brown
+                  存储空间提醒
                 </span>
-                &nbsp;posted a new video: Glassmorphism - learn how to implement
-                the new design trend.
+                <br />
+                您的存储空间已使用80%，请及时清理。
               </div>
               <div className="text-xs font-medium text-primary-700 dark:text-primary-400">
-                3 hours ago
+                6小时前
               </div>
             </div>
           </a>
@@ -548,7 +532,7 @@ const NotificationBellDropdown: FC = function () {
         >
           <div className="inline-flex items-center gap-x-1.5">
             <HiEye className="size-4" />
-            <span>View all</span>
+            <span>查看全部通知</span>
           </div>
         </a>
       </div>
@@ -630,105 +614,168 @@ const NewVideoIcon: FC = function () {
   );
 };
 
-const AppDrawerDropdown: FC = function () {
-  return (
-    <Dropdown
-      arrowIcon={false}
-      inline
-      label={
-        <span className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700">
-          <span className="sr-only">Apps</span>
-          <HiViewGrid className="text-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
-        </span>
+const useStyle = createStyles(({ token, css, cx }) => {
+  const lunar = css`
+    color: ${token.colorTextTertiary};
+    font-size: ${token.fontSizeSM}px;
+  `;
+  const weekend = css`
+    color: ${token.colorError};
+    &.gray {
+      opacity: 0.4;
+    }
+  `;
+  return {
+    wrapper: css`
+      width: 100%;
+      padding: 5px;
+    `,
+    dateCell: css`
+      position: relative;
+      &:before {
+        content: "";
+        position: absolute;
+        inset-inline-start: 0;
+        inset-inline-end: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        max-width: 40px;
+        max-height: 40px;
+        background: transparent;
+        transition: background-color 300ms;
+        border-radius: ${token.borderRadiusOuter}px;
+        border: 1px solid transparent;
+        box-sizing: border-box;
       }
-    >
-      <div className="block rounded-t-lg border-b bg-gray-50 px-3 py-1.5 text-center text-sm font-medium text-gray-700 dark:border-b-gray-600 dark:bg-gray-700 dark:text-white">
-        Apps
-      </div>
-      <div className="grid grid-cols-3 gap-3 p-3">
-        <a
-          href="#"
-          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
-        >
-          <HiShoppingBag className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
-          <div className="text-xs font-medium text-gray-900 dark:text-white">
-            Sales
+      &:hover:before {
+        background: rgba(0, 0, 0, 0.04);
+      }
+    `,
+    today: css`
+      &:before {
+        border: 1px solid ${token.colorPrimary};
+      }
+    `,
+    text: css`
+      position: relative;
+      z-index: 1;
+    `,
+    lunar,
+    current: css`
+      color: ${token.colorTextLightSolid};
+      &:before {
+        background: ${token.colorPrimary};
+      }
+      &:hover:before {
+        background: ${token.colorPrimary};
+        opacity: 0.8;
+      }
+      .${cx(lunar)} {
+        color: ${token.colorTextLightSolid};
+        opacity: 0.9;
+      }
+      .${cx(weekend)} {
+        color: ${token.colorTextLightSolid};
+      }
+    `,
+    weekend,
+  };
+});
+
+const AppDrawerDropdown: FC = function () {
+  const { styles } = useStyle({ test: true });
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [selectDate, setSelectDate] = useState<Dayjs>(dayjs());
+  const [panelDate, setPanelDate] = useState<Dayjs>(dayjs());
+
+  const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>["mode"]) => {
+    console.log(value.format("YYYY-MM-DD"), mode);
+    setPanelDate(value);
+  };
+
+  const onDateChange: CalendarProps<Dayjs>["onSelect"] = (
+    value,
+    selectInfo,
+  ) => {
+    if (selectInfo.source === "date") {
+      setSelectDate(value);
+    }
+  };
+
+  const cellRender: CalendarProps<Dayjs>["fullCellRender"] = (date, info) => {
+    const d = Lunar.fromDate(date.toDate());
+    const lunar = d.getDayInChinese();
+    const solarTerm = d.getJieQi();
+    const isWeekend = date.day() === 6 || date.day() === 0;
+    const h = HolidayUtil.getHoliday(
+      date.get("year"),
+      date.get("month") + 1,
+      date.get("date"),
+    );
+    const displayHoliday =
+      h?.getTarget() === h?.getDay() ? h?.getName() : undefined;
+
+    if (info.type === "date") {
+      return React.cloneElement(info.originNode, {
+        ...(info.originNode as React.ReactElement<any>).props,
+        className: classNames(styles.dateCell, {
+          [styles.current]: selectDate.isSame(date, "date"),
+          [styles.today]: date.isSame(dayjs(), "date"),
+        }),
+        children: (
+          <div className={styles.text}>
+            <span
+              className={classNames({
+                [styles.weekend]: isWeekend,
+                gray: !panelDate.isSame(date, "month"),
+              })}
+            >
+              {date.get("date")}
+            </span>
+            <div className={styles.lunar}>
+              {displayHoliday || solarTerm || lunar}
+            </div>
           </div>
-        </a>
-        <a
-          href="#"
-          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
-        >
-          <HiUsers className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
-          <div className="text-xs font-medium text-gray-900 dark:text-white">
-            Users
+        ),
+      });
+    }
+    return info.originNode;
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setIsCalendarOpen(true)}
+        className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
+      >
+        <span className="sr-only">日历</span>
+        <HiCalendar className="text-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
+      </button>
+
+      <Modal
+        show={isCalendarOpen}
+        onClose={() => setIsCalendarOpen(false)}
+        size="lg"
+      >
+        <Modal.Header>
+          <div className="flex items-center gap-2">
+            <HiCalendar className="text-xl" />
+            <span>日历</span>
           </div>
-        </a>
-        <a
-          href="#"
-          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
-        >
-          <HiInbox className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
-          <div className="text-xs font-medium text-gray-900 dark:text-white">
-            Inbox
+        </Modal.Header>
+        <Modal.Body>
+          <div className={styles.wrapper}>
+            <Calendar
+              fullCellRender={cellRender}
+              fullscreen={false}
+              onPanelChange={onPanelChange}
+              onSelect={onDateChange}
+            />
           </div>
-        </a>
-        <a
-          href="#"
-          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
-        >
-          <HiUserCircle className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
-          <div className="text-xs font-medium text-gray-900 dark:text-white">
-            Profile
-          </div>
-        </a>
-        <a
-          href="#"
-          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
-        >
-          <HiCog className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
-          <div className="text-xs font-medium text-gray-900 dark:text-white">
-            Settings
-          </div>
-        </a>
-        <a
-          href="#"
-          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
-        >
-          <HiArchive className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
-          <div className="text-xs font-medium text-gray-900 dark:text-white">
-            Products
-          </div>
-        </a>
-        <a
-          href="#"
-          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
-        >
-          <HiCurrencyDollar className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
-          <div className="text-xs font-medium text-gray-900 dark:text-white">
-            Pricing
-          </div>
-        </a>
-        <a
-          href="#"
-          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
-        >
-          <HiOutlineTicket className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
-          <div className="text-xs font-medium text-gray-900 dark:text-white">
-            Billing
-          </div>
-        </a>
-        <a
-          href="#"
-          className="block rounded-lg p-3 text-center hover:bg-gray-100 dark:hover:bg-gray-600"
-        >
-          <HiLogout className="mx-auto mb-1 size-6 text-gray-500 dark:text-white" />
-          <div className="text-xs font-medium text-gray-900 dark:text-white">
-            Logout
-          </div>
-        </a>
-      </div>
-    </Dropdown>
+        </Modal.Body>
+      </Modal>
+    </>
   );
 };
 

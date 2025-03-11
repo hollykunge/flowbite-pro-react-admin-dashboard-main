@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { useState } from "react";
 import type { MessageSecurityLevel } from "./MessageInput";
+import { PiBirdDuotone } from "react-icons/pi";
 
 /**
  * 聊天消息组件属性接口
@@ -93,6 +94,8 @@ const ChatMessage: FC<ChatMessageProps> = ({
   // 编辑状态
   const [isEditing, setIsEditing] = useState(false);
   const [editedMessage, setEditedMessage] = useState(message);
+  // 添加下拉菜单状态
+  const [showDropdown, setShowDropdown] = useState(false);
 
   // 处理编辑按钮点击
   const handleEditClick = () => {
@@ -112,6 +115,21 @@ const ChatMessage: FC<ChatMessageProps> = ({
     setIsEditing(false);
     setEditedMessage(message);
     if (onCancelEdit) onCancelEdit();
+  };
+
+  // 处理菜单项点击事件
+  const handleMenuItemClick = (handler?: () => void) => {
+    if (handler) {
+      handler();
+    }
+    setShowDropdown(false);
+  };
+
+  // 处理AI助手功能
+  const handleAIAssistant = () => {
+    console.log("使用AI助手处理消息:", message);
+    // 这里可以添加调用AI助手的逻辑
+    setShowDropdown(false);
   };
 
   /**
@@ -569,112 +587,173 @@ const ChatMessage: FC<ChatMessageProps> = ({
           </span>
         </div>
       </div>
-      <button
-        id="dropdownMenuIconButton"
-        data-dropdown-toggle="dropdownDots"
-        data-dropdown-placement="bottom-start"
-        className="inline-flex items-center self-center rounded-lg bg-white p-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-50 dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800 dark:focus:ring-gray-600 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 dark:border-gray-700"
-        type="button"
-      >
-        <svg
-          className="size-4 text-gray-500 dark:text-gray-400"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="currentColor"
-          viewBox="0 0 4 15"
-        >
-          <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
-        </svg>
-      </button>
       <div
-        id="dropdownDots"
-        className="z-10 hidden w-40 divide-y divide-gray-100 rounded-lg bg-white shadow-lg border border-gray-100 dark:divide-gray-600 dark:bg-gray-700 dark:border-gray-600"
+        className="relative"
+        onMouseEnter={() => setShowDropdown(true)}
+        onMouseLeave={() => setShowDropdown(false)}
       >
-        <ul
-          className="py-2 text-sm text-gray-700 dark:text-gray-200"
-          aria-labelledby="dropdownMenuIconButton"
+        <button
+          id="dropdownMenuIconButton"
+          data-dropdown-toggle="dropdownDots"
+          data-dropdown-placement="bottom-start"
+          className="inline-flex items-center self-center p-2 text-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full focus:outline-none dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 transition-all duration-200"
+          type="button"
         >
-          {onReply && (
-            <li>
-              <button
-                onClick={onReply}
-                className="block w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                回复
-              </button>
-            </li>
-          )}
-          {onForward && (
-            <li>
-              <button
-                onClick={onForward}
-                className="block w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                转发
-              </button>
-            </li>
-          )}
-          {onCopy && (
-            <li>
-              <button
-                onClick={onCopy}
-                className="block w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                复制
-              </button>
-            </li>
-          )}
-          {onEdit && isOwn && (
-            <li>
-              <button
-                onClick={handleEditClick}
-                className="block w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                编辑
-              </button>
-            </li>
-          )}
-          {onAddReaction && (
-            <li>
-              <div className="block w-full px-4 py-2 text-left">
-                <div className="mb-1 text-gray-500 dark:text-gray-400">
-                  添加表情
-                </div>
-                <div className="flex gap-2">
-                  {["👍", "❤️", "😂", "😮", "😢"].map((emoji) => (
-                    <button
-                      key={emoji}
-                      onClick={() => onAddReaction(emoji)}
-                      className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600"
+          <svg
+            className="size-4"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 4 15"
+          >
+            <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+          </svg>
+        </button>
+        {showDropdown && (
+          <div
+            className="absolute z-10 w-40 divide-y divide-gray-100 rounded-lg bg-white shadow-lg border border-gray-100 dark:divide-gray-600 dark:bg-gray-700 dark:border-gray-600"
+            style={{
+              top: "0",
+              right: isOwn ? "100%" : "auto",
+              left: isOwn ? "auto" : "100%",
+              marginLeft: isOwn ? "-8px" : "8px",
+              marginRight: isOwn ? "8px" : "-8px",
+              transform: "translateY(-25%)",
+            }}
+          >
+            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+              <li>
+                <button
+                  onClick={handleAIAssistant}
+                  className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  <PiBirdDuotone className="mr-1 size-4 text-purple-500" />
+                  AI助手
+                </button>
+              </li>
+              {onCopy && (
+                <li>
+                  <button
+                    onClick={() => handleMenuItemClick(onCopy)}
+                    className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      {emoji}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </li>
-          )}
-          {onReport && !isOwn && (
-            <li>
-              <button
-                onClick={onReport}
-                className="block w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                举报
-              </button>
-            </li>
-          )}
-          {onDelete && isOwn && (
-            <li>
-              <button
-                onClick={onDelete}
-                className="block w-full px-4 py-2 text-left text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600"
-              >
-                删除
-              </button>
-            </li>
-          )}
-        </ul>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      ></path>
+                    </svg>
+                    复制
+                  </button>
+                </li>
+              )}
+              {onReply && (
+                <li>
+                  <button
+                    onClick={() => handleMenuItemClick(onReply)}
+                    className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                      ></path>
+                    </svg>
+                    引用
+                  </button>
+                </li>
+              )}
+              {onForward && (
+                <li>
+                  <button
+                    onClick={() => handleMenuItemClick(onForward)}
+                    className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M17 8l4 4m0 0l-4 4m4-4H3"
+                      ></path>
+                    </svg>
+                    转发
+                  </button>
+                </li>
+              )}
+              {onEdit && isOwn && (
+                <li>
+                  <button
+                    onClick={() => handleMenuItemClick(handleEditClick)}
+                    className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      ></path>
+                    </svg>
+                    编辑
+                  </button>
+                </li>
+              )}
+              {onDelete && isOwn && (
+                <li>
+                  <button
+                    onClick={() => handleMenuItemClick(onDelete)}
+                    className="flex items-center w-full px-4 py-2 text-left text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      ></path>
+                    </svg>
+                    删除
+                  </button>
+                </li>
+              )}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -27,11 +27,17 @@
     "yarn": ">= 1"
   },
   "dependencies": {
+    "@types/react-calendar": "^4.1.0",
+    "antd": "^5.24.3",
+    "antd-style": "^3.7.1",
     "apexcharts": "^3.41.0",
-    "classnames": "^2.3.2",
+    "classnames": "^2.5.1",
+    "dayjs": "^1.11.13",
     "flowbite": "^1.8.0",
     "flowbite-react": "^0.5.0",
+    "lunar-typescript": "^1.7.8",
     "react-apexcharts": "^1.4.1",
+    "react-calendar": "^5.1.0",
     "react-icons": "^4.10.1",
     "react-sortablejs": "^6.1.4",
     "sortablejs": "^1.15.0",
