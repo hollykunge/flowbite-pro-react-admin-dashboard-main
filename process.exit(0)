@@ -1,0 +1,2 @@
+
+D:\BaiduNetdiskDownload\Flowbite Pro - Code\flowbite-pro-react-admin-dashboard-main>  "D:\BaiduNetdiskDownload\Flowbite Pro - Code\flowbite-pro-react-admin-dashboard-main\node_modules\.bin\\node.exe"  "D:\BaiduNetdiskDownload\Flowbite Pro - Code\flowbite-pro-react-admin-dashboard-main\node_modules\.bin\\..\concurrently\dist\bin\concurrently.js" --kill-others "pnpm dev" "node -e \"setTimeout(() =, 5000)\" && cross-env ELECTRON_START_URL=http://localhost:5174 electron ."

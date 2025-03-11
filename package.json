@@ -12,12 +12,12 @@
   },
   "scripts": {
     "build": "yarn typecheck && vite build",
-    "dev": "vite --host",
+    "dev": "vite --host --port 5174",
     "format": "prettier --check --ignore-path .gitignore --write .",
     "lint": "eslint --ignore-path .gitignore .",
     "preview": "vite preview --host",
     "typecheck": "tsc",
-    "electron:dev": "concurrently --kill-others \"pnpm dev\" \"cross-env ELECTRON_START_URL=http://localhost:5174 electron .\"",
+    "electron:dev": "concurrently --kill-others \"pnpm dev\" \"wait-on tcp:5174 && cross-env ELECTRON_START_URL=http://localhost:5174 electron .\"",
     "electron:build": "pnpm build && electron-builder",
     "electron:start": "electron ."
   },

@@ -31,7 +31,7 @@ const MainContent: FC<PropsWithChildren<NavbarSidebarLayoutProps>> = function ({
     <main
       className={classNames(
         "overflow-y-auto relative w-full h-full bg-transparent",
-        isSidebarOpen ? "lg:ml-16" : "lg:ml-64",
+        "lg:ml-16",
       )}
     >
       {children}

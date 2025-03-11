@@ -30,6 +30,7 @@ import {
 
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
+import isLargeScreen from "../helpers/is-large-screen";
 import "../styles/electron.css";
 
 // 窗口控制按钮组件
@@ -112,6 +113,19 @@ const ExampleNavbar: FC = function () {
   // 添加搜索模态框状态
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isCollapsed, setIsCollapsed] = useState(!isLargeScreen());
+
+  // 监听窗口大小变化，调整侧边栏状态
+  useEffect(() => {
+    function handleResize() {
+      setIsCollapsed(!isLargeScreen());
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   // 打开搜索模态框
   const openSearchModal = () => {
@@ -131,6 +145,16 @@ const ExampleNavbar: FC = function () {
     closeSearchModal();
   };
 
+  // 切换侧边栏状态
+  const toggleSidebar = () => {
+    if (isSmallScreen()) {
+      setOpenOnSmallScreens(!isOpenOnSmallScreens);
+    } else {
+      setIsCollapsed(!isCollapsed);
+      setOpenOnSmallScreens(!isCollapsed);
+    }
+  };
+
   return (
     <Navbar fluid className="app-drag-region py-1">
       <div className="w-full lg:px-4 lg:pl-2">
@@ -139,7 +163,7 @@ const ExampleNavbar: FC = function () {
           <div className="no-drag flex items-center">
             {isPageWithSidebar && (
               <button
-                onClick={() => setOpenOnSmallScreens(!isOpenOnSmallScreens)}
+                onClick={toggleSidebar}
                 className="mr-2 cursor-pointer rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:inline"
               >
                 <span className="sr-only">Toggle sidebar</span>

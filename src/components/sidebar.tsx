@@ -9,6 +9,7 @@ import { PiBirdFill, PiChatTeardropDotsFill } from "react-icons/pi";
 
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
+import isLargeScreen from "../helpers/is-large-screen";
 
 // 添加自定义CSS样式，用于设置活动项目的图标颜色
 import "./sidebar.css";
@@ -18,12 +19,25 @@ const ExampleSidebar: FC = function () {
     useSidebarContext();
 
   const [currentPage, setCurrentPage] = useState("");
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   useEffect(() => {
     const newPage = window.location.pathname;
-
     setCurrentPage(newPage);
   }, [setCurrentPage]);
+
+  // 监听窗口大小变化，但保持默认折叠状态
+  useEffect(() => {
+    function handleResize() {
+      // 无论屏幕大小如何，都保持折叠状态
+      setIsCollapsed(true);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <div
@@ -33,7 +47,7 @@ const ExampleSidebar: FC = function () {
     >
       <Sidebar
         aria-label="Sidebar with multi-level dropdown example"
-        collapsed={isSidebarOpenOnSmallScreens && !isSmallScreen()}
+        collapsed={isCollapsed && !isSmallScreen()}
       >
         <div className="flex h-full flex-col justify-between py-2">
           <div>
@@ -124,13 +138,26 @@ const ExampleSidebar: FC = function () {
  */
 const UserProfileMenu: FC = function () {
   const { isOpenOnSmallScreens } = useSidebarContext();
-  const isSidebarCollapsed = isOpenOnSmallScreens && !isSmallScreen();
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  // 监听窗口大小变化，但保持默认折叠状态
+  useEffect(() => {
+    function handleResize() {
+      // 无论屏幕大小如何，都保持折叠状态
+      setIsCollapsed(true);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <div
       className={classNames(
         "flex items-center justify-center py-4",
-        isSidebarCollapsed ? "px-2" : "gap-x-3 px-3",
+        isCollapsed && !isSmallScreen() ? "px-2" : "gap-x-3 px-3",
       )}
     >
       <Dropdown
@@ -140,7 +167,7 @@ const UserProfileMenu: FC = function () {
           <div
             className={classNames(
               "flex cursor-pointer items-center",
-              isSidebarCollapsed ? "" : "gap-x-3",
+              isCollapsed && !isSmallScreen() ? "" : "gap-x-3",
             )}
           >
             <div className="overflow-hidden rounded-full transition-all duration-200 hover:ring-2 hover:ring-blue-500 dark:hover:ring-blue-600">
@@ -152,7 +179,7 @@ const UserProfileMenu: FC = function () {
                 className="!h-8 min-h-8 !w-8 min-w-8 transition-transform duration-200 hover:scale-110"
               />
             </div>
-            {!isSidebarCollapsed && (
+            {!(isCollapsed && !isSmallScreen()) && (
               <div className="hidden text-left lg:block">
                 <div className="text-sm font-semibold text-gray-900 dark:text-white">
                   Neil Sims
