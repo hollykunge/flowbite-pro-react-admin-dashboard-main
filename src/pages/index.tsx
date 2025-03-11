@@ -11,11 +11,13 @@ import {
   PiMoonStarsDuotone,
   PiCalendarCheckDuotone,
   PiListChecksDuotone,
+  PiRocketLaunchDuotone,
 } from "react-icons/pi";
 import NavbarSidebarLayout from "../layouts/navbar-sidebar";
 import { PiChatTeardropDuotone } from "react-icons/pi";
 import { PiListNumbersDuotone } from "react-icons/pi";
 import { PiBookOpenDuotone } from "react-icons/pi";
+import { AiTwotoneSetting } from "react-icons/ai";
 
 import {
   HiOutlineVideoCamera,
@@ -33,27 +35,39 @@ import {
 const DashboardPage: FC = function () {
   return (
     <NavbarSidebarLayout>
-      <div className="min-h-screen px-4 pt-6 bg-gradient-to-br from-white to-blue-100 dark:from-gray-900 dark:to-gray-800">
-        <Greeting />
-        <div className="mt-6 flex flex-col md:flex-row gap-4">
-          {/* 左侧列 */}
-          <div className="w-full md:w-1/2 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <DateCard />
-              <TodoCard />
-            </div>
-            <div>
-              <MessageSummaryCard />
-            </div>
-          </div>
+      <div className="min-h-screen px-4 pt-6 bg-gradient-to-br from-white to-blue-100 dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
+        {/* 背景火箭图标 - 右上角，45度角 */}
+        <div className="absolute -right-20 -top-20 opacity-5 transform rotate-45 z-0">
+          <PiRocketLaunchDuotone size={300} />
+        </div>
 
-          {/* 右侧列 */}
-          <div className="w-full md:w-1/2 space-y-4">
-            <div>
-              <TaskSummaryCard />
+        {/* 背景火箭图标 - 左下角，-45度角 */}
+        <div className="absolute -left-20 -bottom-20 opacity-5 transform -rotate-45 z-0">
+          <PiRocketLaunchDuotone size={300} />
+        </div>
+
+        <div className="relative z-10">
+          <Greeting />
+          <div className="mt-6 flex flex-col md:flex-row gap-4">
+            {/* 左侧列 */}
+            <div className="w-full md:w-1/2 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <DateCard />
+                <TodoCard />
+              </div>
+              <div>
+                <MessageSummaryCard />
+              </div>
             </div>
-            <div>
-              <WorkPlanCard />
+
+            {/* 右侧列 */}
+            <div className="w-full md:w-1/2 space-y-4">
+              <div>
+                <TaskSummaryCard />
+              </div>
+              <div>
+                <WorkPlanCard />
+              </div>
             </div>
           </div>
         </div>
@@ -185,7 +199,7 @@ const Greeting: FC = function () {
         type="button"
         className="p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700"
       >
-        <HiOutlineCog className="w-6 h-6" />
+        <AiTwotoneSetting className="w-6 h-6" />
         <span className="sr-only">设置</span>
       </button>
     </div>
@@ -197,62 +211,101 @@ const Greeting: FC = function () {
  */
 const MessageSummaryCard: FC = function () {
   return (
-    <Card className="min-h-[300px] overflow-hidden">
-      <div className="flex items-center gap-1 py-6 px-6 -mt-px -mx-px bg-gradient-to-r from-blue-100 to-white dark:from-blue-900/50 dark:to-gray-800">
+    <Card className="min-h-[300px] overflow-hidden [&>div]:!p-0">
+      <div className="flex items-center gap-1 py-4 px-6 bg-gradient-to-r from-blue-100 to-white dark:from-blue-900/50 dark:to-gray-800">
         <PiChatTeardropDuotone className="size-5 text-blue-600 dark:text-blue-400" />
         <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
           消息摘要
         </h5>
       </div>
-      <div className="p-6 pt-4">
+      <div className="p-6">
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+          {/* 会议信息 */}
           <li className="py-3">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <img
-                  className="size-8 rounded-full"
-                  src="/images/users/neil-sims.png"
-                  alt="Neil Sims"
-                />
+                <div className="size-8 rounded-full bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
+                  <HiOutlineVideoCamera className="size-5 text-purple-600 dark:text-purple-400" />
+                </div>
               </div>
               <div className="flex-1 min-w-0 ms-4">
                 <div className="flex justify-between items-start">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    待处理任务
+                    项目周会
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    10:00 AM
+                  </p>
+                </div>
+                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                  <p className="flex items-center gap-1">
+                    <HiOutlineClock className="size-4" />
+                    2024-03-20 10:00-11:30
+                  </p>
+                  <p className="flex items-center gap-1">
+                    <HiOutlineChatBubbleBottomCenterText className="size-4" />
+                    腾讯会议：123-456-789
+                  </p>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          {/* 待办事项 */}
+          <li className="py-3">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <div className="size-8 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
+                  <PiListChecksDuotone className="size-5 text-green-600 dark:text-green-400" />
+                </div>
+              </div>
+              <div className="flex-1 min-w-0 ms-4">
+                <div className="flex justify-between items-start">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    待办事项
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     3项待办
                   </p>
                 </div>
                 <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 space-y-1">
-                  <p>用户管理模块开发</p>
-                  <p>首页性能优化</p>
-                  <p>数据可视化组件集成</p>
+                  <p className="flex items-center justify-between">
+                    <span>用户管理模块开发</span>
+                    <span>14:30</span>
+                  </p>
+                  <p className="flex items-center justify-between">
+                    <span>首页性能优化</span>
+                    <span>16:00</span>
+                  </p>
+                  <p className="flex items-center justify-between">
+                    <span>数据可视化组件集成</span>
+                    <span>明天</span>
+                  </p>
                 </div>
               </div>
             </div>
           </li>
+
+          {/* 需要回复 */}
           <li className="py-3">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <img
-                  className="size-8 rounded-full"
-                  src="/images/users/bonnie-green.png"
-                  alt="Bonnie Green"
-                />
+                <div className="size-8 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
+                  <PiChatTeardropDuotone className="size-5 text-blue-600 dark:text-blue-400" />
+                </div>
               </div>
               <div className="flex-1 min-w-0 ms-4">
                 <div className="flex justify-between items-start">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    待回复消息
+                    需要回复
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     2条未回复
                   </p>
                 </div>
                 <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 space-y-1">
-                  <p>张三：关于项目进度的咨询</p>
-                  <p>李四：新需求变更确认</p>
+                  <p>张三：关于新功能开发进度的确认，需要您的反馈</p>
+                  <p>李四：测试环境部署问题，请查看并回复处理方案</p>
                 </div>
               </div>
             </div>
@@ -268,14 +321,14 @@ const MessageSummaryCard: FC = function () {
  */
 const TaskSummaryCard: FC = function () {
   return (
-    <Card className="min-h-[300px] [&>div]:!block">
-      <div className="flex items-center gap-1 py-6 px-6 -mt-px -mx-px bg-gradient-to-r from-green-100 to-white dark:from-green-900/50 dark:to-gray-800">
+    <Card className="min-h-[300px] [&>div]:!p-0">
+      <div className="flex items-center gap-1 py-4 px-6 bg-gradient-to-r from-green-100 to-white dark:from-green-900/50 dark:to-gray-800 rounded-t-lg">
         <PiListNumbersDuotone className="size-5 text-green-600 dark:text-green-400" />
         <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
           任务摘要
         </h5>
       </div>
-      <div className="p-6 pt-4">
+      <div className="p-6">
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           <li className="py-3">
             <div className="flex flex-col gap-2">
@@ -333,14 +386,14 @@ const TaskSummaryCard: FC = function () {
  */
 const WorkPlanCard: FC = function () {
   return (
-    <Card className="min-h-[300px]">
-      <div className="flex items-center gap-2 py-6 px-6 -mt-px -mx-px bg-gradient-to-r from-orange-100 to-white dark:from-orange-900/50 dark:to-gray-800">
+    <Card className="min-h-[300px] [&>div]:!p-0">
+      <div className="flex items-center gap-1 py-4 px-6 bg-gradient-to-r from-orange-100 to-white dark:from-orange-900/50 dark:to-gray-800 rounded-t-lg">
         <PiBookOpenDuotone className="size-5 text-orange-600 dark:text-orange-400" />
         <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
           知识推荐
         </h5>
       </div>
-      <div className="p-6 pt-4">
+      <div className="p-6">
         <div className="space-y-4">
           <div className="bg-blue-50 dark:bg-blue-900/50 rounded-lg p-4 transition-colors hover:bg-blue-100 dark:hover:bg-blue-900/70">
             <div className="flex items-center gap-3 mb-3">

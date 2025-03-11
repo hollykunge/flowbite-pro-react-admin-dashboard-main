@@ -42,6 +42,7 @@ import {
   FaRegWindowMinimize,
   FaRegWindowRestore,
 } from "react-icons/fa";
+import { FaEarlybirds } from "react-icons/fa";
 
 import { useSidebarContext } from "../context/SidebarContext";
 import isSmallScreen from "../helpers/is-small-screen";
@@ -176,11 +177,11 @@ const ExampleNavbar: FC = function () {
       <div className="w-full lg:px-4 lg:pl-2">
         <div className="grid grid-cols-3 items-center">
           {/* 左侧品牌区域 */}
-          <div className="no-drag flex items-center">
+          <div className="flex items-center">
             {isPageWithSidebar && (
               <button
                 onClick={toggleSidebar}
-                className="mr-2 cursor-pointer rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:inline"
+                className="no-drag mr-2 cursor-pointer rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:inline"
               >
                 <span className="sr-only">Toggle sidebar</span>
                 {isOpenOnSmallScreens && isSmallScreen() ? (
@@ -192,9 +193,9 @@ const ExampleNavbar: FC = function () {
             )}
             <Navbar.Brand href="/" className="no-drag">
               <img
-                alt=""
-                src="https://flowbite.com/docs/images/logo.svg"
-                className="mr-2 h-5 sm:h-6"
+                src="/images/logo.svg"
+                alt="易知云雀 Logo"
+                className="mr-2 h-7 sm:h-8"
               />
               <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
                 易知云雀
@@ -202,7 +203,7 @@ const ExampleNavbar: FC = function () {
             </Navbar.Brand>
           </div>
 
-          {/* 中间搜索区域 - 可拖动 */}
+          {/* 中间搜索区域 */}
           <div className="flex justify-center">
             <button
               type="button"
@@ -215,12 +216,12 @@ const ExampleNavbar: FC = function () {
           </div>
 
           {/* 右侧功能区域 */}
-          <div className="no-drag flex items-center justify-end lg:gap-2">
+          <div className="flex items-center justify-end lg:gap-2">
             <Button
               outline
               gradientDuoTone="purpleToPink"
               size="xs"
-              className="mr-2 hover:text-white group"
+              className="no-drag mr-2 hover:text-white group"
             >
               <PiBirdDuotone className="mr-1 size-5 text-purple-500 group-hover:text-white" />
               <span className="text-purple-500 group-hover:text-white">
@@ -229,15 +230,23 @@ const ExampleNavbar: FC = function () {
             </Button>
             <button
               onClick={openSearchModal}
-              className="cursor-pointer rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:ring-2 focus:ring-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700 dark:focus:ring-gray-700 md:hidden"
+              className="no-drag cursor-pointer rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:ring-2 focus:ring-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700 dark:focus:ring-gray-700 md:hidden"
             >
               <span className="sr-only">Search</span>
               <HiSearch className="size-5" />
             </button>
-            <NotificationBellDropdown />
-            <AppDrawerDropdown />
-            <DarkThemeToggle />
-            <WindowControls />
+            <div className="no-drag">
+              <NotificationBellDropdown />
+            </div>
+            <div className="no-drag">
+              <AppDrawerDropdown />
+            </div>
+            <div className="no-drag">
+              <DarkThemeToggle />
+            </div>
+            <div className="no-drag">
+              <WindowControls />
+            </div>
           </div>
         </div>
       </div>
