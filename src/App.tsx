@@ -15,6 +15,7 @@ import FlowbiteWrapper from "./components/flowbite-wrapper";
 import DiscussionPage from "./pages/discussion";
 import WorkspacePage from "./pages/workspace";
 import AIChat from "./components/AIChat";
+import ApplicationsPage from "./pages/applications";
 
 const App: FC = function () {
   return (
@@ -23,6 +24,7 @@ const App: FC = function () {
         <Route element={<FlowbiteWrapper />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/kanban" element={<KanbanPage />} />
+          <Route path="/applications" element={<ApplicationsPage />} />
           <Route path="/discussion" element={<DiscussionPage />} />
           <Route path="/workspace" element={<WorkspacePage />} />
           <Route path="/aichat" element={<AIChat />} />

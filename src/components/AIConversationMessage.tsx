@@ -24,6 +24,18 @@ interface AIConversationMessageProps {
    */
   isUser?: boolean;
   /**
+   * 发送者名称
+   */
+  sender?: string;
+  /**
+   * 发送者头像
+   */
+  avatarSrc?: string;
+  /**
+   * 消息时间
+   */
+  time?: string;
+  /**
    * 复制按钮点击事件处理函数
    */
   onCopy?: () => void;
@@ -32,12 +44,15 @@ interface AIConversationMessageProps {
 /**
  * AI对话消息组件
  *
- * 专为AI对话设计的消息组件，简洁现代的设计风格，适合长文本显示
+ * 专为AI对话设计的消息组件，文档式布局，适合长文本阅读
  */
 const AIConversationMessage: FC<AIConversationMessageProps> = ({
   message,
   messageType = "text",
   isUser = false,
+  sender = "",
+  avatarSrc = "",
+  time = "",
   onCopy,
 }) => {
   /**
@@ -92,30 +107,39 @@ const AIConversationMessage: FC<AIConversationMessageProps> = ({
   };
 
   return (
-    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
-      <div className={`max-w-3xl ${isUser ? "order-2" : "order-1"}`}>
-        <div className="flex items-start gap-2.5">
-          <div
-            className={`flex flex-col gap-1 ${isUser ? "items-end" : "items-start"}`}
-          >
-            <div
-              className={`rounded-lg px-4 py-3 ${
-                isUser
-                  ? "rounded-tr-none bg-primary-600 text-white dark:bg-primary-500"
-                  : "rounded-tl-none bg-gray-100 dark:bg-gray-700"
-              }`}
-            >
-              {renderMessageContent()}
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={handleCopy}
-                className="rounded p-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                复制
-              </button>
-            </div>
+    <div className="w-full">
+      <div className="mb-2 flex items-center">
+        {avatarSrc && (
+          <img
+            src={avatarSrc}
+            alt={sender}
+            className="mr-2 h-8 w-8 rounded-full"
+          />
+        )}
+        <div className="font-medium text-gray-900 dark:text-white">
+          {sender}
+        </div>
+        {time && (
+          <div className="ml-2 text-xs text-gray-500 dark:text-gray-400">
+            {time}
           </div>
+        )}
+      </div>
+      <div
+        className={`mb-4 rounded-lg px-4 py-3 ${
+          isUser
+            ? "bg-gray-100 dark:bg-gray-700"
+            : "bg-gray-50 dark:bg-gray-800"
+        }`}
+      >
+        {renderMessageContent()}
+        <div className="mt-2 flex justify-end">
+          <button
+            onClick={handleCopy}
+            className="rounded p-1 text-xs text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          >
+            复制
+          </button>
         </div>
       </div>
     </div>

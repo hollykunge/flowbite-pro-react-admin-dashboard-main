@@ -59,17 +59,7 @@ const ExampleSidebar: FC = function () {
                 >
                   主页
                 </Sidebar.Item>
-                <Sidebar.Item
-                  href="/kanban"
-                  icon={HiViewGrid}
-                  active={"/kanban" === currentPage}
-                  className={classNames({
-                    "bg-gray-100 dark:bg-gray-700": "/kanban" === currentPage,
-                    "active-sidebar-item": "/kanban" === currentPage,
-                  })}
-                >
-                  任务
-                </Sidebar.Item>
+
                 <Sidebar.Item
                   href="/discussion"
                   icon={PiChatTeardropDotsFill}
@@ -104,6 +94,18 @@ const ExampleSidebar: FC = function () {
                   })}
                 >
                   百灵AI
+                </Sidebar.Item>
+                <Sidebar.Item
+                  href="/applications"
+                  icon={HiViewGrid}
+                  active={"/applications" === currentPage}
+                  className={classNames({
+                    "bg-gray-100 dark:bg-gray-700":
+                      "/applications" === currentPage,
+                    "active-sidebar-item": "/applications" === currentPage,
+                  })}
+                >
+                  应用
                 </Sidebar.Item>
               </Sidebar.ItemGroup>
             </Sidebar.Items>

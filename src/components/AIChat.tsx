@@ -5,6 +5,9 @@ import type { MessageSecurityLevel } from "../components/MessageInput";
 import ModernMessageInput from "../components/ModernMessageInput";
 import AIConversationList from "../components/AIConversationList";
 import NavbarSidebarLayout from "../layouts/navbar-sidebar";
+import AIWelcomePage from "./AIWelcomePage";
+import AIInputBox from "../components/AIInputBox";
+import "../styles/scrollbar.css";
 
 /**
  * 消息类型定义
@@ -144,6 +147,7 @@ const AIChatPage: FC = function () {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const modelDropdownRef = useRef<HTMLDivElement>(null);
   const historyDropdownRef = useRef<HTMLDivElement>(null);
+  const [showWelcomePage, setShowWelcomePage] = useState(true);
 
   // 可用的大模型列表
   const availableModels = [
@@ -247,6 +251,12 @@ const AIChatPage: FC = function () {
   const handleSendMessage = () => {
     if (message.trim() === "") return;
 
+    // 如果当前显示的是欢迎页面，则切换到聊天界面
+    if (showWelcomePage) {
+      setShowWelcomePage(false);
+      return; // 先切换界面，等界面切换后再通过handleWelcomePageSendMessage调用
+    }
+
     const userMessage: MessageType = {
       id: messages.length + 1,
       sender: "用户",
@@ -258,7 +268,7 @@ const AIChatPage: FC = function () {
       }),
       messageType: "text",
       isOwn: true,
-      securityLevel,
+      securityLevel: securityLevel,
     };
 
     setMessages((prevMessages) => [...prevMessages, userMessage]);
@@ -307,6 +317,61 @@ const AIChatPage: FC = function () {
     }, 1000);
   };
 
+  /**
+   * 处理从欢迎页面发送的消息
+   * @param welcomeMessage 用户输入的消息
+   */
+  const handleWelcomePageSendMessage = (welcomeMessage: string) => {
+    if (welcomeMessage.trim() === "") return;
+
+    setShowWelcomePage(false);
+
+    // 延迟一下再发送消息，确保界面已经切换
+    setTimeout(() => {
+      const userMessage: MessageType = {
+        id: messages.length + 1,
+        sender: "用户",
+        avatarSrc: "/images/users/bonnie-green.png",
+        content: welcomeMessage,
+        time: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        messageType: "text",
+        isOwn: true,
+        securityLevel: securityLevel,
+      };
+
+      const newMessages = [...messages, userMessage];
+      setMessages(newMessages);
+      setMessage("");
+
+      // 模拟AI回复
+      setTimeout(() => {
+        const aiResponse: MessageType = {
+          id: newMessages.length + 1,
+          sender: "AI意识体",
+          avatarSrc: "/images/logo.svg",
+          content: `我已收到您的消息: "${welcomeMessage}"。正在处理中...`,
+          time: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          messageType: "text",
+          isOwn: false,
+          securityLevel: securityLevel,
+        };
+        setMessages([...newMessages, aiResponse]);
+
+        // 滚动到底部
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop =
+            messagesContainerRef.current.scrollHeight;
+        }
+      }, 1000);
+    }, 100);
+  };
+
   const handleSecurityLevelChange = (level: MessageSecurityLevel) => {
     setSecurityLevel(level);
   };
@@ -319,179 +384,238 @@ const AIChatPage: FC = function () {
     }
   };
 
+  /**
+   * 创建新对话
+   */
   const handleNewChat = () => {
+    // 重置消息列表
+    setMessages([]);
+    // 重置输入框
+    setMessage("");
+    // 显示欢迎页面
+    setShowWelcomePage(true);
+
+    // 创建新的会话记录
     const newSession: ChatSession = {
-      id: Date.now().toString(),
-      title: `对话 ${chatSessions.length + 1}`,
+      id: `session-${Date.now()}`,
+      title: `新对话 ${chatSessions.length + 1}`,
       lastMessage: "",
       timestamp: new Date().toLocaleString(),
     };
+
+    // 将新会话添加到会话列表
     setChatSessions([newSession, ...chatSessions]);
-    setMessages([]);
   };
 
+  /**
+   * 选择会话
+   * @param sessionId 会话ID
+   */
   const handleSelectSession = (sessionId: string) => {
-    const session = chatSessions.find((s) => s.id === sessionId);
-    if (session) {
-      // 这里可以添加加载对应会话消息的逻辑
-      setIsHistoryOpen(false);
-    }
+    // 这里应该从后端获取对应会话的消息历史
+    // 这里仅做模拟，实际应用中应该从API获取数据
+    console.log(`选择会话: ${sessionId}`);
+
+    // 确保切换到聊天界面
+    setShowWelcomePage(false);
+
+    // 关闭会话历史下拉菜单
+    setIsHistoryOpen(false);
+
+    // 模拟加载历史消息
+    // 实际应用中应该从API获取数据
+    const mockMessages: MessageType[] = [
+      {
+        id: 1,
+        sender: "用户",
+        avatarSrc: "/images/users/bonnie-green.png",
+        content: "这是历史会话中的消息",
+        time: "10:30",
+        messageType: "text",
+        isOwn: true,
+        securityLevel: "非密",
+      },
+      {
+        id: 2,
+        sender: "AI意识体",
+        avatarSrc: "/images/logo.svg",
+        content: "这是AI在历史会话中的回复",
+        time: "10:31",
+        messageType: "text",
+        isOwn: false,
+        securityLevel: "非密",
+      },
+    ];
+
+    setMessages(mockMessages);
   };
 
   return (
     <NavbarSidebarLayout>
-      <div className="relative size-full">
-        {/* 顶部工具栏 */}
-        <div className="border-b border-gray-200 bg-white px-4 py-2.5 pb-4 dark:border-gray-700 dark:bg-gray-800 sm:pb-2.5">
-          <div className="mb-2.5 flex w-full items-center justify-between sm:mb-0">
-            <div className="flex items-center space-x-3">
-              <button
-                type="button"
-                className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:ring-2 focus:ring-gray-300 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600"
-                onClick={() => setIsSettingsOpen(true)}
-              >
-                <span className="sr-only">聊天设置</span>
-                <HiCog className="size-6" />
-              </button>
+      {showWelcomePage ? (
+        <AIWelcomePage onSendMessage={handleWelcomePageSendMessage} />
+      ) : (
+        <div className="flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900">
+          <div className="relative h-[calc(100vh-64px)]">
+            {/* 顶部工具栏 */}
+            <div className="border-b border-gray-200 bg-white px-4 py-2.5 pb-4 dark:border-gray-700 dark:bg-gray-800 sm:pb-2.5">
+              <div className="mb-2.5 flex w-full items-center justify-between sm:mb-0">
+                <div className="flex items-center space-x-3">
+                  <button
+                    type="button"
+                    className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:ring-2 focus:ring-gray-300 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600"
+                    onClick={() => setIsSettingsOpen(true)}
+                  >
+                    <span className="sr-only">聊天设置</span>
+                    <HiCog className="size-6" />
+                  </button>
 
-              {/* 大模型选择器 */}
-              <div className="relative" ref={modelDropdownRef}>
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600"
-                  onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
-                >
-                  {selectedModel}
-                  <HiChevronDown className="ml-2 size-4" />
-                </button>
-                {isModelDropdownOpen && (
-                  <div className="absolute left-0 z-10 mt-2 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none dark:bg-gray-700">
-                    <div className="py-1">
-                      <div className="px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">
-                        选择大模型
-                      </div>
-                      {availableModels.map((model) => (
-                        <button
-                          key={model.id}
-                          className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
-                          onClick={() => handleModelChange(model.id)}
-                        >
-                          <div className="font-medium">{model.name}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {model.provider}
+                  {/* 大模型选择器 */}
+                  <div className="relative" ref={modelDropdownRef}>
+                    <button
+                      type="button"
+                      className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600"
+                      onClick={() =>
+                        setIsModelDropdownOpen(!isModelDropdownOpen)
+                      }
+                    >
+                      {selectedModel}
+                      <HiChevronDown className="ml-2 size-4" />
+                    </button>
+                    {isModelDropdownOpen && (
+                      <div className="absolute left-0 z-10 mt-2 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none dark:bg-gray-700">
+                        <div className="py-1">
+                          <div className="px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+                            选择大模型
                           </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* 会话历史 */}
-              <div className="relative" ref={historyDropdownRef}>
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600"
-                  onClick={() => setIsHistoryOpen(!isHistoryOpen)}
-                >
-                  会话历史
-                  <HiChevronDown className="ml-2 size-4" />
-                </button>
-                {isHistoryOpen && (
-                  <div className="absolute left-0 z-10 mt-2 w-72 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none dark:bg-gray-700">
-                    <div className="py-1">
-                      <div className="px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">
-                        最近会话
-                      </div>
-                      {chatSessions.length === 0 ? (
-                        <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">
-                          暂无会话历史
+                          {availableModels.map((model) => (
+                            <button
+                              key={model.id}
+                              className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                              onClick={() => handleModelChange(model.id)}
+                            >
+                              <div className="font-medium">{model.name}</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
+                                {model.provider}
+                              </div>
+                            </button>
+                          ))}
                         </div>
-                      ) : (
-                        chatSessions.map((session) => (
-                          <button
-                            key={session.id}
-                            className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
-                            onClick={() => handleSelectSession(session.id)}
-                          >
-                            <div className="font-medium">{session.title}</div>
-                            <div className="truncate text-xs text-gray-500 dark:text-gray-400">
-                              {session.lastMessage || "暂无消息"}
-                            </div>
-                            <div className="text-xs text-gray-400 dark:text-gray-500">
-                              {session.timestamp}
-                            </div>
-                          </button>
-                        ))
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
-                )}
+
+                  {/* 会话历史 */}
+                  <div className="relative" ref={historyDropdownRef}>
+                    <button
+                      type="button"
+                      className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600"
+                      onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+                    >
+                      会话历史
+                      <HiChevronDown className="ml-2 size-4" />
+                    </button>
+                    {isHistoryOpen && (
+                      <div className="absolute left-0 z-10 mt-2 w-72 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none dark:bg-gray-700">
+                        <div className="py-1">
+                          <div className="px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+                            最近会话
+                          </div>
+                          {chatSessions.length === 0 ? (
+                            <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">
+                              暂无会话历史
+                            </div>
+                          ) : (
+                            chatSessions.map((session) => (
+                              <button
+                                key={session.id}
+                                className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                                onClick={() => handleSelectSession(session.id)}
+                              >
+                                <div className="font-medium">
+                                  {session.title}
+                                </div>
+                                <div className="truncate text-xs text-gray-500 dark:text-gray-400">
+                                  {session.lastMessage || "暂无消息"}
+                                </div>
+                                <div className="text-xs text-gray-400 dark:text-gray-500">
+                                  {session.timestamp}
+                                </div>
+                              </button>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <button
+                    type="button"
+                    className="me-4 hidden w-full items-center justify-center rounded-lg bg-primary-700 px-6 py-2 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 sm:flex sm:w-auto"
+                    onClick={handleNewChat}
+                  >
+                    <svg
+                      className="me-2 size-4"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M17.44 3a1 1 0 0 1 .707.293l2.56 2.56a1 1 0 0 1 0 1.414L18.194 9.78 14.22 5.806l2.513-2.513A1 1 0 0 1 17.44 3Zm-4.634 4.22-9.513 9.513a1 1 0 0 0 0 1.414l2.56 2.56a1 1 0 0 0 1.414 0l9.513-9.513-3.974-3.974ZM6 6a1 1 0 0 1 1 1v1h1a1 1 0 0 1 0 2H7v1a1 1 0 1 1-2 0v-1H4a1 1 0 0 1 0-2h1V7a1 1 0 0 1 1-1Zm9 9a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0v-1h-1a1 1 0 1 1 0-2h1v-1a1 1 0 0 1 1-1Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    新对话
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="flex items-center">
-              <button
-                type="button"
-                className="me-4 hidden w-full items-center justify-center rounded-lg bg-primary-700 px-6 py-2 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 sm:flex sm:w-auto"
-                onClick={handleNewChat}
-              >
-                <svg
-                  className="me-2 size-4"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M17.44 3a1 1 0 0 1 .707.293l2.56 2.56a1 1 0 0 1 0 1.414L18.194 9.78 14.22 5.806l2.513-2.513A1 1 0 0 1 17.44 3Zm-4.634 4.22-9.513 9.513a1 1 0 0 0 0 1.414l2.56 2.56a1 1 0 0 0 1.414 0l9.513-9.513-3.974-3.974ZM6 6a1 1 0 0 1 1 1v1h1a1 1 0 0 1 0 2H7v1a1 1 0 1 1-2 0v-1H4a1 1 0 0 1 0-2h1V7a1 1 0 0 1 1-1Zm9 9a1 1 0 0 1 1 1v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0v-1h-1a1 1 0 1 1 0-2h1v-1a1 1 0 0 1 1-1Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                新对话
-              </button>
-            </div>
-          </div>
-        </div>
 
-        {/* 消息区域 */}
-        <div
-          className="h-4/5 overflow-y-auto"
-          ref={messagesContainerRef}
-          onScroll={handleScroll}
-        >
-          <AIConversationList
-            messages={messages}
-            onCopyMessage={(messageId) => {
-              console.log(`复制消息 ID: ${messageId}`);
-            }}
-          />
-        </div>
-
-        {/* 输入区域 */}
-        <div className="absolute bottom-0 left-0 w-full">
-          <div className="w-full bg-transparent px-4 py-3">
-            <div className="flex items-center gap-4">
-              <ModernMessageInput
-                message={message}
-                onMessageChange={handleMessageChange}
-                onSendMessage={handleSendMessage}
-                securityLevel={securityLevel}
-                onSecurityLevelChange={handleSecurityLevelChange}
-                onDeepSearch={() => console.log("深度搜索模式")}
-                onThink={() => console.log("思考模式")}
+            {/* 消息区域 */}
+            <div
+              className="h-4/5 overflow-y-auto bg-gray-50 dark:bg-gray-900 px-4 elegant-scrollbar show-scrollbar-on-hover"
+              ref={messagesContainerRef}
+              onScroll={handleScroll}
+            >
+              <AIConversationList
+                messages={messages}
+                onCopyMessage={(messageId) => {
+                  console.log(`复制消息 ID: ${messageId}`);
+                }}
               />
             </div>
-          </div>
-        </div>
-      </div>
 
-      <SettingsDrawer
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-      />
+            {/* 输入区域 */}
+            <div className="absolute bottom-0 left-0 w-full">
+              <div className="w-full bg-gray-50 dark:bg-gray-900 px-4 py-3">
+                <div className="flex items-center justify-center">
+                  <div className="w-full max-w-4xl">
+                    <AIInputBox
+                      message={message}
+                      onMessageChange={handleMessageChange}
+                      onSendMessage={handleSendMessage}
+                      securityLevel={securityLevel}
+                      onSecurityLevelChange={handleSecurityLevelChange}
+                      onDeepSearch={() => console.log("深度搜索模式")}
+                      onThink={() => console.log("思考模式")}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <SettingsDrawer
+            isOpen={isSettingsOpen}
+            onClose={() => setIsSettingsOpen(false)}
+          />
+        </div>
+      )}
     </NavbarSidebarLayout>
   );
 };

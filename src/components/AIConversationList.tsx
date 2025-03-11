@@ -70,26 +70,31 @@ const AIConversationList: FC<AIConversationListProps> = ({
   };
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto p-4">
-      <div className="flex flex-col space-y-6">
-        {messages.length === 0 ? (
-          <div className="flex h-full items-center justify-center">
-            <p className="text-center text-gray-500 dark:text-gray-400">
-              开始新的对话吧！
-            </p>
-          </div>
-        ) : (
-          messages.map((message) => (
-            <AIConversationMessage
-              key={message.id}
-              message={message.content}
-              messageType={message.messageType}
-              isUser={message.isOwn}
-              onCopy={() => handleCopy(message.id)}
-            />
-          ))
-        )}
-        <div ref={messagesEndRef} />
+    <div className="flex h-full flex-col overflow-y-auto p-4 elegant-scrollbar">
+      <div className="mx-auto w-full max-w-4xl">
+        <div className="flex flex-col space-y-6">
+          {messages.length === 0 ? (
+            <div className="flex h-full items-center justify-center">
+              <p className="text-center text-gray-500 dark:text-gray-400">
+                开始新的对话吧！
+              </p>
+            </div>
+          ) : (
+            messages.map((message) => (
+              <AIConversationMessage
+                key={message.id}
+                message={message.content}
+                messageType={message.messageType}
+                isUser={message.isOwn}
+                sender={message.sender}
+                avatarSrc={message.avatarSrc}
+                time={message.time}
+                onCopy={() => handleCopy(message.id)}
+              />
+            ))
+          )}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
     </div>
   );

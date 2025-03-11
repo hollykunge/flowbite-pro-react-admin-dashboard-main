@@ -91,39 +91,39 @@ const MessageInput: FC<MessageInputProps> = ({
         </div>
 
         {/* 功能按钮和发送按钮区域 */}
-        <div className="flex items-center justify-between border-t border-gray-200 p-1 dark:border-gray-700">
+        <div className="flex items-center justify-between p-2 dark:border-gray-700">
           {/* 左侧功能按钮 */}
-          <div className="flex flex-wrap items-center space-x-1">
+          <div className="flex flex-wrap items-center space-x-2">
             <button
               type="button"
-              className="inline-flex cursor-pointer justify-center rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               title="上传图片"
             >
-              <HiOutlinePhotograph />
+              <HiOutlinePhotograph className="size-5" />
               <span className="sr-only">上传图片</span>
             </button>
             <button
               type="button"
-              className="inline-flex cursor-pointer justify-center rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               title="添加表情"
             >
-              <MdOutlineEmojiEmotions />
+              <MdOutlineEmojiEmotions className="size-5" />
               <span className="sr-only">添加表情</span>
             </button>
             <button
               type="button"
-              className="inline-flex cursor-pointer justify-center rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               title="添加文件"
             >
-              <FiFile />
+              <FiFile className="size-5" />
               <span className="sr-only">添加文件</span>
             </button>
             <button
               type="button"
-              className="inline-flex cursor-pointer justify-center rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               title="录制语音"
             >
-              <AiOutlineAudio />
+              <AiOutlineAudio className="size-5" />
               <span className="sr-only">录制语音</span>
             </button>
           </div>
@@ -189,7 +189,7 @@ const MessageInput: FC<MessageInputProps> = ({
               </div>
             </div>
 
-            <Button size="xs">
+            <Button size="sm">
               <BiSend className="mr-2 size-5" />
               发送
             </Button>
