@@ -27,6 +27,7 @@ import {
   HiX,
   HiCalendar,
 } from "react-icons/hi";
+import { MdCloudDownload, MdCloudUpload } from "react-icons/md";
 import { PiBirdDuotone } from "react-icons/pi";
 import { Calendar, Col, Radio, Row, Select } from "antd";
 import type { CalendarProps } from "antd";
@@ -123,6 +124,242 @@ const WindowControls: FC = function () {
   );
 };
 
+// 添加下载上传管理组件
+const DownloadUploadManager: FC = function () {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"upload" | "download">("upload");
+
+  // 打开模态框
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // 关闭模态框
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <button
+        onClick={openModal}
+        className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
+      >
+        <span className="sr-only">下载上传管理</span>
+        <MdCloudDownload className="text-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
+      </button>
+
+      {/* 自定义模态框，与搜索框样式一致 */}
+      <div
+        className={`${
+          isModalOpen ? "fixed" : "hidden"
+        } inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50 p-4 backdrop-blur-sm`}
+      >
+        <div className="mx-auto w-full max-w-2xl overflow-hidden rounded-xl bg-white/95 shadow-xl transition-all dark:bg-gray-800/95">
+          {/* 模态框头部 */}
+          <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {activeTab === "upload" ? (
+                  <MdCloudUpload className="text-xl text-blue-600 dark:text-blue-500" />
+                ) : (
+                  <MdCloudDownload className="text-xl text-purple-600 dark:text-purple-500" />
+                )}
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                  文件传输管理
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={closeModal}
+                className="rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                <HiX className="size-5" />
+                <span className="sr-only">关闭</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 模态框内容 */}
+          <div className="p-4">
+            <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
+              <ul className="flex flex-wrap -mb-px text-sm font-medium text-center">
+                <li className="mr-2">
+                  <button
+                    onClick={() => setActiveTab("upload")}
+                    className={`inline-flex items-center justify-center p-4 ${
+                      activeTab === "upload"
+                        ? "text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500"
+                        : "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    }`}
+                  >
+                    <MdCloudUpload className="mr-2 size-4" />
+                    上传管理
+                  </button>
+                </li>
+                <li className="mr-2">
+                  <button
+                    onClick={() => setActiveTab("download")}
+                    className={`inline-flex items-center justify-center p-4 ${
+                      activeTab === "download"
+                        ? "text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500"
+                        : "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    }`}
+                  >
+                    <MdCloudDownload className="mr-2 size-4" />
+                    下载管理
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            {activeTab === "upload" ? (
+              <div className="space-y-4">
+                <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                  <div className="mb-2 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="mr-2 flex size-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+                        <MdCloudUpload className="size-5 text-blue-600 dark:text-blue-300" />
+                      </div>
+                      <div>
+                        <h5 className="text-sm font-medium text-gray-900 dark:text-white">
+                          项目报告.docx
+                        </h5>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          2.5MB / 2.5MB
+                        </p>
+                      </div>
+                    </div>
+                    <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-300">
+                      已完成
+                    </span>
+                  </div>
+                  <div className="w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                    <div
+                      className="rounded-full bg-green-600 p-0.5 text-center text-xs font-medium leading-none text-green-100 dark:bg-green-500"
+                      style={{ width: "100%" }}
+                    >
+                      100%
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                  <div className="mb-2 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="mr-2 flex size-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+                        <MdCloudUpload className="size-5 text-blue-600 dark:text-blue-300" />
+                      </div>
+                      <div>
+                        <h5 className="text-sm font-medium text-gray-900 dark:text-white">
+                          产品设计图.psd
+                        </h5>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          15MB / 45MB
+                        </p>
+                      </div>
+                    </div>
+                    <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                      上传中
+                    </span>
+                  </div>
+                  <div className="w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                    <div
+                      className="rounded-full bg-blue-600 p-0.5 text-center text-xs font-medium leading-none text-blue-100 dark:bg-blue-500"
+                      style={{ width: "33%" }}
+                    >
+                      33%
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                  <div className="mb-2 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="mr-2 flex size-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900">
+                        <MdCloudDownload className="size-5 text-purple-600 dark:text-purple-300" />
+                      </div>
+                      <div>
+                        <h5 className="text-sm font-medium text-gray-900 dark:text-white">
+                          系统更新包.zip
+                        </h5>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          120MB / 120MB
+                        </p>
+                      </div>
+                    </div>
+                    <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-300">
+                      已完成
+                    </span>
+                  </div>
+                  <div className="w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                    <div
+                      className="rounded-full bg-green-600 p-0.5 text-center text-xs font-medium leading-none text-green-100 dark:bg-green-500"
+                      style={{ width: "100%" }}
+                    >
+                      100%
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                  <div className="mb-2 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="mr-2 flex size-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900">
+                        <MdCloudDownload className="size-5 text-purple-600 dark:text-purple-300" />
+                      </div>
+                      <div>
+                        <h5 className="text-sm font-medium text-gray-900 dark:text-white">
+                          研究数据集.csv
+                        </h5>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          25MB / 80MB
+                        </p>
+                      </div>
+                    </div>
+                    <span className="rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800 dark:bg-purple-900 dark:text-purple-300">
+                      下载中
+                    </span>
+                  </div>
+                  <div className="w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                    <div
+                      className="rounded-full bg-purple-600 p-0.5 text-center text-xs font-medium leading-none text-purple-100 dark:bg-purple-500"
+                      style={{ width: "31%" }}
+                    >
+                      31%
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 模态框底部 */}
+          <div className="border-t border-gray-200 p-4 dark:border-gray-700">
+            <div className="flex w-full justify-between">
+              <button
+                type="button"
+                onClick={closeModal}
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              >
+                关闭
+              </button>
+              <button
+                type="button"
+                className="rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                {activeTab === "upload" ? "新建上传" : "新建下载"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
 const ExampleNavbar: FC = function () {
   const { isOpenOnSmallScreens, isPageWithSidebar, setOpenOnSmallScreens } =
     useSidebarContext();
@@ -177,20 +414,7 @@ const ExampleNavbar: FC = function () {
       <div className="w-full lg:px-4 lg:pl-2">
         <div className="grid grid-cols-3 items-center">
           {/* 左侧品牌区域 */}
-          <div className="flex items-center">
-            {isPageWithSidebar && (
-              <button
-                onClick={toggleSidebar}
-                className="no-drag mr-2 cursor-pointer rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:inline"
-              >
-                <span className="sr-only">Toggle sidebar</span>
-                {isOpenOnSmallScreens && isSmallScreen() ? (
-                  <HiX className="size-5" />
-                ) : (
-                  <HiMenuAlt1 className="size-5" />
-                )}
-              </button>
-            )}
+          <div className="flex items-center ml-2">
             <Navbar.Brand href="/" className="no-drag">
               <img
                 src="/images/logo.svg"
@@ -208,7 +432,7 @@ const ExampleNavbar: FC = function () {
             <button
               type="button"
               onClick={openSearchModal}
-              className="no-drag hidden h-8 w-64 items-center rounded-lg bg-gray-200/90 px-2 py-2 text-left text-sm text-gray-600 hover:bg-gray-300/90 dark:bg-gray-600/90 dark:text-gray-300 dark:hover:bg-gray-500/90 md:flex"
+              className="no-drag hidden h-7 w-64 items-center rounded-lg border-0 bg-gray-100 px-2 py-1.5 text-left text-sm text-gray-600 shadow-sm transition-all hover:bg-gray-100/90 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700/70 dark:text-gray-300 dark:hover:bg-gray-600/70 dark:focus:ring-blue-500 md:flex"
             >
               <HiSearch className="mr-2 size-4" />
               <span>搜索...</span>
@@ -230,9 +454,9 @@ const ExampleNavbar: FC = function () {
             </Button>
             <button
               onClick={openSearchModal}
-              className="no-drag cursor-pointer rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:ring-2 focus:ring-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:bg-gray-700 dark:focus:ring-gray-700 md:hidden"
+              className="no-drag cursor-pointer rounded-lg p-1.5 text-gray-600 transition-all hover:bg-gray-50/90 hover:text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700/70 dark:hover:text-white dark:focus:ring-blue-500 md:hidden"
             >
-              <span className="sr-only">Search</span>
+              <span className="sr-only">搜索</span>
               <HiSearch className="size-5" />
             </button>
             <div className="no-drag">
@@ -240,6 +464,9 @@ const ExampleNavbar: FC = function () {
             </div>
             <div className="no-drag">
               <AppDrawerDropdown />
+            </div>
+            <div className="no-drag">
+              <DownloadUploadManager />
             </div>
             <div className="no-drag">
               <DarkThemeToggle />
@@ -253,9 +480,9 @@ const ExampleNavbar: FC = function () {
 
       {/* 搜索模态框 */}
       <div
-        className={`${isSearchModalOpen ? "fixed" : "hidden"} inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50 p-4`}
+        className={`${isSearchModalOpen ? "fixed" : "hidden"} inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50 p-4 backdrop-blur-sm`}
       >
-        <div className="mx-auto w-full max-w-2xl rounded-lg bg-white shadow-2xl transition-all dark:bg-gray-800">
+        <div className="mx-auto w-full max-w-2xl overflow-hidden rounded-xl bg-white/95 shadow-xl transition-all dark:bg-gray-800/95">
           {/* 搜索输入区域 */}
           <div className="p-5">
             <form onSubmit={handleSearchSubmit}>
@@ -266,16 +493,17 @@ const ExampleNavbar: FC = function () {
                 <input
                   type="search"
                   id="modal-search"
-                  className="block w-full rounded-lg bg-gray-200/90 p-4 pl-10 text-sm text-gray-800 focus:ring-blue-500 dark:bg-gray-600/90 dark:text-white dark:placeholder:text-gray-300 dark:focus:ring-blue-500"
+                  className="block w-full rounded-lg border-2 bg-gray-100 p-2 pl-10 text-sm text-gray-800 ring-0 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700/70 dark:text-white dark:placeholder:text-gray-300 dark:focus:bg-gray-700 dark:focus:ring-blue-500"
                   placeholder="搜索关键词..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   required
+                  autoFocus
                 />
                 <button
                   type="button"
                   onClick={closeSearchModal}
-                  className="absolute right-2.5 top-2.5 rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="absolute inset-y-0 right-2.5 flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   <HiX className="size-5" />
                   <span className="sr-only">关闭</span>
@@ -285,15 +513,14 @@ const ExampleNavbar: FC = function () {
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     type="submit"
-                    className="flex items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700 focus:outline-none focus:ring-0 dark:bg-blue-600 dark:hover:bg-blue-700"
                   >
                     <HiSearch className="mr-2 size-4" />
                     全局搜索
                   </button>
-                  <Button
+                  <button
                     type="button"
-                    outline
-                    gradientDuoTone="purpleToPink"
+                    className="flex items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 px-5 py-2.5 text-center text-sm font-medium text-white shadow-sm transition-all hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-0"
                     onClick={() => {
                       console.log("AI搜索:", searchQuery);
                       closeSearchModal();
@@ -313,14 +540,14 @@ const ExampleNavbar: FC = function () {
                       ></path>
                     </svg>
                     AI搜索
-                  </Button>
+                  </button>
                 </div>
               </div>
             </form>
           </div>
 
           {/* 搜索建议区域 */}
-          <div className="border-t border-gray-200 px-5 py-4 dark:border-gray-700">
+          <div className="px-5 py-4 dark:border-gray-700">
             <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
               热门搜索
             </h3>
@@ -365,7 +592,7 @@ const ExampleNavbar: FC = function () {
           </div>
 
           {/* 最近搜索区域 */}
-          <div className="border-t border-gray-200 px-5 py-4 dark:border-gray-700">
+          <div className="mt-2 px-5 py-4 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
                 最近搜索
@@ -693,8 +920,9 @@ const useStyle = createStyles(({ token, css, cx }) => {
 });
 
 const AppDrawerDropdown: FC = function () {
-  const { styles } = useStyle({ test: true });
+  const [isOpen, setIsOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const { styles } = useStyle({ test: true });
   const [selectDate, setSelectDate] = useState<Dayjs>(dayjs());
   const [panelDate, setPanelDate] = useState<Dayjs>(dayjs());
 
@@ -707,6 +935,7 @@ const AppDrawerDropdown: FC = function () {
     value,
     selectInfo,
   ) => {
+    console.log(value.format("YYYY-MM-DD"), selectInfo);
     if (selectInfo.source === "date") {
       setSelectDate(value);
     }
@@ -758,32 +987,62 @@ const AppDrawerDropdown: FC = function () {
         onClick={() => setIsCalendarOpen(true)}
         className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
       >
-        <span className="sr-only">日历</span>
+        <span className="sr-only">应用抽屉</span>
         <HiCalendar className="text-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
       </button>
 
-      <Modal
-        show={isCalendarOpen}
-        onClose={() => setIsCalendarOpen(false)}
-        size="lg"
+      {/* 自定义日历模态框，与搜索框样式一致 */}
+      <div
+        className={`${
+          isCalendarOpen ? "fixed" : "hidden"
+        } inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50 p-4 backdrop-blur-sm`}
       >
-        <Modal.Header>
-          <div className="flex items-center gap-2">
-            <HiCalendar className="text-xl" />
-            <span>日历</span>
+        <div className="mx-auto w-full max-w-2xl overflow-hidden rounded-xl bg-white/95 shadow-xl transition-all dark:bg-gray-800/95">
+          {/* 模态框头部 */}
+          <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <HiCalendar className="text-xl text-blue-600 dark:text-blue-500" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                  日历
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsCalendarOpen(false)}
+                className="rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                <HiX className="size-5" />
+                <span className="sr-only">关闭</span>
+              </button>
+            </div>
           </div>
-        </Modal.Header>
-        <Modal.Body>
-          <div className={styles.wrapper}>
+
+          {/* 模态框内容 */}
+          <div className="p-4">
             <Calendar
-              fullCellRender={cellRender}
               fullscreen={false}
               onPanelChange={onPanelChange}
               onSelect={onDateChange}
+              fullCellRender={cellRender}
+              className="bg-white dark:bg-gray-800 dark:text-white"
             />
           </div>
-        </Modal.Body>
-      </Modal>
+
+          {/* 模态框底部 */}
+          <div className="border-t border-gray-200 p-4 dark:border-gray-700">
+            <div className="flex w-full justify-end">
+              <button
+                type="button"
+                onClick={() => setIsCalendarOpen(false)}
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              >
+                关闭
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

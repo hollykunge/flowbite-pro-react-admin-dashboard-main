@@ -218,7 +218,7 @@ const MessageSummaryCard: FC = function () {
           消息摘要
         </h5>
       </div>
-      <div className="p-6">
+      <div className="px-6 pt-0 pb-6">
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           {/* 会议信息 */}
           <li className="py-3">
@@ -328,7 +328,7 @@ const TaskSummaryCard: FC = function () {
           任务摘要
         </h5>
       </div>
-      <div className="p-6">
+      <div className="px-6 pt-0 pb-6">
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           <li className="py-3">
             <div className="flex flex-col gap-2">
@@ -393,7 +393,7 @@ const WorkPlanCard: FC = function () {
           知识推荐
         </h5>
       </div>
-      <div className="p-6">
+      <div className="px-6 pt-0 pb-6">
         <div className="space-y-4">
           <div className="bg-blue-50 dark:bg-blue-900/50 rounded-lg p-4 transition-colors hover:bg-blue-100 dark:hover:bg-blue-900/70">
             <div className="flex items-center gap-3 mb-3">

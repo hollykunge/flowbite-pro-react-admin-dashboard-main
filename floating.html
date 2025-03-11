@@ -35,7 +35,7 @@
       }
 
       .floating-container.expanded {
-        width: 480px;
+        width: 360px;
         height: 600px;
         flex-direction: column;
         align-items: stretch;
@@ -535,11 +535,7 @@
       <!-- 搜索模式的头部 -->
       <div class="search-header">
         <div class="icon-container" id="dragHandle">
-          <img
-            src="https://flowbite.com/docs/images/logo.svg"
-            alt="Logo"
-            class="app-logo"
-          />
+          <img src="./public/images/logo.svg" alt="Logo" class="app-logo" />
         </div>
         <div class="icons-container">
           <div class="action-icon" id="chatIcon">
@@ -608,7 +604,7 @@
         <div class="chat-title-container">
           <div class="icon-container" id="chatDragHandle">
             <img
-              src="/images/logo.svg"
+              src="./public/images/logo.svg"
               alt="易知云雀 Logo"
               className="mr-2 h-7 sm:h-8"
             />
@@ -904,6 +900,86 @@
           }
         }
       });
+
+      // 在主进程中定义窗口尺寸常量
+      const MINI_SIZE = {
+        width: 180,
+        height: 36,
+      };
+
+      const EXPANDED_SIZE = {
+        width: 360,
+        height: 600,
+      };
+
+      // 创建一个函数来处理窗口大小变化
+      function toggleWindowSize(win, expanded) {
+        if (expanded) {
+          win.setSize(EXPANDED_SIZE.width, EXPANDED_SIZE.height);
+          // 展开时居中显示
+          win.center();
+        } else {
+          win.setSize(MINI_SIZE.width, MINI_SIZE.height);
+          // 可以保持原来的位置
+          const [x, y] = win.getPosition();
+          win.setPosition(x, y);
+        }
+      }
+
+      // 在渲染进程中发送消息
+      if (window.electron) {
+        window.electron.send("toggle-window-size", expanded);
+      }
+
+      // 在主进程中监听并处理
+      ipcMain.on("toggle-window-size", (event, expanded) => {
+        toggleWindowSize(mainWindow, expanded);
+      });
+
+      // 窗口配置
+      const windowConfig = {
+        width: MINI_SIZE.width,
+        height: MINI_SIZE.height,
+        frame: false,
+        transparent: true,
+        resizable: false,
+        alwaysOnTop: true,
+        skipTaskbar: true,
+        webPreferences: {
+          nodeIntegration: true,
+          contextIsolation: false,
+        },
+      };
+
+      // 添加动画效果
+      function animateWindow(win, targetSize) {
+        const ANIMATION_STEPS = 10;
+        const ANIMATION_INTERVAL = 16; // ~60fps
+
+        const startSize = {
+          width: win.getSize()[0],
+          height: win.getSize()[1],
+        };
+
+        let step = 0;
+
+        const animate = setInterval(() => {
+          step++;
+
+          const progress = step / ANIMATION_STEPS;
+          const newWidth =
+            startSize.width + (targetSize.width - startSize.width) * progress;
+          const newHeight =
+            startSize.height +
+            (targetSize.height - startSize.height) * progress;
+
+          win.setSize(Math.floor(newWidth), Math.floor(newHeight));
+
+          if (step >= ANIMATION_STEPS) {
+            clearInterval(animate);
+          }
+        }, ANIMATION_INTERVAL);
+      }
     </script>
   </body>
 </html>

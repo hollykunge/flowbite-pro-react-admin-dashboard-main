@@ -50,6 +50,52 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
   const [useKnowledgeBase, setUseKnowledgeBase] = useState(false);
   const [useThinkingMode, setUseThinkingMode] = useState(false);
 
+  // 模拟聊天历史数据
+  const mockChatHistory = [
+    {
+      id: "chat-1",
+      title: "AI技术与未来发展",
+      lastMessage: "大模型在医疗领域的应用前景如何？",
+      timestamp: "今天 14:30",
+    },
+    {
+      id: "chat-2",
+      title: "Python进阶学习",
+      lastMessage: "如何优化深度学习模型的训练效率",
+      timestamp: "昨天 09:45",
+    },
+    {
+      id: "chat-3",
+      title: "云南旅行规划",
+      lastMessage: "大理、丽江、香格里拉七日游最佳路线",
+      timestamp: "3天前 18:22",
+    },
+    {
+      id: "chat-4",
+      title: "健康生活方式",
+      lastMessage: "间歇性断食对身体代谢的影响研究",
+      timestamp: "11月8日",
+    },
+    {
+      id: "chat-5",
+      title: "技术领导力培养",
+      lastMessage: "如何从技术专家转型为团队管理者",
+      timestamp: "11月5日",
+    },
+    {
+      id: "chat-6",
+      title: "前端开发趋势",
+      lastMessage: "2024年值得关注的Web前端技术栈",
+      timestamp: "10月28日",
+    },
+    {
+      id: "chat-7",
+      title: "创意写作指导",
+      lastMessage: "如何构建引人入胜的故事开头",
+      timestamp: "10月20日",
+    },
+  ];
+
   // AI设置
   const [aiSettings, setAiSettings] = useState({
     memory: true,
@@ -82,43 +128,43 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
   };
 
   return (
-    <div className="flex h-full w-full flex-col items-center bg-white dark:bg-gray-900 text-gray-800 dark:text-white relative overflow-y-auto overflow-x-hidden">
+    <div className="flex h-full w-full flex-col items-center relative overflow-y-auto overflow-x-hidden bg-gradient-to-br from-white to-purple-100 dark:from-gray-900 dark:to-purple-900/30 text-gray-800 dark:text-white">
       <div className="flex flex-col items-center w-full h-full relative">
         {/* 顶部功能区 */}
-        <div className="w-full px-4 py-3 flex justify-between items-center sticky top-0 bg-white dark:bg-gray-900 z-20">
+        <div className="w-full px-4 py-2 flex justify-between items-center sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-10">
           {/* 左侧按钮 */}
           <button
             onClick={onOpenSettings}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
+            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
             aria-label="设置"
           >
-            <HiCog className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+            <HiCog className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           </button>
 
           {/* 右侧按钮组 */}
           <div className="flex items-center space-x-2">
             <button
               onClick={onNewChat}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
+              className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
               aria-label="新建会话"
             >
-              <PiChatTeardropBold className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+              <PiChatTeardropBold className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             </button>
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
+              className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
               aria-label="历史记录"
             >
-              <HiMenuAlt2 className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+              <HiMenuAlt2 className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             </button>
           </div>
         </div>
 
-        {/* 聊天历史抽屉 - 放在顶部功能区之后，确保它能覆盖其他内容 */}
+        {/* 聊天历史抽屉 - 使用模拟数据 */}
         <ChatHistoryDrawer
           isOpen={isDrawerOpen}
           onClose={() => setIsDrawerOpen(false)}
-          chatHistory={chatHistory}
+          chatHistory={mockChatHistory}
           onSelectChat={onSelectChat}
         />
 

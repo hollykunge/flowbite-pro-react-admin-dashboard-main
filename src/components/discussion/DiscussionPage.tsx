@@ -1,6 +1,12 @@
 import type { ChangeEvent, FC } from "react";
 import { useEffect, useRef, useState } from "react";
-import { HiCog, HiSearch, HiUserAdd, HiOfficeBuilding } from "react-icons/hi";
+import {
+  HiCog,
+  HiSearch,
+  HiUserAdd,
+  HiOfficeBuilding,
+  HiBadgeCheck,
+} from "react-icons/hi";
 import { RiListCheck2, RiGroup2Line, RiGovernmentFill } from "react-icons/ri";
 import { BiSolidMessageSquareDots } from "react-icons/bi";
 import { RiContactsBookFill } from "react-icons/ri";
@@ -803,7 +809,11 @@ const DiscussionPage: FC = function () {
                           <div className="flex items-center w-full px-4">
                             <div className="relative shrink-0">
                               <img
-                                className="size-7 rounded-full object-cover shadow-sm ring-1 ring-gray-200/50 dark:ring-gray-700/50"
+                                className={`size-7 rounded-full object-cover shadow-sm ring-1 ${
+                                  item.isGroup
+                                    ? "ring-2 ring-yellow-400 dark:ring-yellow-500"
+                                    : "ring-gray-200/50 dark:ring-gray-700/50"
+                                }`}
                                 src={item.avatar}
                                 alt={`${item.name} 的头像`}
                               />
@@ -813,9 +823,14 @@ const DiscussionPage: FC = function () {
                             </div>
                             <div className="ml-3 flex-1 overflow-hidden">
                               <div className="flex items-center justify-between">
-                                <h3 className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                                  {item.name}
-                                </h3>
+                                <div className="flex items-center">
+                                  <h3 className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                                    {item.name}
+                                  </h3>
+                                  {item.isGroup && (
+                                    <HiBadgeCheck className="ml-1 flex-shrink-0 text-orange-400" />
+                                  )}
+                                </div>
                                 <span className="text-xs text-gray-500 dark:text-gray-400">
                                   {item.time}
                                 </span>
@@ -825,7 +840,7 @@ const DiscussionPage: FC = function () {
                                   {item.lastMessage}
                                 </p>
                                 {item.unread > 0 && (
-                                  <span className="ml-1.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary-600 text-xs font-medium text-white dark:bg-primary-500">
+                                  <span className="ml-1.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
                                     {item.unread}
                                   </span>
                                 )}
@@ -954,15 +969,41 @@ const DiscussionPage: FC = function () {
                 <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-2 dark:border-gray-700 dark:bg-gray-800">
                   <div className="flex items-center">
                     <div className="mr-3 flex size-10 shrink-0 items-center justify-center">
-                      <img
-                        className="size-10 rounded-full object-cover shadow-sm ring-1 ring-gray-200/50 dark:ring-gray-700/50"
-                        src={
-                          discussionList.find(
-                            (item) => item.id === activeDiscussionId,
-                          )?.avatar || "/images/users/bonnie-green.png"
-                        }
-                        alt="用户头像"
-                      />
+                      <div className="relative">
+                        <img
+                          className={`size-10 rounded-full object-cover shadow-sm ring-1 ${
+                            discussionList.find(
+                              (item) => item.id === activeDiscussionId,
+                            )?.isGroup
+                              ? "ring-2 ring-yellow-400 dark:ring-yellow-500"
+                              : "ring-gray-200/50 dark:ring-gray-700/50"
+                          }`}
+                          src={
+                            discussionList.find(
+                              (item) => item.id === activeDiscussionId,
+                            )?.avatar || "/images/users/bonnie-green.png"
+                          }
+                          alt="用户头像"
+                        />
+                        {discussionList.find(
+                          (item) => item.id === activeDiscussionId,
+                        )?.isGroup && (
+                          <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-yellow-400 text-white ring-1 ring-white dark:ring-gray-800">
+                            <svg
+                              className="size-3"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              ></path>
+                            </svg>
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <div className="flex items-center">
@@ -973,6 +1014,12 @@ const DiscussionPage: FC = function () {
                                 (item) => item.id === activeDiscussionId,
                               )?.name || "未知用户"}
                         </h2>
+                        {rightPanelType === "message" &&
+                          discussionList.find(
+                            (item) => item.id === activeDiscussionId,
+                          )?.isGroup && (
+                            <HiBadgeCheck className="ml-1 text-orange-400 size-5" />
+                          )}
                         {rightPanelType === "message" && (
                           <div className="ml-2 text-xs text-gray-500 dark:text-gray-400">
                             {discussionList.find(
