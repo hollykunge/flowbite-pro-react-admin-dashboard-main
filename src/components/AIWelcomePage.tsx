@@ -127,6 +127,11 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
     onSendMessage(finalMessage);
   };
 
+  // 处理设置按钮点击
+  const handleSettingsClick = () => {
+    setIsSettingsOpen(true);
+  };
+
   return (
     <div className="flex h-full w-full flex-col items-center relative overflow-y-auto overflow-x-hidden bg-gradient-to-br from-white to-purple-100 dark:from-gray-900 dark:to-purple-900/30 text-gray-800 dark:text-white">
       <div className="flex flex-col items-center w-full h-full relative">
@@ -134,7 +139,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
         <div className="w-full px-4 py-2 flex justify-between items-center sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-10">
           {/* 左侧按钮 */}
           <button
-            onClick={onOpenSettings}
+            onClick={handleSettingsClick}
             className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
             aria-label="设置"
           >

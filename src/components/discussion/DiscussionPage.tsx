@@ -175,7 +175,7 @@ const DiscussionPage: FC = function () {
     },
     {
       id: 6,
-      name: "产品研发群",
+      name: "XXX研究室",
       avatar: "/images/users/lana-byrd.png",
       lastMessage: "🎉 太棒了，我们走吧！",
       time: "16h",
@@ -189,7 +189,7 @@ const DiscussionPage: FC = function () {
     },
     {
       id: 7,
-      name: "市场部小组",
+      name: "XXX研究室党支部",
       avatar: "/images/users/helene-engels.png",
       lastMessage: "是的，我们可以做到！🔥",
       time: "18h",
@@ -203,7 +203,7 @@ const DiscussionPage: FC = function () {
     },
     {
       id: 9,
-      name: "技术交流群",
+      name: "XXX研究室工会",
       avatar: "/images/users/thomas-lean.png",
       lastMessage: "语音消息",
       time: "2d",
@@ -780,8 +780,8 @@ const DiscussionPage: FC = function () {
                       .filter((item) => {
                         if (messageFilter === "all") return true;
                         if (messageFilter === "unread") return item.unread > 0;
-                        if (messageFilter === "media")
-                          return item.isPhoto || item.isVoiceMessage;
+                        if (messageFilter === "group")
+                          return item.isGroup === true;
                         return true;
                       })
                       .map((item) => (

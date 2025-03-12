@@ -672,14 +672,12 @@ ipcMain.on("search-focus", (event, isFocused) => {
 
   if (floatingWindow) {
     if (isFocused) {
-      // 搜索框获取焦点时，扩展悬浮窗口为聊天界面
-      floatingWindow.setSize(480, 600);
-      // 发送消息到渲染进程，通知其更新UI
+      // 修改为与HTML一致的360px
+      floatingWindow.setSize(360, 600);
       floatingWindow.webContents.send("update-ui", { expanded: true });
     } else {
-      // 搜索框失去焦点时，恢复悬浮窗口原始大小
-      floatingWindow.setSize(360, 76);
-      // 发送消息到渲染进程，通知其更新UI
+      // 修改为与HTML一致的180px
+      floatingWindow.setSize(181, 36); // 使用181是为了解决边框问题
       floatingWindow.webContents.send("update-ui", { expanded: false });
     }
   }

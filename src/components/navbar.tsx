@@ -335,25 +335,6 @@ const DownloadUploadManager: FC = function () {
               </div>
             )}
           </div>
-
-          {/* 模态框底部 */}
-          <div className="border-t border-gray-200 p-4 dark:border-gray-700">
-            <div className="flex w-full justify-between">
-              <button
-                type="button"
-                onClick={closeModal}
-                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                关闭
-              </button>
-              <button
-                type="button"
-                className="rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                {activeTab === "upload" ? "新建上传" : "新建下载"}
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </>
@@ -1027,19 +1008,6 @@ const AppDrawerDropdown: FC = function () {
               fullCellRender={cellRender}
               className="bg-white dark:bg-gray-800 dark:text-white"
             />
-          </div>
-
-          {/* 模态框底部 */}
-          <div className="border-t border-gray-200 p-4 dark:border-gray-700">
-            <div className="flex w-full justify-end">
-              <button
-                type="button"
-                onClick={() => setIsCalendarOpen(false)}
-                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                关闭
-              </button>
-            </div>
           </div>
         </div>
       </div>

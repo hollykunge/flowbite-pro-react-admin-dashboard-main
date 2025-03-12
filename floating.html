@@ -25,6 +25,7 @@
         overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.08);
         transition: all 0.25s ease;
+        box-sizing: border-box;
       }
 
       /* 亮色模式样式 */
@@ -39,13 +40,8 @@
         height: 600px;
         flex-direction: column;
         align-items: stretch;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1000;
         background-color: rgba(30, 41, 59, 0.85);
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.3);
         box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
         border-radius: 10px;
         transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -57,7 +53,7 @@
       /* 亮色模式展开悬浮窗 */
       .light-mode .floating-container.expanded {
         background-color: rgba(255, 255, 255, 0.9);
-        border: 2px solid rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(0, 0, 0, 0.25);
         box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
       }
 
@@ -383,20 +379,20 @@
 
       .chat-input-container {
         display: none;
-        height: 80px;
-        padding: 16px;
+        height: 70px;
+        padding: 12px 16px;
         margin: 0 1px 1px 1px; /* 底部和侧面添加边距 */
         width: calc(100% - 2px); /* 减去边框宽度 */
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
         box-sizing: border-box;
         background-color: rgba(15, 23, 42, 0.85);
         border-radius: 0 0 8px 8px; /* 稍微减小以适应父容器边框 */
+        /* 移除顶部分割线 */
       }
 
       /* 亮色模式输入容器边框 */
       .light-mode .chat-input-container {
-        border-top: 1px solid rgba(0, 0, 0, 0.15);
         background-color: rgba(241, 245, 249, 0.85);
+        /* 移除顶部分割线 */
       }
 
       .floating-container.expanded .chat-input-container {
@@ -405,24 +401,26 @@
 
       .chat-input-wrapper {
         display: flex;
+        align-items: center;
         background-color: rgba(30, 41, 59, 0.9);
         border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 10px;
+        border-radius: 18px;
         overflow: hidden;
-        box-shadow: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
+        padding: 0 6px 0 16px;
       }
 
       /* 亮色模式输入框包装器 */
       .light-mode .chat-input-wrapper {
         background-color: white;
         border: 1px solid rgba(0, 0, 0, 0.15);
-        box-shadow: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       }
 
       .chat-input-wrapper:focus-within {
         border-color: rgba(59, 130, 246, 0.5);
-        box-shadow: none;
+        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.15);
       }
 
       .chat-input {
@@ -431,7 +429,7 @@
         background-color: transparent;
         border: none;
         color: white;
-        padding: 0 16px;
+        padding: 0;
         font-size: 14px;
         outline: none;
         transition: all 0.3s ease;
@@ -442,9 +440,39 @@
         color: #1e293b;
       }
 
+      /* 附件按钮样式 */
+      .attachment-button {
+        width: 36px;
+        height: 36px;
+        background-color: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        margin-right: 4px;
+      }
+
+      .attachment-button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .light-mode .attachment-button {
+        color: rgba(30, 41, 59, 0.7);
+      }
+
+      .light-mode .attachment-button:hover {
+        background-color: rgba(30, 41, 59, 0.1);
+        color: rgba(30, 41, 59, 0.9);
+      }
+
       .send-button {
-        width: 44px;
-        height: 44px;
+        width: 36px;
+        height: 36px;
         background-color: #3b82f6;
         border: none;
         color: white;
@@ -453,10 +481,13 @@
         justify-content: center;
         cursor: pointer;
         transition: all 0.2s ease;
+        border-radius: 50%;
+        margin-left: 4px;
       }
 
       .send-button:hover {
         background-color: #2563eb;
+        transform: scale(1.05);
       }
 
       .send-button:active {
@@ -686,6 +717,27 @@
             placeholder="输入消息..."
             id="chatInput"
           />
+          <button
+            class="attachment-button"
+            id="attachmentButton"
+            title="添加附件"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"
+              ></path>
+            </svg>
+          </button>
           <button class="send-button" id="sendButton">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -713,6 +765,7 @@
       const linkIcon = document.getElementById("linkIcon");
       const chatInput = document.getElementById("chatInput");
       const sendButton = document.getElementById("sendButton");
+      const attachmentButton = document.getElementById("attachmentButton");
       const closeChat = document.getElementById("closeChat");
       const pinButton = document.getElementById("pinButton");
       const dragHandle = document.getElementById("dragHandle");
@@ -738,7 +791,9 @@
       // 聊天图标点击事件
       chatIcon.addEventListener("click", () => {
         if (window.electron) {
-          window.electron.send("search-focus", true);
+          const isExpanded = floatingContainer.classList.contains("expanded");
+          window.electron.send("toggle-window-size", !isExpanded);
+          window.electron.send("search-focus", !isExpanded);
         }
       });
 
@@ -761,6 +816,7 @@
       // 关闭聊天按钮点击事件
       closeChat.addEventListener("click", () => {
         if (window.electron) {
+          window.electron.send("toggle-window-size", false);
           window.electron.send("search-focus", false);
         }
       });
@@ -868,6 +924,62 @@
           console.log("收到主题变化通知:", dark ? "暗色模式" : "亮色模式");
           setTheme(dark);
         });
+
+        ipcMain.on("toggle-window-size", (event, expanded) => {
+          const win = BrowserWindow.fromWebContents(event.sender);
+          if (!win) return;
+
+          const [currentX, currentY] = win.getPosition();
+
+          if (expanded) {
+            win.setBounds(
+              {
+                width: 360,
+                height: 600,
+              },
+              true,
+            );
+            win.center();
+          } else {
+            win.setBounds(
+              {
+                width: 181, // 使用181px
+                height: 36,
+                x: currentX,
+                y: currentY,
+              },
+              true,
+            );
+          }
+        });
+
+        ipcMain.on("search-focus", (event, isFocused) => {
+          if (floatingWindow) {
+            if (isFocused) {
+              floatingWindow.setBounds(
+                {
+                  width: 360,
+                  height: 600,
+                },
+                true,
+              ); // true表示立即应用
+              floatingWindow.center();
+              floatingWindow.webContents.send("update-ui", { expanded: true });
+            } else {
+              const [x, y] = floatingWindow.getPosition();
+              floatingWindow.setBounds(
+                {
+                  width: 181,
+                  height: 36,
+                  x: x,
+                  y: y,
+                },
+                true,
+              );
+              floatingWindow.webContents.send("update-ui", { expanded: false });
+            }
+          }
+        });
       }
 
       // 初始化主题 - 尝试从localStorage获取当前主题
@@ -901,9 +1013,9 @@
         }
       });
 
-      // 在主进程中定义窗口尺寸常量
+      // 修改窗口尺寸常量
       const MINI_SIZE = {
-        width: 180,
+        width: 181, // 调整为181以匹配实际显示
         height: 36,
       };
 
@@ -912,44 +1024,27 @@
         height: 600,
       };
 
-      // 创建一个函数来处理窗口大小变化
-      function toggleWindowSize(win, expanded) {
-        if (expanded) {
-          win.setSize(EXPANDED_SIZE.width, EXPANDED_SIZE.height);
-          // 展开时居中显示
-          win.center();
-        } else {
-          win.setSize(MINI_SIZE.width, MINI_SIZE.height);
-          // 可以保持原来的位置
-          const [x, y] = win.getPosition();
-          win.setPosition(x, y);
-        }
-      }
-
-      // 在渲染进程中发送消息
-      if (window.electron) {
-        window.electron.send("toggle-window-size", expanded);
-      }
-
-      // 在主进程中监听并处理
-      ipcMain.on("toggle-window-size", (event, expanded) => {
-        toggleWindowSize(mainWindow, expanded);
-      });
-
-      // 窗口配置
+      // 修改窗口配置
       const windowConfig = {
-        width: MINI_SIZE.width,
-        height: MINI_SIZE.height,
+        width: 181, // 改为181px
+        height: 36, // 改为36px
+        x: width - 200, // 调整初始位置
+        y: 100,
         frame: false,
         transparent: true,
-        resizable: false,
         alwaysOnTop: true,
         skipTaskbar: true,
+        resizable: false,
+        useContentSize: true, // 添加这个配置确保内容区域大小正确
         webPreferences: {
-          nodeIntegration: true,
-          contextIsolation: false,
+          nodeIntegration: false,
+          contextIsolation: true,
+          preload: path.join(__dirname, "preload.js"),
         },
       };
+
+      // 创建窗口时使用这个配置
+      const mainWindow = new BrowserWindow(windowConfig);
 
       // 添加动画效果
       function animateWindow(win, targetSize) {
@@ -980,6 +1075,72 @@
           }
         }, ANIMATION_INTERVAL);
       }
+
+      // 主进程中添加
+      function verifyWindowSize(win, expectedWidth, expectedHeight) {
+        const bounds = win.getBounds();
+        if (
+          bounds.width !== expectedWidth ||
+          bounds.height !== expectedHeight
+        ) {
+          win.setBounds(
+            {
+              width: expectedWidth,
+              height: expectedHeight,
+              x: bounds.x,
+              y: bounds.y,
+            },
+            true,
+          );
+        }
+      }
+
+      function verifyFloatingWindowSize() {
+        if (floatingWindow) {
+          const bounds = floatingWindow.getBounds();
+          const isExpanded =
+            floatingWindow.webContents.send("get-expanded-state");
+
+          if (isExpanded && (bounds.width !== 360 || bounds.height !== 600)) {
+            floatingWindow.setBounds(
+              {
+                width: 360,
+                height: 600,
+                x: bounds.x,
+                y: bounds.y,
+              },
+              true,
+            );
+          } else if (
+            !isExpanded &&
+            (bounds.width !== 181 || bounds.height !== 36)
+          ) {
+            floatingWindow.setBounds(
+              {
+                width: 181,
+                height: 36,
+                x: bounds.x,
+                y: bounds.y,
+              },
+              true,
+            );
+          }
+        }
+      }
+
+      // 在窗口创建后和每次切换状态后调用验证
+      floatingWindow.webContents.on(
+        "did-finish-load",
+        verifyFloatingWindowSize,
+      );
+
+      // 附件按钮点击事件
+      attachmentButton.addEventListener("click", () => {
+        console.log("附件按钮被点击");
+        if (window.electron) {
+          window.electron.send("open-attachment");
+        }
+      });
     </script>
   </body>
 </html>
