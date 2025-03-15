@@ -719,6 +719,21 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
             background: linear-gradient(to left, rgba(17,24,39,0.95), transparent);
           }
         }
+        
+        /* 输入框焦点效果 */
+        .input-focus-effect {
+          transition: all 0.3s ease;
+        }
+        
+        .input-focus-effect:focus-within {
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+        }
+        
+        .dark .input-focus-effect:focus-within {
+          border-color: #60a5fa;
+          box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.25);
+        }
         `}
       </style>
 
@@ -1208,7 +1223,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
           {/* 输入区 */}
           <div className="mb-6 w-full max-w-3xl px-4">
             {/* 整合的输入框和功能区容器 */}
-            <div className="relative rounded-2xl bg-white/90 dark:bg-gray-800/90 shadow-lg overflow-hidden border border-gray-200 dark:border-gray-600 backdrop-blur-sm">
+            <div className="relative rounded-2xl bg-white/90 dark:bg-gray-800/90 shadow-lg overflow-hidden border border-gray-200 dark:border-gray-600 backdrop-blur-sm transition-all duration-200 focus-within:border-primary-500 dark:focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/30 dark:focus-within:ring-primary-400/30 input-focus-effect">
               {/* 输入框 */}
               <div className="relative">
                 <input
