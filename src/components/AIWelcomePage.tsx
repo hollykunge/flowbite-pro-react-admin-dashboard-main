@@ -2,6 +2,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import {
   HiBookOpen,
   HiChartPie,
+  HiChevronDown,
   HiChip,
   HiCog,
   HiDatabase,
@@ -9,13 +10,11 @@ import {
   HiLightningBolt,
   HiMenuAlt2,
   HiOutlineLightBulb,
-  HiSparkles,
   HiTemplate,
   HiUserCircle,
   HiUserGroup,
   HiX,
 } from "react-icons/hi";
-import { PiBirdDuotone } from "react-icons/pi";
 import AISettingsModal from "./AISettingsModal";
 import ChatHistoryDrawer from "./ChatHistoryDrawer";
 
@@ -58,6 +57,47 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
   const [useThinkingMode, setUseThinkingMode] = useState(false);
   // 控制当前选中的导航项
   const [activeNavItem, setActiveNavItem] = useState<string | null>(null);
+
+  // 模型选择相关状态
+  const [showModelSelector, setShowModelSelector] = useState(false);
+  const [selectedModel, setSelectedModel] = useState({
+    id: "gpt-4",
+    name: "GPT-4",
+    icon: "🧠",
+    description: "高级推理能力",
+  });
+  const modelSelectorRef = useRef<HTMLDivElement>(null);
+
+  // 可选模型列表
+  const availableModels = [
+    { id: "gpt-4", name: "GPT-4", icon: "🧠", description: "高级推理能力" },
+    { id: "claude-3", name: "Claude 3", icon: "🔮", description: "长文本处理" },
+    { id: "bailing-7b", name: "百灵-7B", icon: "🐦", description: "本地部署" },
+    {
+      id: "gemini-pro",
+      name: "Gemini Pro",
+      icon: "💎",
+      description: "多模态能力",
+    },
+    { id: "llama-3", name: "Llama 3", icon: "🦙", description: "开源模型" },
+  ];
+
+  // 点击页面其他区域时关闭模型选择器
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modelSelectorRef.current &&
+        !modelSelectorRef.current.contains(event.target as Node)
+      ) {
+        setShowModelSelector(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // 黑洞效果的画布引用
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -106,152 +146,291 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
     let centerX = canvas.width / 2;
     let centerY = canvas.height / 2;
 
-    // 星星类
-    class Star {
+    // 绘制科技蓝亚克力动态效果
+    const drawTechBackground = () => {
+      if (!ctx || !canvas) return;
+
+      // 检测当前是否为暗色模式
+      const isDarkMode =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+      if (isDarkMode) {
+        // 暗色模式下保留原有的黑洞效果
+        // 创建径向渐变 - 从中心向外
+        const gradient = ctx.createRadialGradient(
+          centerX,
+          centerY,
+          0,
+          centerX,
+          centerY,
+          canvas.width * 0.2,
+        );
+
+        // 暗色模式下的渐变颜色
+        gradient.addColorStop(0, "rgba(0, 0, 0, 1)");
+        gradient.addColorStop(0.2, "rgba(20, 0, 40, 0.8)");
+        gradient.addColorStop(0.4, "rgba(40, 0, 80, 0.6)");
+        gradient.addColorStop(0.6, "rgba(60, 20, 120, 0.4)");
+        gradient.addColorStop(0.8, "rgba(80, 40, 160, 0.2)");
+        gradient.addColorStop(1, "rgba(100, 60, 200, 0)");
+
+        // 绘制黑洞
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, canvas.width * 0.2, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      } else {
+        // 亮色模式下绘制科技蓝亚克力效果
+        // 不绘制中心圆形，而是绘制多个半透明的蓝色几何图形
+
+        // 清除画布
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 绘制背景网格
+        const gridSize = 50;
+        ctx.strokeStyle = "rgba(0, 120, 255, 0.1)";
+        ctx.lineWidth = 0.5;
+
+        // 水平线
+        for (let y = 0; y < canvas.height; y += gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+          ctx.stroke();
+        }
+
+        // 垂直线
+        for (let x = 0; x < canvas.width; x += gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+        }
+      }
+    };
+
+    // 星星类改为粒子类
+    class Particle {
       x: number;
       y: number;
-      z: number;
       size: number;
       color: string;
-      angle: number;
-      distance: number;
-      speed: number;
+      speedX: number;
+      speedY: number;
+      opacity: number;
+      shape: "circle" | "square" | "triangle";
 
       constructor() {
-        // 随机位置和深度
-        this.angle = Math.random() * Math.PI * 2;
-        this.distance = Math.random() * (canvas?.width || 1000) * 0.8 + 50;
-        this.x = centerX + Math.cos(this.angle) * this.distance;
-        this.y = centerY + Math.sin(this.angle) * this.distance;
-        this.z = Math.random() * 2;
+        // 随机位置
+        this.x = Math.random() * (canvas?.width || 1000);
+        this.y = Math.random() * (canvas?.height || 800);
 
-        // 星星大小和颜色
-        this.size = Math.random() * 2 + 0.5;
+        // 粒子大小
+        this.size = Math.random() * 3 + 1;
 
-        // 根据暗色/亮色模式和距离设置颜色
+        // 默认形状为圆形，避免 undefined
+        this.shape = "circle";
+
+        // 检测当前是否为暗色模式
         const isDarkMode =
           window.matchMedia &&
           window.matchMedia("(prefers-color-scheme: dark)").matches;
-        const colorIntensity = Math.floor(Math.random() * 100 + 155);
 
-        // 根据距离中心的远近设置不同颜色
-        const canvasWidth = canvas?.width || 1000;
-        const distanceRatio = this.distance / (canvasWidth * 0.4);
+        if (isDarkMode) {
+          // 暗色模式下保留原有的星星效果
+          const colorIntensity = Math.floor(Math.random() * 100 + 155);
+          const distanceFromCenter = Math.sqrt(
+            Math.pow(this.x - centerX, 2) + Math.pow(this.y - centerY, 2),
+          );
+          const canvasWidth = canvas?.width || 1000;
+          const distanceRatio = distanceFromCenter / (canvasWidth * 0.4);
 
-        if (distanceRatio < 0.3) {
-          // 靠近中心的星星 - 蓝色/紫色调
-          this.color = `rgba(${colorIntensity - 100}, ${colorIntensity - 150}, ${colorIntensity}, ${0.8 - distanceRatio})`;
-        } else if (distanceRatio < 0.6) {
-          // 中间区域的星星 - 紫色/粉色调
-          this.color = `rgba(${colorIntensity - 50}, ${colorIntensity - 150}, ${colorIntensity}, ${0.7 - distanceRatio * 0.5})`;
+          if (distanceRatio < 0.3) {
+            // 靠近中心的星星 - 蓝色/紫色调
+            this.color = `rgba(${colorIntensity - 100}, ${colorIntensity - 150}, ${colorIntensity}, ${0.8 - distanceRatio})`;
+          } else if (distanceRatio < 0.6) {
+            // 中间区域的星星 - 紫色/粉色调
+            this.color = `rgba(${colorIntensity - 50}, ${colorIntensity - 150}, ${colorIntensity}, ${0.7 - distanceRatio * 0.5})`;
+          } else {
+            // 外围的星星 - 白色/淡蓝色调
+            this.color = `rgba(${colorIntensity}, ${colorIntensity}, ${colorIntensity}, ${0.6 - distanceRatio * 0.3})`;
+          }
+
+          // 速度 - 向黑洞中心移动
+          const angle = Math.atan2(centerY - this.y, centerX - this.x);
+          const speed = 0.2 + Math.random() * 0.3;
+          this.speedX = Math.cos(angle) * speed;
+          this.speedY = Math.sin(angle) * speed;
+
+          this.opacity = 0.7 + Math.random() * 0.3;
+          // 暗色模式下都使用圆形
+          this.shape = "circle";
         } else {
-          // 外围的星星 - 白色/淡蓝色调
-          this.color = `rgba(${colorIntensity}, ${colorIntensity}, ${colorIntensity}, ${0.6 - distanceRatio * 0.3})`;
-        }
+          // 亮色模式下的科技蓝亚克力效果粒子
+          // 蓝色调粒子
+          const blueShade = Math.floor(Math.random() * 100) + 155;
+          this.color = `rgba(0, ${blueShade}, 255, ${Math.random() * 0.3 + 0.1})`;
 
-        // 旋转速度 - 越靠近中心旋转越快
-        this.speed = (1 - Math.min(0.8, distanceRatio)) * 0.02;
+          // 随机速度
+          this.speedX = (Math.random() - 0.5) * 0.5;
+          this.speedY = (Math.random() - 0.5) * 0.5;
+
+          this.opacity = Math.random() * 0.3 + 0.1;
+
+          // 随机形状：圆形、方形或三角形
+          const shapes: Array<"circle" | "square" | "triangle"> = [
+            "circle",
+            "square",
+            "triangle",
+          ];
+          this.shape =
+            shapes[Math.floor(Math.random() * shapes.length)] || "circle";
+        }
       }
 
       update() {
         if (!canvas) return;
 
-        // 更新角度 - 模拟围绕黑洞旋转
-        this.angle += this.speed;
+        // 检测当前是否为暗色模式
+        const isDarkMode =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-        // 随着旋转，逐渐向中心靠近（模拟被吸入黑洞）
-        this.distance -= 0.1 + (1 - this.distance / (canvas.width * 0.4)) * 0.2;
+        if (isDarkMode) {
+          // 暗色模式下向黑洞中心移动
+          this.x += this.speedX;
+          this.y += this.speedY;
 
-        // 如果距离太小（被吸入黑洞中心），重新生成在外围
-        if (this.distance < 20) {
-          this.distance =
-            Math.random() * canvas.width * 0.3 + canvas.width * 0.5;
-          this.speed =
-            (1 - Math.min(0.8, this.distance / (canvas.width * 0.4))) * 0.02;
+          // 如果粒子到达中心附近，重新生成在边缘
+          const distanceFromCenter = Math.sqrt(
+            Math.pow(this.x - centerX, 2) + Math.pow(this.y - centerY, 2),
+          );
+
+          if (distanceFromCenter < 20) {
+            // 重新生成在画布边缘
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.max(canvas.width, canvas.height) * 0.5;
+            this.x = centerX + Math.cos(angle) * distance;
+            this.y = centerY + Math.sin(angle) * distance;
+
+            // 重新计算向中心的速度
+            const newAngle = Math.atan2(centerY - this.y, centerX - this.x);
+            const speed = 0.2 + Math.random() * 0.3;
+            this.speedX = Math.cos(newAngle) * speed;
+            this.speedY = Math.sin(newAngle) * speed;
+          }
+        } else {
+          // 亮色模式下自由移动
+          this.x += this.speedX;
+          this.y += this.speedY;
+
+          // 边界检查 - 如果超出画布边界，从另一侧重新进入
+          if (this.x < 0) this.x = canvas.width;
+          if (this.x > canvas.width) this.x = 0;
+          if (this.y < 0) this.y = canvas.height;
+          if (this.y > canvas.height) this.y = 0;
         }
-
-        // 更新位置
-        this.x = centerX + Math.cos(this.angle) * this.distance;
-        this.y = centerY + Math.sin(this.angle) * this.distance;
       }
 
       draw() {
         if (!ctx) return;
 
-        // 绘制星星
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
+        ctx.globalAlpha = this.opacity;
 
-        // 为部分星星添加光晕效果
-        if (Math.random() > 0.8) {
+        if (this.shape === "circle") {
+          // 绘制圆形
           ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
-          ctx.fillStyle = this.color
-            .replace(")", ", 0.3)")
-            .replace("rgba", "rgba");
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.fill();
+        } else if (this.shape === "square") {
+          // 绘制方形
+          ctx.fillStyle = this.color;
+          ctx.fillRect(
+            this.x - this.size,
+            this.y - this.size,
+            this.size * 2,
+            this.size * 2,
+          );
+        } else if (this.shape === "triangle") {
+          // 绘制三角形
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y - this.size);
+          ctx.lineTo(this.x - this.size, this.y + this.size);
+          ctx.lineTo(this.x + this.size, this.y + this.size);
+          ctx.closePath();
+          ctx.fillStyle = this.color;
           ctx.fill();
         }
+
+        ctx.globalAlpha = 1;
       }
     }
 
-    // 创建星星数组
+    // 创建粒子数组
     const canvasWidth = canvas?.width || 1000;
     const canvasHeight = canvas?.height || 800;
-    const starCount = Math.min(
-      200,
-      Math.floor((canvasWidth * canvasHeight) / 8000),
+    const particleCount = Math.min(
+      150,
+      Math.floor((canvasWidth * canvasHeight) / 10000),
     );
-    const stars: Star[] = [];
+    const particles: Particle[] = [];
 
-    for (let i = 0; i < starCount; i++) {
-      stars.push(new Star());
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
     }
-
-    // 绘制黑洞中心
-    const drawBlackHole = () => {
-      if (!ctx || !canvas) return;
-
-      // 创建径向渐变 - 从中心向外
-      const gradient = ctx.createRadialGradient(
-        centerX,
-        centerY,
-        0,
-        centerX,
-        centerY,
-        canvas.width * 0.2,
-      );
-
-      // 设置渐变颜色
-      gradient.addColorStop(0, "rgba(0, 0, 0, 1)");
-      gradient.addColorStop(0.2, "rgba(20, 0, 40, 0.8)");
-      gradient.addColorStop(0.4, "rgba(40, 0, 80, 0.6)");
-      gradient.addColorStop(0.6, "rgba(60, 20, 120, 0.4)");
-      gradient.addColorStop(0.8, "rgba(80, 40, 160, 0.2)");
-      gradient.addColorStop(1, "rgba(100, 60, 200, 0)");
-
-      // 绘制黑洞
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, canvas.width * 0.2, 0, Math.PI * 2);
-      ctx.fillStyle = gradient;
-      ctx.fill();
-    };
 
     // 动画循环
     const animate = () => {
       if (!ctx || !canvas) return;
 
+      // 检测当前是否为暗色模式
+      const isDarkMode =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+
       // 清除画布
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // 绘制黑洞
-      drawBlackHole();
+      // 绘制背景
+      drawTechBackground();
 
-      // 更新并绘制所有星星
-      for (const star of stars) {
-        star.update();
-        star.draw();
+      // 更新并绘制所有粒子
+      for (const particle of particles) {
+        particle.update();
+        particle.draw();
+      }
+
+      // 亮色模式下添加连接线效果
+      if (!isDarkMode && ctx && particles.length > 0) {
+        ctx.strokeStyle = "rgba(0, 120, 255, 0.05)";
+        ctx.lineWidth = 0.5;
+
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const p1 = particles[i];
+            const p2 = particles[j];
+            if (!p1 || !p2) continue;
+
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            // 只连接距离较近的粒子
+            if (distance < 100) {
+              // 距离越近，线条越不透明
+              const opacity = (1 - distance / 100) * 0.2;
+              ctx.globalAlpha = opacity;
+              ctx.beginPath();
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        ctx.globalAlpha = 1;
       }
 
       // 继续动画循环
@@ -352,6 +531,9 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
       finalMessage = "Think: " + finalMessage;
     }
 
+    // 添加模型信息
+    finalMessage = `[${selectedModel.name}] ${finalMessage}`;
+
     onSendMessage(finalMessage);
   };
 
@@ -418,13 +600,58 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
     }
   };
 
+  // 处理模型选择
+  const handleModelSelect = (model: typeof selectedModel) => {
+    setSelectedModel(model);
+    setShowModelSelector(false);
+  };
+
   return (
-    <div className="flex h-full w-full flex-col items-center relative overflow-y-auto overflow-x-hidden bg-gradient-to-br from-gray-900 to-purple-900 dark:from-black dark:to-purple-950 text-gray-200 dark:text-white">
-      {/* 宇宙黑洞效果背景画布 */}
+    <div className="flex h-full w-full flex-col items-center relative overflow-y-auto overflow-x-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+      {/* 科技蓝亚克力动态背景效果画布 */}
       <canvas
         ref={canvasRef}
         className="absolute top-0 left-0 w-full h-full pointer-events-none z-0"
       />
+
+      {/* 模型选择下拉菜单 - 移到顶层 */}
+      {showModelSelector && modelSelectorRef.current && (
+        <div
+          className="fixed bg-white dark:bg-gray-800 rounded-lg shadow-xl border-2 border-blue-500 dark:border-blue-700 py-1 z-[9999]"
+          style={{
+            top: modelSelectorRef.current.getBoundingClientRect().bottom + 5,
+            left: modelSelectorRef.current.getBoundingClientRect().left,
+            width: "14rem",
+          }}
+        >
+          <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              选择模型
+            </h3>
+          </div>
+          <div className="max-h-60 overflow-y-auto">
+            {availableModels.map((model) => (
+              <button
+                key={model.id}
+                onClick={() => handleModelSelect(model)}
+                className={`flex items-center w-full px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                  selectedModel.id === model.id
+                    ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300"
+                    : "text-gray-700 dark:text-gray-300"
+                }`}
+              >
+                <span className="mr-2 text-lg">{model.icon}</span>
+                <div className="flex flex-col items-start">
+                  <span className="font-medium">{model.name}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {model.description}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* CSS动画样式 */}
       <style>
@@ -451,6 +678,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
           position: relative;
           max-width: 100%;
           margin: 0 auto;
+          overflow: hidden;
         }
         
         .prompt-container::before,
@@ -458,7 +686,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
           content: "";
           position: absolute;
           top: 0;
-          width: 15%;
+          width: 20%;
           height: 100%;
           z-index: 1;
           pointer-events: none;
@@ -466,12 +694,30 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
         
         .prompt-container::before {
           left: 0;
-          background: linear-gradient(to right, rgba(0,0,0,0.7), transparent);
+          background: linear-gradient(to right, rgba(255,255,255,0.95), transparent);
         }
         
         .prompt-container::after {
           right: 0;
-          background: linear-gradient(to left, rgba(0,0,0,0.7), transparent);
+          background: linear-gradient(to left, rgba(255,255,255,0.95), transparent);
+        }
+        
+        .dark .prompt-container::before {
+          background: linear-gradient(to right, rgba(17,24,39,0.95), transparent);
+        }
+        
+        .dark .prompt-container::after {
+          background: linear-gradient(to left, rgba(17,24,39,0.95), transparent);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+          .prompt-container::before {
+            background: linear-gradient(to right, rgba(17,24,39,0.95), transparent);
+          }
+          
+          .prompt-container::after {
+            background: linear-gradient(to left, rgba(17,24,39,0.95), transparent);
+          }
         }
         `}
       </style>
@@ -479,7 +725,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
       <div className="flex flex-col items-center w-full h-full relative">
         {/* 悬浮导航栏 - 增加设置和会话列表按钮 */}
         <div className="w-full max-w-5xl mx-auto px-4 mt-6 mb-2 z-20">
-          <div className="flex items-center justify-between p-2 bg-transparent backdrop-blur-sm rounded-xl shadow-lg">
+          <div className="flex items-center justify-between p-2 bg-transparent backdrop-blur-sm rounded-xl">
             {/* 左侧功能按钮组 */}
             <div className="flex space-x-3">
               {/* 知识库按钮 - 图标和文字 */}
@@ -492,13 +738,13 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all duration-200 ${
                   activeNavItem === "knowledge"
                     ? "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300"
-                    : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+                    : "hover:bg-gray-100/80 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
                 }`}
                 aria-label="知识库"
                 title="知识库"
               >
                 <HiDatabase className="w-5 h-5" />
-                <span className="text-sm font-medium">知识库</span>
+                <span className="text-sm font-medium">知识工程</span>
               </button>
 
               {/* 智能体按钮 - 图标和文字 */}
@@ -509,7 +755,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all duration-200 ${
                   activeNavItem === "agents"
                     ? "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300"
-                    : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+                    : "hover:bg-gray-100/80 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
                 }`}
                 aria-label="智能体"
                 title="智能体"
@@ -528,13 +774,47 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all duration-200 ${
                   activeNavItem === "templates"
                     ? "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300"
-                    : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+                    : "hover:bg-gray-100/80 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
                 }`}
-                aria-label="提示词模板"
-                title="提示词模板"
+                aria-label="提示词"
+                title="提示词"
               >
                 <HiTemplate className="w-5 h-5" />
-                <span className="text-sm font-medium">提示词模板</span>
+                <span className="text-sm font-medium">提示词</span>
+              </button>
+
+              {/* 模型管理按钮 - 图标和文字 */}
+              <button
+                onClick={() =>
+                  setActiveNavItem(activeNavItem === "models" ? null : "models")
+                }
+                className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all duration-200 ${
+                  activeNavItem === "models"
+                    ? "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300"
+                    : "hover:bg-gray-100/80 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
+                }`}
+                aria-label="模型管理"
+                title="模型管理"
+              >
+                <HiChip className="w-5 h-5" />
+                <span className="text-sm font-medium">模型管理</span>
+              </button>
+
+              {/* 使用帮助按钮 - 图标和文字 */}
+              <button
+                onClick={() =>
+                  setActiveNavItem(activeNavItem === "help" ? null : "help")
+                }
+                className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all duration-200 ${
+                  activeNavItem === "help"
+                    ? "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300"
+                    : "hover:bg-gray-100/80 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
+                }`}
+                aria-label="使用帮助"
+                title="使用帮助"
+              >
+                <HiBookOpen className="w-5 h-5" />
+                <span className="text-sm font-medium">使用帮助</span>
               </button>
             </div>
 
@@ -597,7 +877,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
 
           {/* 导航内容面板 - 根据选中的导航项显示不同内容 */}
           {activeNavItem && (
-            <div className="mt-2 p-4 bg-transparent backdrop-blur-sm rounded-xl shadow-lg animate-fadeIn">
+            <div className="mt-2 p-4 bg-transparent backdrop-blur-sm rounded-xl animate-fadeIn">
               {activeNavItem === "knowledge" && (
                 <div className="text-sm">
                   <h3 className="font-medium text-primary-700 dark:text-primary-300 mb-2">
@@ -708,6 +988,115 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                   </div>
                 </div>
               )}
+
+              {activeNavItem === "models" && (
+                <div className="text-sm">
+                  <h3 className="font-medium text-primary-700 dark:text-primary-300 mb-2">
+                    模型管理
+                  </h3>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                      <div className="font-medium">GPT-4</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        高级推理能力
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                      <div className="font-medium">Claude 3</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        长文本处理
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                      <div className="font-medium">百灵-7B</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        本地部署
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                      <div className="font-medium">Gemini Pro</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        多模态能力
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                      <div className="font-medium">Llama 3</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        开源模型
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg border border-dashed border-primary-300 dark:border-primary-600 bg-primary-50/50 dark:bg-primary-900/20 text-center flex items-center justify-center cursor-pointer">
+                      <span className="text-primary-600 dark:text-primary-400">
+                        + 添加模型
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeNavItem === "help" && (
+                <div className="text-sm">
+                  <h3 className="font-medium text-primary-700 dark:text-primary-300 mb-2">
+                    使用帮助
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                      <div className="font-medium flex items-center">
+                        <HiOutlineLightBulb className="w-4 h-4 mr-2 text-yellow-500" />
+                        新手入门
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        百灵AI助手基础使用教程
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                      <div className="font-medium flex items-center">
+                        <HiLightningBolt className="w-4 h-4 mr-2 text-blue-500" />
+                        高级技巧
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        提高AI对话效率的专业技巧
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                      <div className="font-medium flex items-center">
+                        <HiTemplate className="w-4 h-4 mr-2 text-purple-500" />
+                        提示词指南
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        如何编写高效的AI提示词
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                      <div className="font-medium flex items-center">
+                        <HiDatabase className="w-4 h-4 mr-2 text-green-500" />
+                        知识库教程
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        创建和使用个人知识库
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                      <div className="font-medium flex items-center">
+                        <HiChip className="w-4 h-4 mr-2 text-red-500" />
+                        模型对比
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        各大模型特点和适用场景
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                      <div className="font-medium flex items-center">
+                        <HiExclamationCircle className="w-4 h-4 mr-2 text-amber-500" />
+                        常见问题
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        使用过程中的常见问题解答
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -732,7 +1121,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
         <div className="flex flex-col items-center w-full max-w-5xl pb-8 z-10">
           {/* 可关闭的升级提示 - 放在组件顶部 */}
           {showUpgradeAlert && (
-            <div className="w-full mt-2 mb-8 rounded-lg bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-700 shadow-md">
+            <div className="w-full mt-2 mb-8 rounded-lg bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-700 shadow-md backdrop-blur-sm">
               <div className="px-4 py-3">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
@@ -767,7 +1156,11 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
           {/* Logo */}
           <div className="mb-8 mt-32 flex items-center">
             <div className="mr-4 text-5xl">
-              <PiBirdDuotone className="text-6xl text-purple-600 dark:text-purple-500" />
+              <img
+                src="/images/logo-bailing.svg"
+                alt="百灵 Logo"
+                className="w-16 h-16"
+              />
             </div>
             <h1 className="text-5xl font-bold text-gray-900 dark:text-white">
               百灵2.0
@@ -801,7 +1194,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                   {[...rowPrompts, ...rowPrompts].map((prompt, promptIndex) => (
                     <button
                       key={`${rowIndex}-${promptIndex}`}
-                      className="inline-flex items-center h-8 px-3 py-1 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full text-xs text-white border border-white/20 transition-colors duration-200 cursor-pointer"
+                      className="inline-flex items-center h-8 px-3 py-1 bg-purple-100/70 hover:bg-purple-200/70 dark:bg-purple-900/30 dark:hover:bg-purple-800/50 backdrop-blur-sm rounded-full text-xs text-purple-800 dark:text-purple-200 border border-purple-200/50 dark:border-purple-700/50 transition-colors duration-200 cursor-pointer"
                       onClick={() => handlePromptClick(prompt)}
                     >
                       <span className="truncate max-w-xs">{prompt}</span>
@@ -815,7 +1208,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
           {/* 输入区 */}
           <div className="mb-6 w-full max-w-3xl px-4">
             {/* 整合的输入框和功能区容器 */}
-            <div className="relative rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-lg overflow-hidden border border-gray-300 dark:border-gray-600">
+            <div className="relative rounded-2xl bg-white/90 dark:bg-gray-800/90 shadow-lg overflow-hidden border border-gray-200 dark:border-gray-600 backdrop-blur-sm">
               {/* 输入框 */}
               <div className="relative">
                 <input
@@ -833,7 +1226,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
               </div>
 
               {/* 功能区 */}
-              <div className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-gray-800">
+              <div className="flex items-center justify-between px-4 py-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
                 <div className="flex items-center gap-2">
                   <button
                     className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm ${
@@ -897,6 +1290,24 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                       </span>
                     </div>
                   </button>
+
+                  {/* 模型选择按钮 */}
+                  <div className="relative" ref={modelSelectorRef}>
+                    <button
+                      className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-opacity-90 transition-colors duration-200"
+                      onClick={() => setShowModelSelector(!showModelSelector)}
+                    >
+                      <div className="flex items-center justify-center h-5">
+                        <span className="mr-1">{selectedModel.icon}</span>
+                        <span style={{ transform: "translateY(-1px)" }}>
+                          {selectedModel.name}
+                        </span>
+                      </div>
+                      <HiChevronDown
+                        className={`transition-transform duration-200 ${showModelSelector ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -950,46 +1361,220 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
               </div>
             </div>
 
-            {/* 提示框区域 */}
-            <div className="mt-8 grid grid-cols-3 gap-4">
-              {/* 提示词教程 */}
-              <button className="flex flex-col items-center p-6 rounded-xl bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-700 hover:shadow-lg transition-shadow duration-200">
-                <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-800 mb-4">
-                  <HiBookOpen className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <h3 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
-                  提示词教程
-                </h3>
-                <p className="text-xs text-blue-700 dark:text-blue-400 text-center">
-                  学习如何更好地与AI对话
-                </p>
-              </button>
+            {/* 智能微应用网格列表区域 */}
+            <div className="mt-8 w-full">
+              <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">
+                智能微应用
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {/* 文档助手 */}
+                <button className="flex flex-col items-center p-4 rounded-xl bg-white/90 dark:bg-gray-800/90 border border-blue-200 dark:border-blue-700 hover:shadow-lg transition-all duration-200 hover:scale-105 backdrop-blur-sm">
+                  <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-800/70 mb-3">
+                    <svg
+                      className="w-6 h-6 text-blue-600 dark:text-blue-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-sm font-medium text-blue-900 dark:text-blue-300">
+                    文档助手
+                  </h3>
+                  <p className="text-xs text-blue-700 dark:text-blue-400 text-center mt-1">
+                    智能文档处理与总结
+                  </p>
+                </button>
 
-              {/* 大模型介绍 */}
-              <button className="flex flex-col items-center p-6 rounded-xl bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-700 hover:shadow-lg transition-shadow duration-200">
-                <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-800 mb-4">
-                  <HiChip className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <h3 className="text-sm font-medium text-purple-900 dark:text-purple-300 mb-2">
-                  大模型介绍
-                </h3>
-                <p className="text-xs text-purple-700 dark:text-purple-400 text-center">
-                  了解AI大模型的能力
-                </p>
-              </button>
+                {/* 代码助手 */}
+                <button className="flex flex-col items-center p-4 rounded-xl bg-white/90 dark:bg-gray-800/90 border border-purple-200 dark:border-purple-700 hover:shadow-lg transition-all duration-200 hover:scale-105 backdrop-blur-sm">
+                  <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-800/70 mb-3">
+                    <svg
+                      className="w-6 h-6 text-purple-600 dark:text-purple-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-sm font-medium text-purple-900 dark:text-purple-300">
+                    代码助手
+                  </h3>
+                  <p className="text-xs text-purple-700 dark:text-purple-400 text-center mt-1">
+                    编程辅助与代码优化
+                  </p>
+                </button>
 
-              {/* 百灵功能介绍 */}
-              <button className="flex flex-col items-center p-6 rounded-xl bg-white dark:bg-gray-800 border border-emerald-200 dark:border-emerald-700 hover:shadow-lg transition-shadow duration-200">
-                <div className="p-3 rounded-full bg-emerald-100 dark:bg-emerald-800 mb-4">
-                  <HiSparkles className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <h3 className="text-sm font-medium text-emerald-900 dark:text-emerald-300 mb-2">
-                  百灵功能介绍
-                </h3>
-                <p className="text-xs text-emerald-700 dark:text-emerald-400 text-center">
-                  探索百灵的特色功能
-                </p>
-              </button>
+                {/* 数据分析 */}
+                <button className="flex flex-col items-center p-4 rounded-xl bg-white/90 dark:bg-gray-800/90 border border-green-200 dark:border-green-700 hover:shadow-lg transition-all duration-200 hover:scale-105 backdrop-blur-sm">
+                  <div className="p-3 rounded-full bg-green-100 dark:bg-green-800/70 mb-3">
+                    <svg
+                      className="w-6 h-6 text-green-600 dark:text-green-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-sm font-medium text-green-900 dark:text-green-300">
+                    数据分析
+                  </h3>
+                  <p className="text-xs text-green-700 dark:text-green-400 text-center mt-1">
+                    数据处理与可视化
+                  </p>
+                </button>
+
+                {/* 图像生成 */}
+                <button className="flex flex-col items-center p-4 rounded-xl bg-white/90 dark:bg-gray-800/90 border border-amber-200 dark:border-amber-700 hover:shadow-lg transition-all duration-200 hover:scale-105 backdrop-blur-sm">
+                  <div className="p-3 rounded-full bg-amber-100 dark:bg-amber-800/70 mb-3">
+                    <svg
+                      className="w-6 h-6 text-amber-600 dark:text-amber-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-sm font-medium text-amber-900 dark:text-amber-300">
+                    图像生成
+                  </h3>
+                  <p className="text-xs text-amber-700 dark:text-amber-400 text-center mt-1">
+                    AI图像创作与编辑
+                  </p>
+                </button>
+
+                {/* 翻译助手 */}
+                <button className="flex flex-col items-center p-4 rounded-xl bg-white/90 dark:bg-gray-800/90 border border-red-200 dark:border-red-700 hover:shadow-lg transition-all duration-200 hover:scale-105 backdrop-blur-sm">
+                  <div className="p-3 rounded-full bg-red-100 dark:bg-red-800/70 mb-3">
+                    <svg
+                      className="w-6 h-6 text-red-600 dark:text-red-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-sm font-medium text-red-900 dark:text-red-300">
+                    翻译助手
+                  </h3>
+                  <p className="text-xs text-red-700 dark:text-red-400 text-center mt-1">
+                    多语言翻译与校对
+                  </p>
+                </button>
+
+                {/* 写作助手 */}
+                <button className="flex flex-col items-center p-4 rounded-xl bg-white/90 dark:bg-gray-800/90 border border-indigo-200 dark:border-indigo-700 hover:shadow-lg transition-all duration-200 hover:scale-105 backdrop-blur-sm">
+                  <div className="p-3 rounded-full bg-indigo-100 dark:bg-indigo-800/70 mb-3">
+                    <svg
+                      className="w-6 h-6 text-indigo-600 dark:text-indigo-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-sm font-medium text-indigo-900 dark:text-indigo-300">
+                    写作助手
+                  </h3>
+                  <p className="text-xs text-indigo-700 dark:text-indigo-400 text-center mt-1">
+                    内容创作与润色
+                  </p>
+                </button>
+
+                {/* 会议助手 */}
+                <button className="flex flex-col items-center p-4 rounded-xl bg-white/90 dark:bg-gray-800/90 border border-cyan-200 dark:border-cyan-700 hover:shadow-lg transition-all duration-200 hover:scale-105 backdrop-blur-sm">
+                  <div className="p-3 rounded-full bg-cyan-100 dark:bg-cyan-800/70 mb-3">
+                    <svg
+                      className="w-6 h-6 text-cyan-600 dark:text-cyan-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-sm font-medium text-cyan-900 dark:text-cyan-300">
+                    会议助手
+                  </h3>
+                  <p className="text-xs text-cyan-700 dark:text-cyan-400 text-center mt-1">
+                    会议记录与总结
+                  </p>
+                </button>
+
+                {/* 添加更多应用 */}
+                <button className="flex flex-col items-center justify-center p-4 rounded-xl bg-white/90 dark:bg-gray-800/90 border border-dashed border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-600 hover:shadow-lg transition-all duration-200 hover:scale-105 backdrop-blur-sm">
+                  <div className="p-3 rounded-full bg-gray-100 dark:bg-gray-700 mb-3">
+                    <svg
+                      className="w-6 h-6 text-gray-500 dark:text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    添加应用
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-1">
+                    探索更多AI微应用
+                  </p>
+                </button>
+              </div>
             </div>
           </div>
         </div>
