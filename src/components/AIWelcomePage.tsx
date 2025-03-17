@@ -21,6 +21,7 @@ import { PiListDashesDuotone } from "react-icons/pi";
 import { PiBrainDuotone } from "react-icons/pi";
 import { PiBookOpenDuotone } from "react-icons/pi";
 import { TbHistory } from "react-icons/tb";
+import { Dropdown, Select } from "flowbite-react";
 
 import AISettingsModal from "./AISettingsModal";
 import ChatHistoryDrawer from "./ChatHistoryDrawer";
@@ -647,9 +648,12 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
       {/* 模型选择下拉菜单 - 移到顶层 */}
       {showModelSelector && modelSelectorRef.current && (
         <div
-          className="fixed bg-white dark:bg-gray-800 rounded-lg shadow-xl border-2 border-blue-500 dark:border-blue-700 py-1 z-[9999]"
+          className="absolute bg-white dark:bg-gray-800 rounded-lg shadow-xl border-2 border-blue-500 dark:border-blue-700 py-1 z-[9999]"
           style={{
-            top: modelSelectorRef.current.getBoundingClientRect().bottom + 5,
+            top:
+              modelSelectorRef.current.getBoundingClientRect().bottom +
+              window.scrollY +
+              4,
             left: modelSelectorRef.current.getBoundingClientRect().left,
             width: "14rem",
           }}
@@ -1363,22 +1367,26 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                   </button>
 
                   {/* 模型选择按钮 */}
-                  <div className="relative" ref={modelSelectorRef}>
-                    <button
-                      className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-opacity-90 transition-colors duration-200"
-                      onClick={() => setShowModelSelector(!showModelSelector)}
-                    >
-                      <div className="flex items-center justify-center h-5">
-                        <span className="mr-1">{selectedModel.icon}</span>
-                        <span style={{ transform: "translateY(-1px)" }}>
-                          {selectedModel.name}
-                        </span>
-                      </div>
-                      <HiChevronDown
-                        className={`transition-transform duration-200 ${showModelSelector ? "rotate-180" : ""}`}
-                      />
-                    </button>
-                  </div>
+                  <Select
+                    value={selectedModel.id}
+                    onChange={(e) => {
+                      const model = availableModels.find(
+                        (m) => m.id === e.target.value,
+                      );
+                      if (model) handleModelSelect(model);
+                    }}
+                    className="!min-w-[140px] !bg-gray-200 dark:!bg-gray-700 !text-gray-700 dark:!text-gray-300 !rounded-lg !border-none hover:!bg-opacity-90 transition-colors duration-200"
+                  >
+                    {availableModels.map((model) => (
+                      <option
+                        key={model.id}
+                        value={model.id}
+                        className="flex items-center gap-2 py-2"
+                      >
+                        {`${model.icon} ${model.name} - ${model.description}`}
+                      </option>
+                    ))}
+                  </Select>
                 </div>
 
                 <div className="flex items-center gap-2">

@@ -123,7 +123,7 @@ const DiscussionPage: FC = function () {
       id: 2,
       name: "李华",
       avatar: "/images/users/leslie-livingston.png",
-      lastMessage: "好的，我们可以做到！🔥",
+      lastMessage: "好的，我们可以做到！",
       time: "14:23",
       unread: 0,
       status: "online",
@@ -176,7 +176,7 @@ const DiscussionPage: FC = function () {
     {
       id: 6,
       name: "XXX研究室",
-      avatar: "/images/users/lana-byrd.png",
+      avatar: "/images/users/zuzhi.png",
       lastMessage: "🎉 太棒了，我们走吧！",
       time: "16h",
       unread: 0,
@@ -190,8 +190,8 @@ const DiscussionPage: FC = function () {
     {
       id: 7,
       name: "XXX研究室党支部",
-      avatar: "/images/users/helene-engels.png",
-      lastMessage: "是的，我们可以做到！🔥",
+      avatar: "/images/users/dangzhibu.png",
+      lastMessage: "是的，我们可以做到！",
       time: "18h",
       unread: 0,
       status: "offline",
@@ -204,7 +204,7 @@ const DiscussionPage: FC = function () {
     {
       id: 9,
       name: "XXX研究室工会",
-      avatar: "/images/users/thomas-lean.png",
+      avatar: "/images/users/gonghui.png",
       lastMessage: "语音消息",
       time: "2d",
       unread: 0,
@@ -1123,7 +1123,7 @@ const DiscussionPage: FC = function () {
                     <div className="min-h-full rounded-lg p-4">
                       <div className="mb-4">
                         <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                          {selectedOrganization.name} 成员列表
+                          成员列表
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           {selectedOrganization.departmentId ? 8 : 15} 名成员
@@ -1140,7 +1140,21 @@ const DiscussionPage: FC = function () {
                             <div className="relative flex size-12 shrink-0 items-center justify-center">
                               <img
                                 className="size-12 rounded-full object-cover shadow-sm ring-1 ring-gray-200/50 dark:ring-gray-700/50"
-                                src={`https://flowbite.com/docs/images/people/profile-picture-${(index % 5) + 1}.jpg`}
+                                src={`/images/users/${
+                                  [
+                                    "neil-sims.png",
+                                    "bonnie-green.png",
+                                    "michael-gough.png",
+                                    "lana-byrd.png",
+                                    "thomas-lean.png",
+                                    "helene-engels.png",
+                                    "robert-brown.png",
+                                    "leslie-livingston.png",
+                                    "joseph-mcfall.png",
+                                    "jese-leos.png",
+                                    "roberta-casas.png",
+                                  ][index % 11]
+                                }`}
                                 alt={`成员${index + 1}的头像`}
                               />
                               <span className="absolute bottom-0 right-0 size-3 rounded-full bg-green-500 ring-1 ring-white dark:ring-gray-800"></span>

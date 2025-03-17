@@ -100,7 +100,13 @@ const ExampleSidebar: FC = function () {
                 </Sidebar.Item>
                 <Sidebar.Item
                   href="/aichat"
-                  icon={PiBirdFill}
+                  icon={() => (
+                    <img
+                      src="/images/logo-bailing.svg"
+                      alt="百灵 Logo"
+                      className="w-5 h-5"
+                    />
+                  )}
                   active={"/aichat" === currentPage}
                   className={classNames({
                     "bg-gray-100 dark:bg-gray-700": "/aichat" === currentPage,

@@ -262,7 +262,21 @@ const ContactsTab: FC<ContactsTabProps> = function ({
               <div className="relative flex size-10 shrink-0 items-center justify-center">
                 <img
                   className="size-10 rounded-full object-cover shadow-sm ring-1 ring-gray-200/50 dark:ring-gray-700/50"
-                  src={`https://flowbite.com/docs/images/people/profile-picture-${(index % 5) + 1}.jpg`}
+                  src={`/images/users/${
+                    [
+                      "neil-sims.png",
+                      "bonnie-green.png",
+                      "michael-gough.png",
+                      "lana-byrd.png",
+                      "thomas-lean.png",
+                      "helene-engels.png",
+                      "robert-brown.png",
+                      "leslie-livingston.png",
+                      "joseph-mcfall.png",
+                      "jese-leos.png",
+                      "roberta-casas.png",
+                    ][index % 11]
+                  }`}
                   alt={`好友${index + 1}的头像`}
                 />
                 <span className="absolute bottom-0 right-0 size-2 rounded-full bg-green-500 ring-1 ring-white dark:ring-gray-800"></span>
