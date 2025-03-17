@@ -31,11 +31,48 @@ const ScrollingPrompts: FC<ScrollingPromptsProps> = memo(
       }
       
       .scroll-left {
-        animation: scrollLeft 30s linear infinite;
+        animation: scrollLeft 60s linear infinite;
       }
       
       .scroll-right {
-        animation: scrollRight 30s linear infinite;
+        animation: scrollRight 60s linear infinite;
+      }
+      
+      .fade-edges::before,
+      .fade-edges::after {
+        content: '';
+        position: absolute;
+        z-index: 2;
+        top: 0;
+        bottom: 0;
+        width: 100px;
+        pointer-events: none;
+      }
+      
+      .fade-edges::before {
+        left: 0;
+        background: linear-gradient(to right, 
+          rgba(255, 255, 255, 1) 0%, 
+          rgba(255, 255, 255, 0) 100%);
+      }
+      
+      .fade-edges::after {
+        right: 0;
+        background: linear-gradient(to left, 
+          rgba(255, 255, 255, 1) 0%, 
+          rgba(255, 255, 255, 0) 100%);
+      }
+      
+      .dark .fade-edges::before {
+        background: linear-gradient(to right, 
+          rgba(17, 24, 39, 1) 0%, 
+          rgba(17, 24, 39, 0) 100%);
+      }
+      
+      .dark .fade-edges::after {
+        background: linear-gradient(to left, 
+          rgba(17, 24, 39, 1) 0%, 
+          rgba(17, 24, 39, 0) 100%);
       }
     `;
 
@@ -55,7 +92,7 @@ const ScrollingPrompts: FC<ScrollingPromptsProps> = memo(
           return (
             <div
               key={`prompt-row-${rowIndex}`}
-              className="relative overflow-hidden prompt-container"
+              className="relative overflow-hidden prompt-container fade-edges"
               style={{ height: "40px" }}
             >
               <div
