@@ -70,3 +70,13 @@
 .dark .show-scrollbar-on-hover:hover::-webkit-scrollbar-thumb {
   background-color: rgba(75, 85, 99, 0.5);
 }
+
+/* 隐藏滚动条但保持可滚动 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

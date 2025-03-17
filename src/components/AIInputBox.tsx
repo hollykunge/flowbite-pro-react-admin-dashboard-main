@@ -83,13 +83,13 @@ const AIInputBox: FC<AIInputBoxProps> = ({
   return (
     <div className="w-full">
       {/* 整合的输入框和功能区容器 */}
-      <div className="relative rounded-2xl bg-white dark:bg-gray-800 shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+      <div className="relative rounded-2xl bg-white dark:bg-gray-800 shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 group focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-opacity-50 transition-all duration-200">
         {/* 输入框 */}
         <div className="relative">
           <input
             type="text"
             placeholder="随便问点什么"
-            className="w-full bg-transparent px-6 py-4 text-gray-800 dark:text-white outline-none border-none focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400"
+            className="w-full bg-transparent px-6 py-4 text-gray-800 dark:text-white outline-none border-none focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400"
             value={message}
             onChange={onMessageChange}
             onKeyDown={handleKeyDown}
@@ -116,7 +116,7 @@ const AIInputBox: FC<AIInputBoxProps> = ({
         </div>
 
         {/* 功能区 - 在输入框下方，没有分割线 */}
-        <div className="flex items-center justify-start gap-2 px-4 py-2 bg-white dark:bg-gray-800">
+        <div className="flex items-center justify-start gap-2 px-4 py-2">
           <button
             className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
             onClick={handleDeepSearch}
