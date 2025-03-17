@@ -71,16 +71,25 @@ module.exports = {
       keyframes: {
         "scroll-left": {
           "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(-50%)" },
+          "100%": { transform: "translateX(calc(-50% - 1rem))" },
         },
         "scroll-right": {
-          "0%": { transform: "translateX(-50%)" },
+          "0%": { transform: "translateX(calc(-50% - 1rem))" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "prompt-scroll": {
+          "0%": { transform: "translateX(0)" },
+          "10%": { transform: "translateX(0)" },
+          "40%": { transform: "translateX(calc(-100% + 100px))" },
+          "60%": { transform: "translateX(calc(-100% + 100px))" },
+          "90%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(0)" },
         },
       },
       animation: {
-        "scroll-left": "scroll-left 40s linear infinite",
-        "scroll-right": "scroll-right 40s linear infinite",
+        "scroll-left": "scroll-left 30s linear infinite",
+        "scroll-right": "scroll-right 30s linear infinite",
+        "prompt-scroll": "prompt-scroll 2.5s ease-in-out",
       },
     },
   },

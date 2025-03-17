@@ -7,75 +7,81 @@ interface ScrollingPromptsProps {
 
 const ScrollingPrompts: FC<ScrollingPromptsProps> = memo(
   ({ promptSuggestions, onPromptClick }) => {
-    const [pauseScrolling, setPauseScrolling] = useState<boolean[]>(
-      new Array(promptSuggestions.length).fill(false),
-    );
+    // 不再暂停整行滚动，只跟踪悬停的提示词
+    const [hoveredPrompt, setHoveredPrompt] = useState<string | null>(null);
 
-    const handlePauseScroll = useCallback((rowIndex: number) => {
-      setPauseScrolling((prev) => {
-        const newState = [...prev];
-        newState[rowIndex] = true;
-        return newState;
-      });
+    const handlePromptHover = useCallback((prompt: string) => {
+      setHoveredPrompt(prompt);
     }, []);
 
-    const handleResumeScroll = useCallback((rowIndex: number) => {
-      setPauseScrolling((prev) => {
-        const newState = [...prev];
-        newState[rowIndex] = false;
-        return newState;
-      });
+    const handlePromptLeave = useCallback(() => {
+      setHoveredPrompt(null);
     }, []);
+
+    // 创建内联样式标签，定义滚动动画
+    const styleTag = `
+      @keyframes scrollLeft {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(calc(-50% - 1rem)); }
+      }
+      
+      @keyframes scrollRight {
+        0% { transform: translateX(calc(-50% - 1rem)); }
+        100% { transform: translateX(0); }
+      }
+      
+      .scroll-left {
+        animation: scrollLeft 30s linear infinite;
+      }
+      
+      .scroll-right {
+        animation: scrollRight 30s linear infinite;
+      }
+    `;
 
     return (
       <div className="w-full mb-8 space-y-3">
-        {promptSuggestions.map((rowPrompts, rowIndex) => (
-          <div
-            key={`prompt-row-${rowIndex}`}
-            className="relative overflow-hidden prompt-container"
-            onMouseEnter={() => handlePauseScroll(rowIndex)}
-            onMouseLeave={() => handleResumeScroll(rowIndex)}
-          >
-            <div className="flex overflow-x-auto no-scrollbar">
+        {/* 添加内联样式标签 */}
+        <style dangerouslySetInnerHTML={{ __html: styleTag }} />
+
+        {promptSuggestions.map((rowPrompts, rowIndex) => {
+          // 确保有足够的提示词以实现无缝滚动
+          const duplicatedPrompts = [
+            ...rowPrompts,
+            ...rowPrompts,
+            ...rowPrompts,
+          ];
+
+          return (
+            <div
+              key={`prompt-row-${rowIndex}`}
+              className="relative overflow-hidden prompt-container"
+              style={{ height: "40px" }}
+            >
               <div
-                className={`flex space-x-3 py-1 ${
-                  !pauseScrolling[rowIndex]
-                    ? `animate-scroll-${rowIndex % 2 === 0 ? "left" : "right"}`
-                    : ""
-                }`}
+                className={`flex space-x-3 py-1 ${rowIndex === 0 ? "scroll-left" : "scroll-right"}`}
                 style={{
-                  animationDuration: `${40 + rowIndex * 10}s`,
-                  animationPlayState: pauseScrolling[rowIndex]
-                    ? "paused"
-                    : "running",
                   width: "fit-content",
-                  minWidth: "100%",
-                  transform: "translate3d(0, 0, 0)",
-                  willChange: "transform",
-                  backfaceVisibility: "hidden",
-                  WebkitFontSmoothing: "antialiased",
-                  perspective: "1000",
-                  transformStyle: "preserve-3d",
+                  minWidth: "200%", // 确保内容足够长以实现滚动效果
+                  display: "flex",
+                  flexWrap: "nowrap",
                 }}
               >
-                {[...rowPrompts, ...rowPrompts].map((prompt, promptIndex) => (
+                {duplicatedPrompts.map((prompt, promptIndex) => (
                   <button
                     key={`${rowIndex}-${promptIndex}`}
-                    className="inline-flex items-center h-8 px-3 py-1 bg-purple-100/70 hover:bg-purple-200/70 dark:bg-purple-900/30 dark:hover:bg-purple-800/50 backdrop-blur-sm rounded-full text-xs text-purple-800 dark:text-purple-200 border border-purple-200/50 dark:border-purple-700/50 transition-all duration-300 ease-out cursor-pointer transform hover:scale-105 whitespace-nowrap"
+                    className={`inline-flex items-center h-8 px-3 py-1 bg-purple-100/70 hover:bg-purple-200/70 dark:bg-purple-900/30 dark:hover:bg-purple-800/50 backdrop-blur-sm rounded-full text-xs text-purple-800 dark:text-purple-200 border border-purple-200/50 dark:border-purple-700/50 transition-all duration-300 ease-out cursor-pointer whitespace-nowrap ${hoveredPrompt === prompt ? "ring-2 ring-purple-400 dark:ring-purple-500 scale-105" : ""}`}
                     onClick={() => onPromptClick(prompt)}
-                    style={{
-                      transform: "translate3d(0, 0, 0)",
-                      backfaceVisibility: "hidden",
-                      WebkitFontSmoothing: "antialiased",
-                    }}
+                    onMouseEnter={() => handlePromptHover(prompt)}
+                    onMouseLeave={handlePromptLeave}
                   >
-                    <span className="truncate max-w-xs">{prompt}</span>
+                    {prompt}
                   </button>
                 ))}
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     );
   },
