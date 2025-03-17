@@ -15,6 +15,13 @@ import {
   HiUserGroup,
   HiX,
 } from "react-icons/hi";
+import { PiBooksDuotone } from "react-icons/pi";
+import { PiRobotDuotone } from "react-icons/pi";
+import { PiListDashesDuotone } from "react-icons/pi";
+import { PiBrainDuotone } from "react-icons/pi";
+import { PiBookOpenDuotone } from "react-icons/pi";
+import { TbHistory } from "react-icons/tb";
+
 import AISettingsModal from "./AISettingsModal";
 import ChatHistoryDrawer from "./ChatHistoryDrawer";
 
@@ -189,7 +196,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
 
         // 绘制背景网格
         const gridSize = 50;
-        ctx.strokeStyle = "rgba(0, 120, 255, 0.1)";
+        ctx.strokeStyle = "rgba(0, 150, 255, 0.15)"; // 加深网格线颜色
         ctx.lineWidth = 0.5;
 
         // 水平线
@@ -206,6 +213,16 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
           ctx.moveTo(x, 0);
           ctx.lineTo(x, canvas.height);
           ctx.stroke();
+        }
+
+        // 在网格交叉点添加小圆点
+        ctx.fillStyle = "rgba(0, 150, 255, 0.25)"; // 保持颜色深度
+        for (let x = 0; x < canvas.width; x += gridSize) {
+          for (let y = 0; y < canvas.height; y += gridSize) {
+            ctx.beginPath();
+            ctx.arc(x, y, 0.5, 0, Math.PI * 2); // 将圆点大小改为0.5
+            ctx.fill();
+          }
         }
       }
     };
@@ -226,10 +243,10 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
         this.x = Math.random() * (canvas?.width || 1000);
         this.y = Math.random() * (canvas?.height || 800);
 
-        // 粒子大小
-        this.size = Math.random() * 3 + 1;
+        // 粒子大小 - 更细致的随机范围
+        this.size = Math.random() * 2 + 1;
 
-        // 默认形状为圆形，避免 undefined
+        // 默认形状为圆形
         this.shape = "circle";
 
         // 检测当前是否为暗色模式
@@ -268,20 +285,21 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
           this.shape = "circle";
         } else {
           // 亮色模式下的科技蓝亚克力效果粒子
-          // 蓝色调粒子
-          const blueShade = Math.floor(Math.random() * 100) + 155;
-          this.color = `rgba(0, ${blueShade}, 255, ${Math.random() * 0.3 + 0.1})`;
+          const blueShade = Math.floor(Math.random() * 50) + 200; // 更亮的蓝色
+          this.color = `rgba(0, ${blueShade}, 255, ${Math.random() * 0.5 + 0.3})`; // 更高的基础透明度
 
-          // 随机速度
-          this.speedX = (Math.random() - 0.5) * 0.5;
-          this.speedY = (Math.random() - 0.5) * 0.5;
+          // 更快的随机速度
+          this.speedX = (Math.random() - 0.5) * 1.5;
+          this.speedY = (Math.random() - 0.5) * 1.5;
 
-          this.opacity = Math.random() * 0.3 + 0.1;
+          this.opacity = Math.random() * 0.5 + 0.3;
 
-          // 随机形状：圆形、方形或三角形
+          // 随机形状，增加三角形的出现概率
           const shapes: Array<"circle" | "square" | "triangle"> = [
             "circle",
+            "circle",
             "square",
+            "triangle",
             "triangle",
           ];
           this.shape =
@@ -404,8 +422,8 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
 
       // 亮色模式下添加连接线效果
       if (!isDarkMode && ctx && particles.length > 0) {
-        ctx.strokeStyle = "rgba(0, 120, 255, 0.05)";
-        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = "rgba(0, 150, 255, 0.15)"; // 加深连接线颜色
+        ctx.lineWidth = 0.3; // 更细的连接线
 
         for (let i = 0; i < particles.length; i++) {
           for (let j = i + 1; j < particles.length; j++) {
@@ -417,15 +435,27 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
             const dy = p1.y - p2.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            // 只连接距离较近的粒子
-            if (distance < 100) {
+            // 增加连接线的最大距离
+            if (distance < 150) {
               // 距离越近，线条越不透明
-              const opacity = (1 - distance / 100) * 0.2;
+              const opacity = (1 - distance / 150) * 0.3;
               ctx.globalAlpha = opacity;
               ctx.beginPath();
               ctx.moveTo(p1.x, p1.y);
               ctx.lineTo(p2.x, p2.y);
               ctx.stroke();
+
+              // 在连接线中点添加小光点效果
+              if (distance < 100) {
+                const midX = (p1.x + p2.x) / 2;
+                const midY = (p1.y + p2.y) / 2;
+                const glowSize = (1 - distance / 100) * 1.5;
+
+                ctx.beginPath();
+                ctx.arc(midX, midY, glowSize, 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(0, 150, 255, 0.3)";
+                ctx.fill();
+              }
             }
           }
         }
@@ -758,7 +788,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 aria-label="知识库"
                 title="知识库"
               >
-                <HiDatabase className="w-5 h-5" />
+                <PiBooksDuotone className="w-5 h-5" />
                 <span className="text-sm font-medium">知识工程</span>
               </button>
 
@@ -775,7 +805,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 aria-label="智能体"
                 title="智能体"
               >
-                <HiUserGroup className="w-5 h-5" />
+                <PiRobotDuotone className="w-5 h-5" />
                 <span className="text-sm font-medium">智能体</span>
               </button>
 
@@ -794,7 +824,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 aria-label="提示词"
                 title="提示词"
               >
-                <HiTemplate className="w-5 h-5" />
+                <PiListDashesDuotone className="w-5 h-5" />
                 <span className="text-sm font-medium">提示词</span>
               </button>
 
@@ -811,8 +841,8 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 aria-label="模型管理"
                 title="模型管理"
               >
-                <HiChip className="w-5 h-5" />
-                <span className="text-sm font-medium">模型管理</span>
+                <PiBrainDuotone className="w-5 h-5" />
+                <span className="text-sm font-medium">大模型</span>
               </button>
 
               {/* 使用帮助按钮 - 图标和文字 */}
@@ -828,7 +858,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 aria-label="使用帮助"
                 title="使用帮助"
               >
-                <HiBookOpen className="w-5 h-5" />
+                <PiBookOpenDuotone className="w-5 h-5" />
                 <span className="text-sm font-medium">使用帮助</span>
               </button>
             </div>
@@ -842,7 +872,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 aria-label="会话列表"
                 title="会话列表"
               >
-                <HiMenuAlt2 className="w-5 h-5" />
+                <TbHistory className="w-5 h-5" />
               </button>
 
               {/* 头像和下拉菜单 */}
