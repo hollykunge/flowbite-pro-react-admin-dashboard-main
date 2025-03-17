@@ -196,8 +196,8 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
 
         // 绘制背景网格
         const gridSize = 50;
-        ctx.strokeStyle = "rgba(0, 150, 255, 0.15)"; // 加深网格线颜色
-        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = "rgba(0, 150, 255, 0.3)"; // 加深网格线颜色到0.3的透明度
+        ctx.lineWidth = 0.8; // 增加线条宽度到0.8
 
         // 水平线
         for (let y = 0; y < canvas.height; y += gridSize) {
@@ -216,7 +216,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
         }
 
         // 在网格交叉点添加小圆点
-        ctx.fillStyle = "rgba(0, 150, 255, 0.25)"; // 保持颜色深度
+        ctx.fillStyle = "rgba(0, 150, 255, 0.4)"; // 加深圆点颜色到0.4的透明度
         for (let x = 0; x < canvas.width; x += gridSize) {
           for (let y = 0; y < canvas.height; y += gridSize) {
             ctx.beginPath();
@@ -576,26 +576,26 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
   const promptSuggestions = [
     // 第一行提示词
     [
-      "如何提高英语口语水平？",
+      "如何做系统设计？",
       "Python数据分析入门指南",
-      "健康饮食的基本原则",
+      "分系统是什么？",
       "高效时间管理技巧",
       "如何培养良好的阅读习惯",
       "提高工作效率的方法",
-      "如何开始冥想练习",
+      "如何开始写任务书",
       "职场沟通技巧",
-      "如何制定可行的财务计划",
-      "旅行摄影技巧分享",
+      "如何制定可行的工作计划",
+      "Word技巧分享",
     ],
     // 第二行提示词
     [
-      "创意写作的灵感来源",
+      "知识工程数据来源",
       "如何开始学习人工智能",
-      "居家办公的环境布置",
+      "办公室的环境布置",
       "提高演讲能力的方法",
       "如何培养批判性思维",
       "有效的学习方法总结",
-      "如何开始投资理财",
+      "如何开始型号设计",
       "提高专注力的技巧",
       "如何写一篇好的论文",
       "团队协作的有效方式",
@@ -687,21 +687,35 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
       <style>
         {`
         @keyframes scrollLeft {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
         }
         
         @keyframes scrollRight {
-          0% { transform: translateX(-50%); }
-          100% { transform: translateX(0); }
+          0% { transform: translate3d(-50%, 0, 0); }
+          100% { transform: translate3d(0, 0, 0); }
         }
         
         .animate-scroll-left {
           animation: scrollLeft linear infinite;
+          animation-play-state: running;
+          will-change: transform;
+          backface-visibility: hidden;
+          -webkit-font-smoothing: antialiased;
+          transform: translateZ(0);
+          perspective: 1000;
+          transform-style: preserve-3d;
         }
         
         .animate-scroll-right {
           animation: scrollRight linear infinite;
+          animation-play-state: running;
+          will-change: transform;
+          backface-visibility: hidden;
+          -webkit-font-smoothing: antialiased;
+          transform: translateZ(0);
+          perspective: 1000;
+          transform-style: preserve-3d;
         }
         
         .prompt-container {
@@ -709,6 +723,11 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
           max-width: 100%;
           margin: 0 auto;
           overflow: hidden;
+          mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+          -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+          transform: translateZ(0);
+          backface-visibility: hidden;
+          perspective: 1000;
         }
         
         .prompt-container::before,
@@ -716,10 +735,12 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
           content: "";
           position: absolute;
           top: 0;
-          width: 20%;
+          width: 15%;
           height: 100%;
           z-index: 1;
           pointer-events: none;
+          transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          will-change: opacity;
         }
         
         .prompt-container::before {
@@ -782,13 +803,13 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 }
                 className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all duration-200 ${
                   activeNavItem === "knowledge"
-                    ? "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300"
+                    ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                     : "hover:bg-gray-100/80 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
                 }`}
                 aria-label="知识库"
                 title="知识库"
               >
-                <PiBooksDuotone className="w-5 h-5" />
+                <PiBooksDuotone className="w-5 h-5 text-blue-500 dark:text-blue-400" />
                 <span className="text-sm font-medium">知识工程</span>
               </button>
 
@@ -799,13 +820,13 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 }
                 className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all duration-200 ${
                   activeNavItem === "agents"
-                    ? "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300"
+                    ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
                     : "hover:bg-gray-100/80 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
                 }`}
                 aria-label="智能体"
                 title="智能体"
               >
-                <PiRobotDuotone className="w-5 h-5" />
+                <PiRobotDuotone className="w-5 h-5 text-purple-500 dark:text-purple-400" />
                 <span className="text-sm font-medium">智能体</span>
               </button>
 
@@ -818,13 +839,13 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 }
                 className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all duration-200 ${
                   activeNavItem === "templates"
-                    ? "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300"
+                    ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300"
                     : "hover:bg-gray-100/80 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
                 }`}
                 aria-label="提示词"
                 title="提示词"
               >
-                <PiListDashesDuotone className="w-5 h-5" />
+                <PiListDashesDuotone className="w-5 h-5 text-green-500 dark:text-green-400" />
                 <span className="text-sm font-medium">提示词</span>
               </button>
 
@@ -835,13 +856,13 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 }
                 className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all duration-200 ${
                   activeNavItem === "models"
-                    ? "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300"
+                    ? "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300"
                     : "hover:bg-gray-100/80 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
                 }`}
                 aria-label="模型管理"
                 title="模型管理"
               >
-                <PiBrainDuotone className="w-5 h-5" />
+                <PiBrainDuotone className="w-5 h-5 text-primary-400 dark:text-primary-400" />
                 <span className="text-sm font-medium">大模型</span>
               </button>
 
@@ -852,13 +873,13 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 }
                 className={`flex items-center justify-center gap-2 py-2 px-4 rounded-lg transition-all duration-200 ${
                   activeNavItem === "help"
-                    ? "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300"
+                    ? "bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300"
                     : "hover:bg-gray-100/80 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
                 }`}
                 aria-label="使用帮助"
                 title="使用帮助"
               >
-                <PiBookOpenDuotone className="w-5 h-5" />
+                <PiBookOpenDuotone className="w-5 h-5 text-rose-500 dark:text-rose-400" />
                 <span className="text-sm font-medium">使用帮助</span>
               </button>
             </div>
@@ -1041,13 +1062,13 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                   </h3>
                   <div className="grid grid-cols-3 gap-2">
                     <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
-                      <div className="font-medium">GPT-4</div>
+                      <div className="font-medium">通义千问Max</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">
                         高级推理能力
                       </div>
                     </div>
                     <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
-                      <div className="font-medium">Claude 3</div>
+                      <div className="font-medium">DeepSeek-R1</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">
                         长文本处理
                       </div>
@@ -1062,12 +1083,6 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                       <div className="font-medium">Gemini Pro</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">
                         多模态能力
-                      </div>
-                    </div>
-                    <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
-                      <div className="font-medium">Llama 3</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        开源模型
                       </div>
                     </div>
                     <div className="p-3 rounded-lg border border-dashed border-primary-300 dark:border-primary-600 bg-primary-50/50 dark:bg-primary-900/20 text-center flex items-center justify-center cursor-pointer">
@@ -1228,19 +1243,30 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                       : ""
                   }`}
                   style={{
-                    animationDuration: `${30 + rowIndex * 5}s`,
+                    animationDuration: `${40 + rowIndex * 10}s`,
                     animationPlayState: pauseScrolling[rowIndex]
                       ? "paused"
                       : "running",
-                    width: "100%",
+                    width: "fit-content",
+                    minWidth: "100%",
+                    transform: "translate3d(0, 0, 0)",
+                    willChange: "transform",
+                    backfaceVisibility: "hidden",
+                    WebkitFontSmoothing: "antialiased",
+                    perspective: "1000",
+                    transformStyle: "preserve-3d",
                   }}
                 >
-                  {/* 复制一份提示词，确保滚动时无缝衔接 */}
                   {[...rowPrompts, ...rowPrompts].map((prompt, promptIndex) => (
                     <button
                       key={`${rowIndex}-${promptIndex}`}
-                      className="inline-flex items-center h-8 px-3 py-1 bg-purple-100/70 hover:bg-purple-200/70 dark:bg-purple-900/30 dark:hover:bg-purple-800/50 backdrop-blur-sm rounded-full text-xs text-purple-800 dark:text-purple-200 border border-purple-200/50 dark:border-purple-700/50 transition-colors duration-200 cursor-pointer"
+                      className="inline-flex items-center h-8 px-3 py-1 bg-purple-100/70 hover:bg-purple-200/70 dark:bg-purple-900/30 dark:hover:bg-purple-800/50 backdrop-blur-sm rounded-full text-xs text-purple-800 dark:text-purple-200 border border-purple-200/50 dark:border-purple-700/50 transition-all duration-300 ease-out cursor-pointer transform hover:scale-105"
                       onClick={() => handlePromptClick(prompt)}
+                      style={{
+                        transform: "translate3d(0, 0, 0)",
+                        backfaceVisibility: "hidden",
+                        WebkitFontSmoothing: "antialiased",
+                      }}
                     >
                       <span className="truncate max-w-xs">{prompt}</span>
                     </button>
