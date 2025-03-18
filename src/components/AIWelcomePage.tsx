@@ -203,7 +203,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
   );
 
   return (
-    <div className="flex h-full w-full flex-col items-center relative overflow-y-auto overflow-x-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+    <div className="flex h-full w-full flex-col items-center relative overflow-y-auto overflow-x-hidden text-gray-800 dark:text-gray-200">
       <BackgroundCanvas isDarkMode={isDarkMode} />
 
       <div className="flex flex-col items-center w-full h-full relative">
@@ -744,7 +744,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
                 loading="lazy"
               />
             </div>
-            <h1 className="text-5xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-5xl font-bold text-gray-700 dark:text-white">
               百灵2.0
             </h1>
           </div>

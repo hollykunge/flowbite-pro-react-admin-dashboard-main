@@ -38,41 +38,64 @@ const ScrollingPrompts: FC<ScrollingPromptsProps> = memo(
         animation: scrollRight 60s linear infinite;
       }
       
-      .fade-edges::before,
-      .fade-edges::after {
-        content: '';
-        position: absolute;
-        z-index: 2;
-        top: 0;
-        bottom: 0;
-        width: 100px;
-        pointer-events: none;
+      /* 模糊渐隐效果 */
+      .prompt-container {
+        position: relative;
+        mask-image: linear-gradient(
+          to right,
+          transparent,
+          black 10%,
+          black 90%,
+          transparent 100%
+        );
+        -webkit-mask-image: linear-gradient(
+          to right,
+          transparent,
+          black 10%,
+          black 90%,
+          transparent 100%
+        );
       }
       
-      .fade-edges::before {
-        left: 0;
-        background: linear-gradient(to right, 
-          rgba(255, 255, 255, 1) 0%, 
-          rgba(255, 255, 255, 0) 100%);
-      }
-      
-      .fade-edges::after {
-        right: 0;
-        background: linear-gradient(to left, 
-          rgba(255, 255, 255, 1) 0%, 
-          rgba(255, 255, 255, 0) 100%);
-      }
-      
-      .dark .fade-edges::before {
-        background: linear-gradient(to right, 
-          rgba(17, 24, 39, 1) 0%, 
-          rgba(17, 24, 39, 0) 100%);
-      }
-      
-      .dark .fade-edges::after {
-        background: linear-gradient(to left, 
-          rgba(17, 24, 39, 1) 0%, 
-          rgba(17, 24, 39, 0) 100%);
+      /* 为不支持mask-image的浏览器提供回退方案 */
+      @supports not (mask-image: linear-gradient(to right, transparent, black)) {
+        .prompt-container::before,
+        .prompt-container::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 10%;
+          z-index: 10;
+          pointer-events: none;
+          backdrop-filter: blur(8px);
+        }
+        
+        .prompt-container::before {
+          left: 0;
+          background: linear-gradient(to right, 
+            rgba(255, 255, 255, 0.5), 
+            rgba(255, 255, 255, 0));
+        }
+        
+        .prompt-container::after {
+          right: 0;
+          background: linear-gradient(to left, 
+            rgba(255, 255, 255, 0.5), 
+            rgba(255, 255, 255, 0));
+        }
+        
+        .dark .prompt-container::before {
+          background: linear-gradient(to right, 
+            rgba(17, 24, 39, 0.5), 
+            rgba(17, 24, 39, 0));
+        }
+        
+        .dark .prompt-container::after {
+          background: linear-gradient(to left, 
+            rgba(17, 24, 39, 0.5), 
+            rgba(17, 24, 39, 0));
+        }
       }
     `;
 
@@ -92,7 +115,7 @@ const ScrollingPrompts: FC<ScrollingPromptsProps> = memo(
           return (
             <div
               key={`prompt-row-${rowIndex}`}
-              className="relative overflow-hidden prompt-container fade-edges"
+              className="relative overflow-hidden prompt-container"
               style={{ height: "40px" }}
             >
               <div

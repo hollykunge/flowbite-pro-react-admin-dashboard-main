@@ -405,7 +405,7 @@ const DiscussionPage: FC = function () {
       securityLevel: "非密",
     },
     {
-      id: 16,
+      id: 17,
       sender: "我",
       avatarSrc: "/images/users/michael-gough.png",
       content: "../images/kanban/task-2.jpg",
@@ -724,7 +724,7 @@ const DiscussionPage: FC = function () {
             <div
               ref={messagesContainerRef}
               onScroll={handleScroll}
-              className="flex-1 overflow-y-auto overflow-x-hidden [scrollbar-width:thin] [&.scrolling]:opacity-100 [&::-webkit-scrollbar-thumb]:rounded-md [&::-webkit-scrollbar-thumb]:bg-gray-300/0 hover:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600/0 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1.5"
+              className="flex-1 overflow-y-auto overflow-x-hidden bg-white dark:bg-transparent [scrollbar-width:thin] [&.scrolling]:opacity-100 [&::-webkit-scrollbar-thumb]:rounded-md [&::-webkit-scrollbar-thumb]:bg-gray-300/0 hover:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600/0 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1.5"
             >
               {/* 消息坞标签页内容 */}
               {activeTab === "messages" && (
@@ -790,7 +790,7 @@ const DiscussionPage: FC = function () {
                           className={`flex w-full items-center justify-between border-b border-gray-200/70 px-0 py-2 text-left transition-all duration-200 hover:cursor-pointer hover:bg-blue-50 dark:border-gray-700/70 dark:hover:bg-blue-900/30 ${
                             activeDiscussionId === item.id
                               ? "bg-blue-100 shadow-sm dark:bg-blue-900/40"
-                              : ""
+                              : "bg-white dark:bg-transparent"
                           } relative overflow-hidden`}
                           onClick={() => handleSelectDiscussion(item.id)}
                           aria-pressed={activeDiscussionId === item.id}
@@ -1116,7 +1116,7 @@ const DiscussionPage: FC = function () {
                 <div
                   ref={chatContainerRef}
                   onScroll={handleScroll}
-                  className="relative flex-1 overflow-y-auto overflow-x-hidden bg-transparent px-4 [scrollbar-width:thin] [&.scrolling]:opacity-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/0 hover:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600/0 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1.5"
+                  className="relative flex-1 overflow-y-auto overflow-x-hidden bg-white dark:bg-transparent px-4 [scrollbar-width:thin] [&.scrolling]:opacity-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/0 hover:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600/0 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1.5"
                 >
                   {/* 组织成员列表 */}
                   {rightPanelType === "contact" && selectedOrganization ? (

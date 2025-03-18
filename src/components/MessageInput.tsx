@@ -76,7 +76,7 @@ const MessageInput: FC<MessageInputProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="my-3 w-full">
-      <div className="rounded-lg border border-gray-200 bg-white shadow-[0_0_10px_rgba(0,0,0,0.1)] hover:shadow-[0_0_15px_rgba(0,0,0,0.2)] transition-shadow duration-300 dark:border-gray-700 dark:bg-gray-800 dark:shadow-[0_0_10px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_15px_rgba(0,0,0,0.4)]">
+      <div className="rounded-lg border border-gray-200 bg-transparent shadow-[0_0_10px_rgba(0,0,0,0.1)] hover:shadow-[0_0_15px_rgba(0,0,0,0.2)] transition-shadow duration-300 dark:border-gray-700 dark:bg-transparent dark:shadow-[0_0_10px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_15px_rgba(0,0,0,0.4)]">
         {/* 消息输入区域 */}
         <div className="px-4 py-3">
           <textarea

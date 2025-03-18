@@ -403,7 +403,7 @@ const ExampleNavbar: FC = function () {
                 className="mr-2 h-7 sm:h-8"
               />
               <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-                易知云雀
+                云雀
               </span>
             </Navbar.Brand>
           </div>
