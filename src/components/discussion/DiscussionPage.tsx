@@ -1262,7 +1262,7 @@ const DiscussionPage: FC = function () {
               <div className="mt-auto">
                 {/* 回复预览 */}
                 {replyingTo && (
-                  <div className="mx-4 mb-2 flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
+                  <div className="mx-4 mb-2 flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
                     <div className="flex items-center">
                       <div className="mr-2 h-4 w-0.5 bg-gray-300 dark:bg-gray-600"></div>
                       <div>

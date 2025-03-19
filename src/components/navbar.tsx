@@ -5,6 +5,7 @@ import {
   Dropdown,
   Navbar,
   Modal,
+  useThemeMode,
 } from "flowbite-react";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
@@ -26,9 +27,20 @@ import {
   HiViewGrid,
   HiX,
   HiCalendar,
+  HiDocumentAdd,
+  HiUserAdd,
+  HiUserGroup,
+  HiClipboardCheck,
+  HiPlus,
 } from "react-icons/hi";
-import { MdCloudDownload, MdCloudUpload } from "react-icons/md";
-import { PiBirdDuotone } from "react-icons/pi";
+import {
+  MdCloudDownload,
+  MdCloudUpload,
+  MdLightMode,
+  MdDarkMode,
+  MdOutlineColorLens,
+} from "react-icons/md";
+import { PiBirdDuotone, PiPaintBrushHouseholdDuotone } from "react-icons/pi";
 import { Calendar, Col, Radio, Row, Select } from "antd";
 import type { CalendarProps } from "antd";
 import { createStyles } from "antd-style";
@@ -341,6 +353,221 @@ const DownloadUploadManager: FC = function () {
   );
 };
 
+// 添加主题切换下拉组件
+const ThemeSwitcher: FC = function () {
+  const [mode, setMode] = useThemeMode();
+  const [techBlueActive, setTechBlueActive] = useState(false);
+  const navbarRef = React.useRef<HTMLDivElement>(null);
+
+  // 应用主题样式的函数 - 使用内联样式
+  const applyThemeStyles = () => {
+    // 获取navbar元素
+    const navbar = navbarRef.current?.closest(".navbar-component");
+
+    if (navbar && techBlueActive) {
+      // 应用科工蓝色主题 - 使用指定的oklch颜色
+      (navbar as HTMLElement).style.backgroundColor =
+        "oklch(0.623 0.214 259.815)";
+      (navbar as HTMLElement).style.borderColor = "oklch(0.523 0.214 259.815)"; // 稍暗的边框色
+
+      // 确保文本和图标在蓝色背景上可见
+      const brandText = navbar.querySelector(".self-center");
+      if (brandText) {
+        (brandText as HTMLElement).style.color = "white";
+      }
+
+      // 将所有导航栏中的图标改为白色
+      const allIcons = navbar.querySelectorAll("svg:not(.no-theme-change)");
+      allIcons.forEach((icon) => {
+        (icon as HTMLElement).style.color = "white";
+      });
+
+      // 确保下拉菜单和悬停状态的颜色也是白色
+      const dropdownTriggers = navbar.querySelectorAll(
+        ".rounded-lg[class*='p-1']",
+      );
+      dropdownTriggers.forEach((trigger) => {
+        (trigger as HTMLElement).classList.add("hover:bg-sky-600");
+        (trigger as HTMLElement).classList.remove(
+          "hover:bg-gray-100",
+          "dark:hover:bg-gray-700",
+        );
+      });
+
+      // 修改搜索框的背景颜色为浅蓝色
+      const searchBox = navbar.querySelector(".no-drag.hidden.h-7.w-64");
+      if (searchBox) {
+        (searchBox as HTMLElement).classList.remove("bg-gray-100");
+        (searchBox as HTMLElement).classList.add("bg-sky-100");
+        (searchBox as HTMLElement).classList.add("text-sky-900");
+        (searchBox as HTMLElement).style.borderColor =
+          "oklch(0.523 0.214 259.815)";
+      }
+    } else if (navbar) {
+      // 重置样式让flowbite主题接管
+      (navbar as HTMLElement).style.backgroundColor = "";
+      (navbar as HTMLElement).style.borderColor = "";
+
+      const brandText = navbar.querySelector(".self-center");
+      if (brandText) {
+        (brandText as HTMLElement).style.color = "";
+      }
+
+      // 重置图标颜色
+      const allIcons = navbar.querySelectorAll("svg:not(.no-theme-change)");
+      allIcons.forEach((icon) => {
+        (icon as HTMLElement).style.color = "";
+      });
+
+      // 重置下拉菜单和悬停状态
+      const dropdownTriggers = navbar.querySelectorAll(
+        ".rounded-lg[class*='p-1']",
+      );
+      dropdownTriggers.forEach((trigger) => {
+        (trigger as HTMLElement).classList.remove("hover:bg-sky-600");
+        (trigger as HTMLElement).classList.add("hover:bg-gray-100");
+        if (document.documentElement.classList.contains("dark")) {
+          (trigger as HTMLElement).classList.add("dark:hover:bg-gray-700");
+        }
+      });
+
+      // 重置搜索框的背景颜色
+      const searchBox = navbar.querySelector(".no-drag.hidden.h-7.w-64");
+      if (searchBox) {
+        (searchBox as HTMLElement).classList.add("bg-gray-100");
+        (searchBox as HTMLElement).classList.remove("bg-sky-100");
+        (searchBox as HTMLElement).classList.remove("text-sky-900");
+        (searchBox as HTMLElement).style.borderColor = "";
+      }
+    }
+
+    console.log(
+      "应用主题样式:",
+      techBlueActive ? "科工蓝色(OKLCH)" : mode === "dark" ? "暗色" : "亮色",
+      "元素:",
+      navbar ? "找到" : "未找到",
+    );
+  };
+
+  // 初始化主题
+  useEffect(() => {
+    // 从localStorage读取科技蓝色主题状态
+    const techBlue = localStorage.getItem("techBlueTheme") === "true";
+    setTechBlueActive(techBlue);
+  }, []);
+
+  // mode或techBlueActive变化时应用样式
+  useEffect(() => {
+    applyThemeStyles();
+  }, [mode, techBlueActive]);
+
+  // 切换亮色主题
+  const setLightTheme = () => {
+    console.log("切换到亮色主题");
+    // 直接设置HTML元素的类和localStorage
+    document.documentElement.classList.remove("dark");
+    localStorage.setItem("theme", "light");
+    setMode("light"); // 同时也更新组件状态
+    setTechBlueActive(false);
+    localStorage.setItem("techBlueTheme", "false");
+  };
+
+  // 切换暗色主题
+  const setDarkTheme = () => {
+    console.log("切换到暗色主题");
+    // 直接设置HTML元素的类和localStorage
+    document.documentElement.classList.add("dark");
+    localStorage.setItem("theme", "dark");
+    setMode("dark"); // 同时也更新组件状态
+    setTechBlueActive(false);
+    localStorage.setItem("techBlueTheme", "false");
+  };
+
+  // 切换科技蓝色主题
+  const setTechBlueTheme = () => {
+    console.log("切换到科工蓝色主题");
+    // 直接设置HTML元素的类和localStorage
+    document.documentElement.classList.remove("dark");
+    localStorage.setItem("theme", "light");
+    setMode("light"); // 同时也更新组件状态
+    setTechBlueActive(true);
+    localStorage.setItem("techBlueTheme", "true");
+  };
+
+  return (
+    <div ref={navbarRef}>
+      <Dropdown
+        arrowIcon={false}
+        inline
+        label={
+          <span className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <span className="sr-only">切换主题</span>
+            <PiPaintBrushHouseholdDuotone className="text-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
+          </span>
+        }
+      >
+        <div className="w-52">
+          <div className="block rounded-t-lg bg-gray-50 px-4 py-2 text-center text-sm font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+            选择主题
+          </div>
+          <div className="px-2 py-2">
+            <button
+              onClick={setLightTheme}
+              className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm ${
+                mode === "light" && !techBlueActive
+                  ? "bg-gray-100 text-blue-600 dark:bg-gray-600 dark:text-blue-500"
+                  : "text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-600"
+              }`}
+            >
+              <MdLightMode className="text-lg text-yellow-400" />
+              亮色主题
+              {mode === "light" && !techBlueActive && (
+                <div className="ml-auto">
+                  <div className="size-2 rounded-full bg-blue-600"></div>
+                </div>
+              )}
+            </button>
+
+            <button
+              onClick={setDarkTheme}
+              className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm ${
+                mode === "dark"
+                  ? "bg-gray-100 text-blue-600 dark:bg-gray-600 dark:text-blue-500"
+                  : "text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-600"
+              }`}
+            >
+              <MdDarkMode className="text-lg text-gray-700 dark:text-gray-400" />
+              暗色主题
+              {mode === "dark" && (
+                <div className="ml-auto">
+                  <div className="size-2 rounded-full bg-blue-600"></div>
+                </div>
+              )}
+            </button>
+
+            <button
+              onClick={setTechBlueTheme}
+              className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm ${
+                techBlueActive
+                  ? "bg-gray-100 text-blue-600 dark:bg-gray-600 dark:text-blue-500"
+                  : "text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-600"
+              }`}
+            >
+              <MdOutlineColorLens className="text-lg text-sky-600" />
+              科工蓝色
+              {techBlueActive && (
+                <div className="ml-auto">
+                  <div className="size-2 rounded-full bg-blue-600"></div>
+                </div>
+              )}
+            </button>
+          </div>
+        </div>
+      </Dropdown>
+    </div>
+  );
+};
+
 const ExampleNavbar: FC = function () {
   const { isOpenOnSmallScreens, isPageWithSidebar, setOpenOnSmallScreens } =
     useSidebarContext();
@@ -391,7 +618,7 @@ const ExampleNavbar: FC = function () {
   };
 
   return (
-    <Navbar fluid className="app-drag-region py-1">
+    <Navbar fluid className="app-drag-region py-1 navbar-component">
       <div className="w-full lg:px-4 lg:pl-2">
         <div className="grid grid-cols-3 items-center">
           {/* 左侧品牌区域 */}
@@ -409,7 +636,7 @@ const ExampleNavbar: FC = function () {
           </div>
 
           {/* 中间搜索区域 */}
-          <div className="flex justify-center">
+          <div className="flex justify-center items-center">
             <button
               type="button"
               onClick={openSearchModal}
@@ -418,6 +645,9 @@ const ExampleNavbar: FC = function () {
               <HiSearch className="mr-2 size-4" />
               <span>搜索...</span>
             </button>
+            <div className="ml-2 hidden md:block">
+              <CreateActionDropdown />
+            </div>
           </div>
 
           {/* 右侧功能区域 */}
@@ -444,6 +674,9 @@ const ExampleNavbar: FC = function () {
               <span className="sr-only">搜索</span>
               <HiSearch className="size-5" />
             </button>
+            <div className="no-drag md:hidden">
+              <CreateActionDropdown />
+            </div>
             <div className="no-drag">
               <NotificationBellDropdown />
             </div>
@@ -454,7 +687,7 @@ const ExampleNavbar: FC = function () {
               <DownloadUploadManager />
             </div>
             <div className="no-drag">
-              <DarkThemeToggle />
+              <ThemeSwitcher />
             </div>
             <div className="no-drag">
               <WindowControls />
@@ -1004,6 +1237,155 @@ const AppDrawerDropdown: FC = function () {
               fullCellRender={cellRender}
               className="bg-white dark:bg-gray-800 dark:text-white"
             />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+// 创建按钮下拉组件
+const CreateActionDropdown: FC = function () {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 打开模态框
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // 关闭模态框
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // 处理创建操作
+  const handleAction = (action: string) => {
+    console.log(`创建操作: ${action}`);
+    closeModal();
+  };
+
+  return (
+    <>
+      <button
+        onClick={openModal}
+        className="no-drag h-7 rounded-lg p-1.5 flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white dark:bg-orange-600 dark:hover:bg-orange-700"
+      >
+        <span className="sr-only">创建</span>
+        <HiPlus className="size-4 text-white dark:text-white" />
+      </button>
+
+      {/* 创建选项模态框 */}
+      <div
+        className={`${
+          isModalOpen ? "fixed" : "hidden"
+        } inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50 p-4 backdrop-blur-sm`}
+      >
+        <div className="mx-auto w-full max-w-md overflow-hidden rounded-xl bg-white/95 shadow-xl transition-all dark:bg-gray-800/95">
+          {/* 模态框头部 */}
+          <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                创建
+              </h3>
+              <button
+                type="button"
+                onClick={closeModal}
+                className="rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                <HiX className="size-5" />
+                <span className="sr-only">关闭</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 模态框内容 */}
+          <div className="p-4">
+            <div className="grid grid-cols-1 gap-3">
+              <button
+                onClick={() => handleAction("对话")}
+                className="flex items-center rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+              >
+                <div className="mr-3 flex size-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300">
+                  <HiUserAdd className="size-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">
+                    创建对话
+                  </h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    开始与联系人的新对话
+                  </p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => handleAction("群组")}
+                className="flex items-center rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+              >
+                <div className="mr-3 flex size-10 items-center justify-center rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300">
+                  <HiUserGroup className="size-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">
+                    创建群组
+                  </h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    创建多人协作群组
+                  </p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => handleAction("任务")}
+                className="flex items-center rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+              >
+                <div className="mr-3 flex size-10 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300">
+                  <HiClipboardCheck className="size-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">
+                    创建任务
+                  </h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    添加新的任务项目
+                  </p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => handleAction("日程")}
+                className="flex items-center rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+              >
+                <div className="mr-3 flex size-10 items-center justify-center rounded-lg bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300">
+                  <HiCalendar className="size-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">
+                    创建日程
+                  </h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    安排新的日程事项
+                  </p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => handleAction("文档")}
+                className="flex items-center rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+              >
+                <div className="mr-3 flex size-10 items-center justify-center rounded-lg bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300">
+                  <HiDocumentAdd className="size-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">
+                    创建文档
+                  </h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    新建文档或笔记
+                  </p>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </div>
