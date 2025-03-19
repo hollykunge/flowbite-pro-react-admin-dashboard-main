@@ -8,7 +8,7 @@ import {
   useThemeMode,
 } from "flowbite-react";
 import type { FC } from "react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { GrClose } from "react-icons/gr";
 import {
   HiArchive,
@@ -358,6 +358,9 @@ const ThemeSwitcher: FC = function () {
   const [mode, setMode] = useThemeMode();
   const [techBlueActive, setTechBlueActive] = useState(false);
   const navbarRef = React.useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [showMenu, setShowMenu] = useState(false);
 
   // 应用主题样式的函数 - 使用内联样式
   const applyThemeStyles = () => {
@@ -394,14 +397,19 @@ const ThemeSwitcher: FC = function () {
         );
       });
 
-      // 修改搜索框的背景颜色为浅蓝色
+      // 修改搜索框的背景颜色为更清晰美观的样式
       const searchBox = navbar.querySelector(".no-drag.hidden.h-7.w-64");
       if (searchBox) {
         (searchBox as HTMLElement).classList.remove("bg-gray-100");
         (searchBox as HTMLElement).classList.add("bg-sky-100");
         (searchBox as HTMLElement).classList.add("text-sky-900");
+        (searchBox as HTMLElement).style.backgroundColor =
+          "rgba(255, 255, 255, 0.25)";
+        (searchBox as HTMLElement).style.backdropFilter = "blur(4px)";
         (searchBox as HTMLElement).style.borderColor =
-          "oklch(0.523 0.214 259.815)";
+          "rgba(255, 255, 255, 0.3)";
+        (searchBox as HTMLElement).style.boxShadow =
+          "0 1px 2px rgba(0, 0, 0, 0.1)";
       }
     } else if (navbar) {
       // 重置样式让flowbite主题接管
@@ -437,7 +445,10 @@ const ThemeSwitcher: FC = function () {
         (searchBox as HTMLElement).classList.add("bg-gray-100");
         (searchBox as HTMLElement).classList.remove("bg-sky-100");
         (searchBox as HTMLElement).classList.remove("text-sky-900");
+        (searchBox as HTMLElement).style.backgroundColor = "";
+        (searchBox as HTMLElement).style.backdropFilter = "";
         (searchBox as HTMLElement).style.borderColor = "";
+        (searchBox as HTMLElement).style.boxShadow = "";
       }
     }
 
@@ -461,6 +472,31 @@ const ThemeSwitcher: FC = function () {
     applyThemeStyles();
   }, [mode, techBlueActive]);
 
+  // 点击外部关闭下拉菜单
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showMenu &&
+        menuRef.current &&
+        buttonRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setShowMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMenu]);
+
+  // 切换下拉菜单显示状态
+  const toggleMenu = () => {
+    setShowMenu(!showMenu);
+  };
+
   // 切换亮色主题
   const setLightTheme = () => {
     console.log("切换到亮色主题");
@@ -470,6 +506,7 @@ const ThemeSwitcher: FC = function () {
     setMode("light"); // 同时也更新组件状态
     setTechBlueActive(false);
     localStorage.setItem("techBlueTheme", "false");
+    setShowMenu(false); // 关闭下拉菜单
   };
 
   // 切换暗色主题
@@ -481,6 +518,7 @@ const ThemeSwitcher: FC = function () {
     setMode("dark"); // 同时也更新组件状态
     setTechBlueActive(false);
     localStorage.setItem("techBlueTheme", "false");
+    setShowMenu(false); // 关闭下拉菜单
   };
 
   // 切换科技蓝色主题
@@ -492,21 +530,26 @@ const ThemeSwitcher: FC = function () {
     setMode("light"); // 同时也更新组件状态
     setTechBlueActive(true);
     localStorage.setItem("techBlueTheme", "true");
+    setShowMenu(false); // 关闭下拉菜单
   };
 
   return (
-    <div ref={navbarRef}>
-      <Dropdown
-        arrowIcon={false}
-        inline
-        label={
-          <span className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700">
-            <span className="sr-only">切换主题</span>
-            <PiPaintBrushHouseholdDuotone className="text-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
-          </span>
-        }
+    <div ref={navbarRef} className="relative">
+      <button
+        ref={buttonRef}
+        onClick={toggleMenu}
+        className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
+        type="button"
       >
-        <div className="w-52">
+        <span className="sr-only">切换主题</span>
+        <PiPaintBrushHouseholdDuotone className="text-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" />
+      </button>
+
+      {showMenu && (
+        <div
+          ref={menuRef}
+          className="absolute right-0 mt-2 w-52 z-50 rounded-xl divide-y divide-gray-100 shadow bg-white dark:bg-gray-800 dark:divide-gray-700"
+        >
           <div className="block rounded-t-lg bg-gray-50 px-4 py-2 text-center text-sm font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-400">
             选择主题
           </div>
@@ -518,6 +561,7 @@ const ThemeSwitcher: FC = function () {
                   ? "bg-gray-100 text-blue-600 dark:bg-gray-600 dark:text-blue-500"
                   : "text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-600"
               }`}
+              type="button"
             >
               <MdLightMode className="text-lg text-yellow-400" />
               亮色主题
@@ -535,6 +579,7 @@ const ThemeSwitcher: FC = function () {
                   ? "bg-gray-100 text-blue-600 dark:bg-gray-600 dark:text-blue-500"
                   : "text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-600"
               }`}
+              type="button"
             >
               <MdDarkMode className="text-lg text-gray-700 dark:text-gray-400" />
               暗色主题
@@ -552,6 +597,7 @@ const ThemeSwitcher: FC = function () {
                   ? "bg-gray-100 text-blue-600 dark:bg-gray-600 dark:text-blue-500"
                   : "text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-600"
               }`}
+              type="button"
             >
               <MdOutlineColorLens className="text-lg text-sky-600" />
               科工蓝色
@@ -563,7 +609,7 @@ const ThemeSwitcher: FC = function () {
             </button>
           </div>
         </div>
-      </Dropdown>
+      )}
     </div>
   );
 };
@@ -1055,7 +1101,7 @@ const NewVideoIcon: FC = function () {
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"></path>
+      <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H5l3 3 3-3h3a2 2 0 002-2V5a2 2 0 00-2-2H5zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"></path>
     </svg>
   );
 };
