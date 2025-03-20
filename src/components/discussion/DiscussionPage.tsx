@@ -1,36 +1,26 @@
 import type { ChangeEvent, FC } from "react";
 import { useEffect, useRef, useState } from "react";
-import {
-  HiCog,
-  HiSearch,
-  HiUserAdd,
-  HiOfficeBuilding,
-  HiBadgeCheck,
-} from "react-icons/hi";
-import { RiListCheck2, RiGroup2Line, RiGovernmentFill } from "react-icons/ri";
 import { BiSolidMessageSquareDots } from "react-icons/bi";
-import { RiContactsBookFill } from "react-icons/ri";
+import { HiBadgeCheck, HiCog, HiSearch, HiUserAdd } from "react-icons/hi";
 import { PiNotificationFill } from "react-icons/pi";
+import {
+  RiContactsBookFill,
+  RiGovernmentFill,
+  RiGroup2Line,
+  RiListCheck2,
+} from "react-icons/ri";
+import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
 import ChatFileMessage from "../ChatFileMessage";
 import ChatMessage from "../ChatMessage";
+import ChatRelayCard from "../ChatRelayCard";
+import ChatTaskCard from "../ChatTaskCard";
 import ChatVoiceMessage from "../ChatVoiceMessage";
+import ChatVoteCard from "../ChatVoteCard";
 import type { MessageSecurityLevel } from "../MessageInput";
 import MessageInput from "../MessageInput";
-import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
 import SettingsDrawer from "../SettingsDrawer";
-import { MessageType } from "./types";
-import {
-  Avatar,
-  Badge,
-  Button,
-  Dropdown,
-  Modal,
-  Spinner,
-  Tabs,
-  TextInput,
-  Textarea,
-} from "flowbite-react";
 import ContactsTab from "./ContactsTab";
+import { MessageType } from "./types";
 
 /**
  * 研讨页面组件
@@ -300,20 +290,43 @@ const DiscussionPage: FC = function () {
     },
     {
       id: 6,
+      sender: "张三",
+      avatarSrc: "/images/users/bonnie-green.png",
+      content: "项目进度评估投票",
+      time: "10:39",
+      status: "已读",
+      messageType: "vote",
+      securityLevel: "非密",
+      voteData: {
+        title: "使用哪个设计方案？",
+        description: "请团队成员投票选择产品原型最终采用的设计方案",
+        options: [
+          { id: 1, text: "方案一：XXX设计方案", votes: 4 },
+          { id: 2, text: "方案二：XXX设计方案", votes: 6 },
+          { id: 3, text: "方案三：XXX设计方案", votes: 3 },
+          { id: 4, text: "方案四：XXX设计方案", votes: 2 },
+        ],
+        totalVotes: 15,
+        deadline: "2023-05-30 18:00",
+        hasVoted: false,
+      },
+    },
+    {
+      id: 7,
       sender: "王五",
       avatarSrc: "/images/users/thomas-lean.png",
       content: "../images/kanban/task-1.jpg",
-      time: "10:39",
+      time: "10:40",
       status: "已读",
       messageType: "image",
       securityLevel: "非密",
     },
     {
-      id: 7,
+      id: 8,
       sender: "我",
       avatarSrc: "/images/users/michael-gough.png",
       content: "我看到问题了，这是版本不匹配导致的",
-      time: "10:40",
+      time: "10:41",
       status: "已读",
       messageType: "text",
       isOwn: true,
@@ -324,27 +337,54 @@ const DiscussionPage: FC = function () {
       securityLevel: "非密",
     },
     {
-      id: 8,
+      id: 9,
+      sender: "李四",
+      avatarSrc: "/images/users/jese-leos.png",
+      content: "API集成兼容性修复任务",
+      time: "10:42",
+      status: "已读",
+      messageType: "task",
+      securityLevel: "非密",
+      taskData: {
+        title: "XXX分系统概要设计",
+        description:
+          "解决当前版本与旧系统协议的兼容性问题，确保数据正确传输和处理",
+        dueDate: "2023-05-25",
+        priority: "high",
+        status: "in-progress",
+        progress: 30,
+        assignees: [
+          { id: 1, name: "张三", avatar: "/images/users/bonnie-green.png" },
+          { id: 2, name: "李四", avatar: "/images/users/jese-leos.png" },
+          { id: 3, name: "王五", avatar: "/images/users/thomas-lean.png" },
+          { id: 4, name: "赵六", avatar: "/images/users/neil-sims.png" },
+          { id: 5, name: "钱七", avatar: "/images/users/robert-brown.png" },
+        ],
+        tags: ["API", "优先级高", "兼容性", "后端"],
+      },
+    },
+    {
+      id: 10,
       sender: "李四",
       avatarSrc: "/images/users/jese-leos.png",
       content: "项目文档.pdf",
-      time: "10:42",
+      time: "10:45",
       status: "已读",
       messageType: "file",
       securityLevel: "非密",
     },
     {
-      id: 9,
+      id: 11,
       sender: "张三",
       avatarSrc: "/images/users/bonnie-green.png",
       content: "语音说明 (0:30)",
-      time: "10:45",
+      time: "10:47",
       status: "已读",
       messageType: "voice",
       securityLevel: "非密",
     },
     {
-      id: 10,
+      id: 12,
       sender: "我",
       avatarSrc: "/images/users/michael-gough.png",
       content: "我已经修复了API问题，大家可以更新代码测试一下",
@@ -355,7 +395,7 @@ const DiscussionPage: FC = function () {
       securityLevel: "非密",
     },
     {
-      id: 11,
+      id: 13,
       sender: "李四",
       avatarSrc: "/images/users/jese-leos.png",
       content: "太好了，我马上测试",
@@ -369,7 +409,7 @@ const DiscussionPage: FC = function () {
       securityLevel: "非密",
     },
     {
-      id: 13,
+      id: 14,
       sender: "张三",
       avatarSrc: "/images/users/bonnie-green.png",
       content: "这是我们的项目时间线，请大家查看一下",
@@ -383,7 +423,7 @@ const DiscussionPage: FC = function () {
       securityLevel: "非密",
     },
     {
-      id: 14,
+      id: 15,
       sender: "我",
       avatarSrc: "/images/users/michael-gough.png",
       content: "语音消息 (3:42)",
@@ -394,7 +434,7 @@ const DiscussionPage: FC = function () {
       securityLevel: "非密",
     },
     {
-      id: 15,
+      id: 16,
       sender: "我",
       avatarSrc: "/images/users/michael-gough.png",
       content: "Flowbite Terms & Conditions.pdf",
@@ -414,6 +454,48 @@ const DiscussionPage: FC = function () {
       messageType: "image",
       isOwn: true,
       securityLevel: "非密",
+    },
+    {
+      id: 18,
+      sender: "张三",
+      avatarSrc: "/images/users/bonnie-green.png",
+      content: "五一假期出行计划接龙",
+      time: "11:15",
+      status: "已读",
+      messageType: "relay",
+      securityLevel: "非密",
+      relayData: {
+        title: "五一假期出行计划接龙",
+        description: "请大家填写各自的五一假期出行计划，便于统筹安排",
+        deadline: "2023-04-25 18:00",
+        participants: [
+          {
+            id: 1,
+            name: "张三",
+            avatar: "/images/users/bonnie-green.png",
+            content: "计划去杭州西湖，4月30日至5月2日",
+            time: "11:15",
+          },
+          {
+            id: 2,
+            name: "李四",
+            avatar: "/images/users/jese-leos.png",
+            content: "计划去上海，5月1日至5月3日",
+            time: "11:20",
+          },
+          {
+            id: 3,
+            name: "王五",
+            avatar: "/images/users/thomas-lean.png",
+            content: "计划去北京，4月29日至5月4日",
+            time: "11:25",
+          },
+        ],
+        totalParticipants: 3,
+        maxParticipants: 10,
+        status: "ongoing",
+        tags: ["假期", "出行", "接龙"],
+      },
     },
   ]);
 
@@ -675,6 +757,94 @@ const DiscussionPage: FC = function () {
       name,
     });
     setRightPanelType("officialGroup");
+  };
+
+  // 处理投票
+  const handleVote = (messageId: number, optionId: number) => {
+    setDiscussions(
+      discussions.map((msg) => {
+        if (msg.id === messageId && msg.voteData) {
+          const updatedOptions = msg.voteData.options.map((opt) =>
+            opt.id === optionId
+              ? { ...opt, votes: opt.votes + 1, voted: true }
+              : opt,
+          );
+
+          return {
+            ...msg,
+            voteData: {
+              ...msg.voteData,
+              options: updatedOptions,
+              totalVotes: msg.voteData.totalVotes + 1,
+              hasVoted: true,
+            },
+          };
+        }
+        return msg;
+      }),
+    );
+  };
+
+  // 处理任务状态变更
+  const handleTaskStatusChange = (messageId: number, newStatus: string) => {
+    setDiscussions(
+      discussions.map((msg) => {
+        if (msg.id === messageId && msg.taskData) {
+          return {
+            ...msg,
+            taskData: {
+              ...msg.taskData,
+              status: newStatus as "pending" | "in-progress" | "completed",
+            },
+          };
+        }
+        return msg;
+      }),
+    );
+  };
+
+  // 处理任务点击
+  const handleTaskClick = (messageId: number) => {
+    console.log(`点击了任务 ID: ${messageId}`);
+    // 这里可以添加查看任务详情的逻辑
+  };
+
+  // 处理任务接受
+  const handleTaskAccept = (messageId: number) => {
+    console.log(`接受处理任务 ID: ${messageId}`);
+    setDiscussions(
+      discussions.map((msg) => {
+        if (msg.id === messageId && msg.taskData) {
+          return {
+            ...msg,
+            taskData: {
+              ...msg.taskData,
+              status: "in-progress",
+            },
+          };
+        }
+        return msg;
+      }),
+    );
+    // 可以在这里添加接受任务的其他逻辑
+  };
+
+  // 处理任务拒绝
+  const handleTaskReject = (messageId: number) => {
+    console.log(`拒绝任务 ID: ${messageId}`);
+    // 可以在这里添加拒绝任务的逻辑
+  };
+
+  // 处理接龙参与
+  const handleRelayParticipate = (relayId: number) => {
+    console.log(`参与接龙 ID: ${relayId}`);
+    // 在实际应用中，这里可以打开一个模态框让用户输入接龙内容
+  };
+
+  // 处理接龙点击
+  const handleRelayClick = (relayId: number) => {
+    console.log(`点击了接龙 ID: ${relayId}`);
+    // 这里可以添加查看接龙详情的逻辑
   };
 
   return (
@@ -1223,6 +1393,129 @@ const DiscussionPage: FC = function () {
                               console.log(`播放语音: ${msg.content}`);
                             }}
                           />
+                        ) : msg.messageType === "vote" && msg.voteData ? (
+                          <div key={msg.id} className="mb-4">
+                            <div className="flex items-start mb-2">
+                              <img
+                                className="size-8 rounded-full mr-2"
+                                src={msg.avatarSrc}
+                                alt={`${msg.sender}的头像`}
+                              />
+                              <div className="flex flex-col">
+                                <div className="flex items-center">
+                                  <span className="text-sm font-medium text-gray-900 dark:text-white mr-2">
+                                    {msg.sender}
+                                  </span>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {msg.time}
+                                  </span>
+                                </div>
+                                <ChatVoteCard
+                                  title={msg.voteData.title}
+                                  description={msg.voteData.description}
+                                  options={msg.voteData.options}
+                                  totalVotes={msg.voteData.totalVotes}
+                                  deadline={msg.voteData.deadline}
+                                  creatorName={msg.sender}
+                                  creatorAvatar={msg.avatarSrc}
+                                  hasVoted={msg.voteData.hasVoted}
+                                  onVote={(optionId) =>
+                                    handleVote(msg.id, optionId)
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ) : msg.messageType === "task" && msg.taskData ? (
+                          <div key={msg.id} className="mb-4">
+                            <div className="flex items-start mb-2">
+                              <img
+                                className="size-8 rounded-full mr-2"
+                                src={msg.avatarSrc}
+                                alt={`${msg.sender}的头像`}
+                              />
+                              <div className="flex flex-col">
+                                <div className="flex items-center">
+                                  <span className="text-sm font-medium text-gray-900 dark:text-white mr-2">
+                                    {msg.sender}
+                                  </span>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {msg.time}
+                                  </span>
+                                </div>
+                                <ChatTaskCard
+                                  id={msg.id}
+                                  title={msg.taskData.title}
+                                  description={msg.taskData.description}
+                                  dueDate={msg.taskData.dueDate}
+                                  createdAt={msg.time}
+                                  creatorName={msg.sender}
+                                  creatorAvatar={msg.avatarSrc}
+                                  priority={msg.taskData.priority}
+                                  status={msg.taskData.status}
+                                  progress={msg.taskData.progress}
+                                  assignees={msg.taskData.assignees}
+                                  tags={msg.taskData.tags}
+                                  onStatusChange={(taskId, newStatus) =>
+                                    handleTaskStatusChange(taskId, newStatus)
+                                  }
+                                  onTaskClick={(taskId) =>
+                                    handleTaskClick(taskId)
+                                  }
+                                  onAccept={(taskId) =>
+                                    handleTaskAccept(taskId)
+                                  }
+                                  onReject={(taskId) =>
+                                    handleTaskReject(taskId)
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ) : msg.messageType === "relay" && msg.relayData ? (
+                          <div key={msg.id} className="mb-4">
+                            <div className="flex items-start mb-2">
+                              <img
+                                className="size-8 rounded-full mr-2"
+                                src={msg.avatarSrc}
+                                alt={`${msg.sender}的头像`}
+                              />
+                              <div className="flex flex-col">
+                                <div className="flex items-center">
+                                  <span className="text-sm font-medium text-gray-900 dark:text-white mr-2">
+                                    {msg.sender}
+                                  </span>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {msg.time}
+                                  </span>
+                                </div>
+                                <ChatRelayCard
+                                  id={msg.id}
+                                  title={msg.relayData.title}
+                                  description={msg.relayData.description}
+                                  deadline={msg.relayData.deadline}
+                                  createdAt={msg.time}
+                                  creatorName={msg.sender}
+                                  creatorAvatar={msg.avatarSrc}
+                                  participants={msg.relayData.participants}
+                                  totalParticipants={
+                                    msg.relayData.totalParticipants
+                                  }
+                                  maxParticipants={
+                                    msg.relayData.maxParticipants
+                                  }
+                                  status={msg.relayData.status}
+                                  tags={msg.relayData.tags}
+                                  onParticipate={(relayId) =>
+                                    handleRelayParticipate(relayId)
+                                  }
+                                  onRelayClick={(relayId) =>
+                                    handleRelayClick(relayId)
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </div>
                         ) : (
                           <ChatMessage
                             key={msg.id}

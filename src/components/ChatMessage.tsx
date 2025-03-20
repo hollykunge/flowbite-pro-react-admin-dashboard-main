@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useState } from "react";
-import type { MessageSecurityLevel } from "./MessageInput";
 import { PiBirdDuotone } from "react-icons/pi";
+import type { MessageSecurityLevel } from "./MessageInput";
 
 /**
  * 聊天消息组件属性接口
@@ -11,7 +11,7 @@ import { PiBirdDuotone } from "react-icons/pi";
  * @property {string} time - 消息发送时间
  * @property {string} message - 消息内容
  * @property {string} [status] - 消息状态（如"已发送"、"已读"等）
- * @property {string} [messageType] - 消息类型（"text", "image", "file", "voice", "video", "location", "link"）
+ * @property {string} [messageType] - 消息类型（"text", "image", "file", "voice", "video", "location", "link", "vote", "task"）
  * @property {boolean} [isOwn] - 是否为用户自己发送的消息
  * @property {object} [replyTo] - 引用回复的消息
  * @property {string[]} [reactions] - 消息的表情反应列表
@@ -40,7 +40,9 @@ interface ChatMessageProps {
     | "voice"
     | "video"
     | "location"
-    | "link";
+    | "link"
+    | "vote"
+    | "task";
   isOwn?: boolean;
   replyTo?: {
     sender: string;

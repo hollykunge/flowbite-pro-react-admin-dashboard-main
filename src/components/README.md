@@ -320,3 +320,184 @@ function App() {
 - 添加输入框焦点效果：当输入框获取焦点时，边框变为蓝色，并添加柔和的阴影效果
 - 支持暗色模式下的焦点效果
 - 优化输入框交互体验
+
+# 研讨系统组件
+
+本目录包含研讨系统所需的各种UI组件，支持丰富的消息类型和交互功能。
+
+## 交互式卡片组件
+
+研讨系统支持多种交互式卡片，用于增强团队协作和信息收集。
+
+### 投票卡片 (ChatVoteCard)
+
+投票卡片允许用户创建投票并收集他人的意见。特点包括：
+
+- 支持多选项投票
+- 实时显示投票结果和百分比
+- 显示投票截止日期
+- 可视化投票进度条
+- 支持已投票状态显示
+
+#### 投票卡片示例用法
+
+设计方案投票示例：
+
+```tsx
+<ChatVoteCard
+  title="使用哪个设计方案？"
+  description="请团队成员投票选择产品原型最终采用的设计方案"
+  options={[
+    { id: 1, text: "方案一：蓝色简约风格", votes: 4 },
+    { id: 2, text: "方案二：渐变色现代风格", votes: 6 },
+    { id: 3, text: "方案三：暗色专业风格", votes: 3 },
+    { id: 4, text: "方案四：轻拟物化风格", votes: 2 },
+  ]}
+  totalVotes={15}
+  deadline="2023-05-30 18:00"
+  creatorName="创建者"
+  creatorAvatar="/path/to/avatar.jpg"
+  hasVoted={false}
+  onVote={(optionId) => handleVote(optionId)}
+/>
+```
+
+功能投票示例：
+
+```tsx
+<ChatVoteCard
+  title="下一阶段优先开发哪个功能？"
+  description="请团队成员投票选择下一个迭代中优先开发的功能模块"
+  options={[
+    { id: 1, text: "用户管理系统升级", votes: 3 },
+    { id: 2, text: "报表导出功能", votes: 5 },
+    { id: 3, text: "移动端适配", votes: 2 },
+    { id: 4, text: "安全审计日志", votes: 1 },
+  ]}
+  totalVotes={11}
+  deadline="2023-06-15 18:00"
+  creatorName="创建者"
+  creatorAvatar="/path/to/avatar.jpg"
+  hasVoted={false}
+  onVote={(optionId) => handleVote(optionId)}
+/>
+```
+
+### 任务卡片 (ChatTaskCard)
+
+任务卡片用于创建和跟踪项目任务。特点包括：
+
+- 任务优先级标记（低、中、高、紧急）
+- 任务进度显示
+- 截止日期提醒
+- 可分配多个负责人
+- 任务状态管理（待办、进行中、已完成）
+- 支持标签分类
+- 提供"处理"和"拒绝"操作按钮，可快速响应任务分配
+
+### 接龙卡片 (ChatRelayCard)
+
+接龙卡片用于创建和参与内容接龙活动。特点包括：
+
+- 接龙标题和说明展示
+- 截止时间提醒
+- 参与情况进度条展示
+- 参与人数上限设置
+- 参与者列表显示，包含每位参与者的内容和时间
+- 支持标签分类
+- 接龙状态管理（进行中、已结束）
+- 提供"参与接龙"按钮，可快速参与活动
+
+## 使用方法
+
+### 投票卡片
+
+```tsx
+<ChatVoteCard
+  title="投票标题"
+  description="投票描述内容"
+  options={[
+    { id: 1, text: "选项1", votes: 5 },
+    { id: 2, text: "选项2", votes: 3 },
+  ]}
+  totalVotes={8}
+  deadline="2023-06-01 18:00"
+  creatorName="创建者"
+  creatorAvatar="/path/to/avatar.jpg"
+  hasVoted={false}
+  onVote={(optionId) => handleVote(optionId)}
+/>
+```
+
+### 任务卡片
+
+```tsx
+<ChatTaskCard
+  id={1}
+  title="任务标题"
+  description="任务描述"
+  dueDate="2023-06-15"
+  createdAt="2023-06-01"
+  creatorName="创建者"
+  creatorAvatar="/path/to/avatar.jpg"
+  priority="medium"
+  status="in-progress"
+  progress={50}
+  assignees={[...]}
+  onStatusChange={(taskId, newStatus) => handleStatusChange(taskId, newStatus)}
+  onTaskClick={(taskId) => handleTaskClick(taskId)}
+  onAccept={(taskId) => handleAcceptTask(taskId)}
+  onReject={(taskId) => handleRejectTask(taskId)}
+/>
+```
+
+### 接龙卡片
+
+```tsx
+<ChatRelayCard
+  id={1}
+  title="活动接龙标题"
+  description="接龙描述内容"
+  deadline="2023-05-01"
+  createdAt="2023-04-15"
+  creatorName="创建者"
+  creatorAvatar="/path/to/avatar.jpg"
+  participants={[
+    {
+      id: 1,
+      name: "张三",
+      avatar: "/images/users/user1.jpg",
+      content: "我的接龙内容",
+      time: "10:30",
+    },
+    // 更多参与者...
+  ]}
+  totalParticipants={3}
+  maxParticipants={10}
+  status="ongoing"
+  tags={["标签1", "标签2"]}
+  onParticipate={(relayId) => handleParticipate(relayId)}
+  onRelayClick={(relayId) => handleRelayClick(relayId)}
+/>
+```
+
+## 消息类型
+
+研讨系统支持以下消息类型：
+
+- `text`: 文本消息
+- `image`: 图片消息
+- `file`: 文件消息
+- `voice`: 语音消息
+- `video`: 视频消息
+- `location`: 位置消息
+- `link`: 链接消息
+- `vote`: 投票卡片消息
+- `task`: 任务卡片消息
+- `relay`: 接龙卡片消息
+
+每种消息类型都有对应的组件进行渲染和处理，使研讨体验更加丰富和高效。
+
+```
+
+```
