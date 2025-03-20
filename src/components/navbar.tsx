@@ -34,7 +34,6 @@ import {
   MdCloudUpload,
   MdDarkMode,
   MdLightMode,
-  MdOutlineColorLens,
 } from "react-icons/md";
 import { PiPaintBrushHouseholdDuotone } from "react-icons/pi";
 
@@ -343,125 +342,10 @@ const DownloadUploadManager: FC = function () {
 // 添加主题切换下拉组件
 const ThemeSwitcher: FC = function () {
   const [mode, setMode] = useThemeMode();
-  const [techBlueActive, setTechBlueActive] = useState(false);
   const navbarRef = React.useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [showMenu, setShowMenu] = useState(false);
-
-  // 应用主题样式的函数 - 使用内联样式
-  const applyThemeStyles = () => {
-    // 获取navbar元素
-    const navbar = navbarRef.current?.closest(".navbar-component");
-
-    if (navbar && techBlueActive) {
-      // 应用科工蓝色主题 - 使用指定的oklch颜色
-      (navbar as HTMLElement).style.backgroundColor =
-        "oklch(0.623 0.214 259.815)";
-      (navbar as HTMLElement).style.borderColor = "oklch(0.523 0.214 259.815)"; // 稍暗的边框色
-
-      // 确保文本和图标在蓝色背景上可见
-      const brandText = navbar.querySelector(".self-center");
-      if (brandText) {
-        (brandText as HTMLElement).style.color = "white";
-      }
-
-      // 仅将导航栏一级子元素中的图标改为白色（严格限制在导航栏顶层，不包括任何弹出层）
-      const navbarTopItems = navbar.querySelectorAll(
-        ".navbar-component > div > div > div > .no-drag > svg:not(.no-theme-change), .navbar-component > div > div > div > button > svg:not(.no-theme-change)",
-      );
-      navbarTopItems.forEach((icon) => {
-        (icon as HTMLElement).style.color = "white";
-      });
-
-      // 确保下拉菜单和悬停状态的颜色也是白色，但仅限于顶层元素
-      const dropdownTriggers = navbar.querySelectorAll(
-        ".navbar-component > div > div > div > button.rounded-lg[class*='p-1']:not(.create-action-button)",
-      );
-      dropdownTriggers.forEach((trigger) => {
-        (trigger as HTMLElement).classList.add("hover:bg-sky-600");
-        (trigger as HTMLElement).classList.remove(
-          "hover:bg-gray-100",
-          "dark:hover:bg-gray-700",
-        );
-      });
-
-      // 修改搜索框的背景颜色为更清晰美观的样式
-      const searchBox = navbar.querySelector(".no-drag.hidden.h-7.w-64");
-      if (searchBox) {
-        (searchBox as HTMLElement).classList.remove("bg-gray-100");
-        (searchBox as HTMLElement).classList.add("bg-sky-100");
-        (searchBox as HTMLElement).classList.add("text-sky-900");
-        (searchBox as HTMLElement).style.backgroundColor =
-          "rgba(255, 255, 255, 0.25)";
-        (searchBox as HTMLElement).style.backdropFilter = "blur(4px)";
-        (searchBox as HTMLElement).style.borderColor =
-          "rgba(255, 255, 255, 0.3)";
-        (searchBox as HTMLElement).style.boxShadow =
-          "0 1px 2px rgba(0, 0, 0, 0.1)";
-      }
-    } else if (navbar) {
-      // 重置样式让flowbite主题接管
-      (navbar as HTMLElement).style.backgroundColor = "";
-      (navbar as HTMLElement).style.borderColor = "";
-
-      const brandText = navbar.querySelector(".self-center");
-      if (brandText) {
-        (brandText as HTMLElement).style.color = "";
-      }
-
-      // 重置图标颜色，与上面的选择器保持一致
-      const navbarTopItems = navbar.querySelectorAll(
-        ".navbar-component > div > div > div > .no-drag > svg:not(.no-theme-change), .navbar-component > div > div > div > button > svg:not(.no-theme-change)",
-      );
-      navbarTopItems.forEach((icon) => {
-        (icon as HTMLElement).style.color = "";
-      });
-
-      // 重置下拉菜单和悬停状态
-      const dropdownTriggers = navbar.querySelectorAll(
-        ".navbar-component > div > div > div > button.rounded-lg[class*='p-1']:not(.create-action-button)",
-      );
-      dropdownTriggers.forEach((trigger) => {
-        (trigger as HTMLElement).classList.remove("hover:bg-sky-600");
-        (trigger as HTMLElement).classList.add("hover:bg-gray-100");
-        if (document.documentElement.classList.contains("dark")) {
-          (trigger as HTMLElement).classList.add("dark:hover:bg-gray-700");
-        }
-      });
-
-      // 重置搜索框的背景颜色
-      const searchBox = navbar.querySelector(".no-drag.hidden.h-7.w-64");
-      if (searchBox) {
-        (searchBox as HTMLElement).classList.add("bg-gray-100");
-        (searchBox as HTMLElement).classList.remove("bg-sky-100");
-        (searchBox as HTMLElement).classList.remove("text-sky-900");
-        (searchBox as HTMLElement).style.backgroundColor = "";
-        (searchBox as HTMLElement).style.backdropFilter = "";
-        (searchBox as HTMLElement).style.borderColor = "";
-        (searchBox as HTMLElement).style.boxShadow = "";
-      }
-    }
-
-    console.log(
-      "应用主题样式:",
-      techBlueActive ? "科工蓝色(OKLCH)" : mode === "dark" ? "暗色" : "亮色",
-      "元素:",
-      navbar ? "找到" : "未找到",
-    );
-  };
-
-  // 初始化主题
-  useEffect(() => {
-    // 从localStorage读取科技蓝色主题状态
-    const techBlue = localStorage.getItem("techBlueTheme") === "true";
-    setTechBlueActive(techBlue);
-  }, []);
-
-  // mode或techBlueActive变化时应用样式
-  useEffect(() => {
-    applyThemeStyles();
-  }, [mode, techBlueActive]);
 
   // 点击外部关闭下拉菜单
   useEffect(() => {
@@ -495,8 +379,6 @@ const ThemeSwitcher: FC = function () {
     document.documentElement.classList.remove("dark");
     localStorage.setItem("theme", "light");
     setMode("light"); // 同时也更新组件状态
-    setTechBlueActive(false);
-    localStorage.setItem("techBlueTheme", "false");
     setShowMenu(false); // 关闭下拉菜单
   };
 
@@ -507,20 +389,6 @@ const ThemeSwitcher: FC = function () {
     document.documentElement.classList.add("dark");
     localStorage.setItem("theme", "dark");
     setMode("dark"); // 同时也更新组件状态
-    setTechBlueActive(false);
-    localStorage.setItem("techBlueTheme", "false");
-    setShowMenu(false); // 关闭下拉菜单
-  };
-
-  // 切换科技蓝色主题
-  const setTechBlueTheme = () => {
-    console.log("切换到科工蓝色主题");
-    // 直接设置HTML元素的类和localStorage
-    document.documentElement.classList.remove("dark");
-    localStorage.setItem("theme", "light");
-    setMode("light"); // 同时也更新组件状态
-    setTechBlueActive(true);
-    localStorage.setItem("techBlueTheme", "true");
     setShowMenu(false); // 关闭下拉菜单
   };
 
@@ -548,7 +416,7 @@ const ThemeSwitcher: FC = function () {
             <button
               onClick={setLightTheme}
               className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm ${
-                mode === "light" && !techBlueActive
+                mode === "light"
                   ? "bg-gray-100 text-blue-600 dark:bg-gray-600 dark:text-blue-500"
                   : "text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-600"
               }`}
@@ -556,7 +424,7 @@ const ThemeSwitcher: FC = function () {
             >
               <MdLightMode className="text-lg text-yellow-400" />
               亮色主题
-              {mode === "light" && !techBlueActive && (
+              {mode === "light" && (
                 <div className="ml-auto">
                   <div className="size-2 rounded-full bg-blue-600"></div>
                 </div>
@@ -580,24 +448,6 @@ const ThemeSwitcher: FC = function () {
                 </div>
               )}
             </button>
-
-            <button
-              onClick={setTechBlueTheme}
-              className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm ${
-                techBlueActive
-                  ? "bg-gray-100 text-blue-600 dark:bg-gray-600 dark:text-blue-500"
-                  : "text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-600"
-              }`}
-              type="button"
-            >
-              <MdOutlineColorLens className="text-lg text-sky-600" />
-              科工蓝色
-              {techBlueActive && (
-                <div className="ml-auto">
-                  <div className="size-2 rounded-full bg-blue-600"></div>
-                </div>
-              )}
-            </button>
           </div>
         </div>
       )}
@@ -613,14 +463,6 @@ const ExampleNavbar: FC = function () {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(!isLargeScreen());
-  // 添加科工蓝色主题状态
-  const [techBlueActive, setTechBlueActive] = useState(false);
-
-  // 初始化读取科工蓝色主题状态
-  useEffect(() => {
-    const techBlue = localStorage.getItem("techBlueTheme") === "true";
-    setTechBlueActive(techBlue);
-  }, []);
 
   // 监听窗口大小变化，调整侧边栏状态
   useEffect(() => {
@@ -685,7 +527,7 @@ const ExampleNavbar: FC = function () {
             <button
               type="button"
               onClick={openSearchModal}
-              className="no-drag hidden h-7 w-64 items-center rounded-lg border-0 bg-gray-100 px-2 py-1.5 text-left text-sm text-gray-600 shadow-sm transition-all hover:bg-gray-100/90 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700/70 dark:text-gray-300 dark:hover:bg-gray-600/70 dark:focus:ring-blue-500 md:flex"
+              className="no-drag hidden h-7 w-64 items-center rounded-lg border-0 bg-gray-100/50 px-2 py-1.5 text-left text-sm text-gray-600 shadow-sm transition-all hover:bg-gray-100/60 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700/50 dark:text-gray-300 dark:hover:bg-gray-600/50 dark:focus:ring-blue-500 md:flex"
             >
               <HiSearch className="mr-2 size-4" />
               <span>搜索...</span>
@@ -699,22 +541,14 @@ const ExampleNavbar: FC = function () {
           <div className="flex items-center justify-end lg:gap-2">
             <Button
               size="xs"
-              className={`no-drag mr-2 group ${
-                techBlueActive
-                  ? "bg-blue-700 text-white hover:bg-blue-800 shadow-md"
-                  : "bg-gray-200 text-gray-900 hover:bg-gray-300 border-0 font-medium"
-              }`}
+              className="no-drag mr-2 group bg-gray-200 text-gray-900 hover:bg-gray-300 border-0 font-medium"
             >
               <img
                 src="/images/logo-bailing.svg"
                 alt="百灵 Logo"
-                className={`mr-1 w-5 h-5 ${techBlueActive ? "filter brightness-150" : ""}`}
+                className="mr-1 w-5 h-5"
               />
-              <span
-                className={`${techBlueActive ? "text-white font-medium" : "text-gray-900 font-medium"}`}
-              >
-                AI助手
-              </span>
+              <span className="text-gray-900 font-medium">AI助手</span>
             </Button>
             <button
               onClick={openSearchModal}
@@ -1351,7 +1185,7 @@ const CreateActionDropdown: FC = function () {
         className="no-drag flex h-8 w-8 items-center justify-center rounded-lg p-1 focus:outline-none focus:ring-2 create-action-button"
         style={{
           cursor: "pointer",
-          backgroundColor: "rgb(255 247 237)", // bg-orange-50
+          backgroundColor: "rgba(255, 247, 237, 0.5)", // 透明度50%的橙色背景
           color: "rgb(234 88 12)", // text-orange-600
           border: "1px solid rgb(251 146 60)", // border-orange-300
         }}
@@ -1450,10 +1284,10 @@ const CreateActionDropdown: FC = function () {
 
               <button
                 type="button"
-                className="group flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white p-5 text-center transition-all hover:border-amber-200 hover:bg-amber-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-amber-800 dark:hover:bg-gray-700"
+                className="group flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-amber-50 p-5 text-center transition-all hover:border-amber-200 hover:bg-amber-100 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-amber-800 dark:hover:bg-gray-700"
                 onClick={(e) => handleMenuItemClick(e, "创建日程")}
               >
-                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600 p-3 text-white shadow-md transition-transform group-hover:scale-110">
+                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-orange-600 p-3 text-white shadow-md transition-transform group-hover:scale-110">
                   <FaRegCalendarCheck className="size-8" />
                 </div>
                 <h4 className="text-base font-semibold text-gray-900 dark:text-white">
