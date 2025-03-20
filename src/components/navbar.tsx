@@ -1,67 +1,54 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import {
-  Button,
-  DarkThemeToggle,
-  Dropdown,
-  Navbar,
-  Modal,
-  useThemeMode,
-} from "flowbite-react";
+import { Button, Dropdown, Navbar, useThemeMode } from "flowbite-react";
 import type { FC } from "react";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { FaRegCalendarCheck } from "react-icons/fa6";
 import { GrClose } from "react-icons/gr";
 import {
   HiArchive,
   HiBell,
+  HiCalendar,
+  HiClipboardCheck,
   HiCog,
-  HiCurrencyDollar,
+  HiDocumentAdd,
   HiEye,
   HiInbox,
-  HiLogout,
-  HiMenuAlt1,
   HiOutlineTicket,
-  HiSearch,
-  HiShoppingBag,
-  HiUserCircle,
-  HiUsers,
-  HiViewGrid,
-  HiX,
-  HiCalendar,
-  HiDocumentAdd,
-  HiUserAdd,
-  HiUserGroup,
-  HiClipboardCheck,
   HiPlus,
+  HiSearch,
+  HiUserGroup,
+  HiUsers,
+  HiX,
 } from "react-icons/hi";
+
+import type { CalendarProps } from "antd";
+import { Calendar } from "antd";
+import { createStyles } from "antd-style";
+import "antd/dist/reset.css";
+import classNames from "classnames";
+import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
+import { HolidayUtil, Lunar } from "lunar-typescript";
 import {
   MdCloudDownload,
   MdCloudUpload,
-  MdLightMode,
   MdDarkMode,
+  MdLightMode,
   MdOutlineColorLens,
 } from "react-icons/md";
-import { PiBirdDuotone, PiPaintBrushHouseholdDuotone } from "react-icons/pi";
-import { Calendar, Col, Radio, Row, Select } from "antd";
-import type { CalendarProps } from "antd";
-import { createStyles } from "antd-style";
-import classNames from "classnames";
-import dayjs from "dayjs";
-import type { Dayjs } from "dayjs";
-import { HolidayUtil, Lunar } from "lunar-typescript";
-import "antd/dist/reset.css";
+import { PiPaintBrushHouseholdDuotone } from "react-icons/pi";
 
 import {
   FaRegWindowMaximize,
   FaRegWindowMinimize,
   FaRegWindowRestore,
 } from "react-icons/fa";
-import { FaEarlybirds } from "react-icons/fa";
 
-import { useSidebarContext } from "../context/SidebarContext";
-import isSmallScreen from "../helpers/is-small-screen";
-import isLargeScreen from "../helpers/is-large-screen";
-import "../styles/electron.css";
 import "react-calendar/dist/Calendar.css";
+import { useSidebarContext } from "../context/SidebarContext";
+import isLargeScreen from "../helpers/is-large-screen";
+import isSmallScreen from "../helpers/is-small-screen";
+import "../styles/electron.css";
 
 // 窗口控制按钮组件
 const WindowControls: FC = function () {
@@ -379,15 +366,17 @@ const ThemeSwitcher: FC = function () {
         (brandText as HTMLElement).style.color = "white";
       }
 
-      // 将所有导航栏中的图标改为白色
-      const allIcons = navbar.querySelectorAll("svg:not(.no-theme-change)");
-      allIcons.forEach((icon) => {
+      // 仅将导航栏一级子元素中的图标改为白色（严格限制在导航栏顶层，不包括任何弹出层）
+      const navbarTopItems = navbar.querySelectorAll(
+        ".navbar-component > div > div > div > .no-drag > svg:not(.no-theme-change), .navbar-component > div > div > div > button > svg:not(.no-theme-change)",
+      );
+      navbarTopItems.forEach((icon) => {
         (icon as HTMLElement).style.color = "white";
       });
 
-      // 确保下拉菜单和悬停状态的颜色也是白色
+      // 确保下拉菜单和悬停状态的颜色也是白色，但仅限于顶层元素
       const dropdownTriggers = navbar.querySelectorAll(
-        ".rounded-lg[class*='p-1']",
+        ".navbar-component > div > div > div > button.rounded-lg[class*='p-1']:not(.create-action-button)",
       );
       dropdownTriggers.forEach((trigger) => {
         (trigger as HTMLElement).classList.add("hover:bg-sky-600");
@@ -421,15 +410,17 @@ const ThemeSwitcher: FC = function () {
         (brandText as HTMLElement).style.color = "";
       }
 
-      // 重置图标颜色
-      const allIcons = navbar.querySelectorAll("svg:not(.no-theme-change)");
-      allIcons.forEach((icon) => {
+      // 重置图标颜色，与上面的选择器保持一致
+      const navbarTopItems = navbar.querySelectorAll(
+        ".navbar-component > div > div > div > .no-drag > svg:not(.no-theme-change), .navbar-component > div > div > div > button > svg:not(.no-theme-change)",
+      );
+      navbarTopItems.forEach((icon) => {
         (icon as HTMLElement).style.color = "";
       });
 
       // 重置下拉菜单和悬停状态
       const dropdownTriggers = navbar.querySelectorAll(
-        ".rounded-lg[class*='p-1']",
+        ".navbar-component > div > div > div > button.rounded-lg[class*='p-1']:not(.create-action-button)",
       );
       dropdownTriggers.forEach((trigger) => {
         (trigger as HTMLElement).classList.remove("hover:bg-sky-600");
@@ -779,9 +770,10 @@ const ExampleNavbar: FC = function () {
                 <button
                   type="button"
                   onClick={closeSearchModal}
-                  className="absolute inset-y-0 right-2.5 flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="absolute top-1/2 -translate-y-1/2 right-2.5 flex items-center justify-center size-7 rounded-full bg-gray-200/80 p-1 text-gray-500 backdrop-blur-sm transition-all hover:bg-gray-300 hover:text-gray-700 dark:bg-gray-600/80 dark:text-gray-300 dark:hover:bg-gray-500 dark:hover:text-white"
+                  aria-label="关闭搜索"
                 >
-                  <HiX className="size-5" />
+                  <HiX className="size-4" />
                   <span className="sr-only">关闭</span>
                 </button>
               </div>
@@ -1356,10 +1348,18 @@ const CreateActionDropdown: FC = function () {
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
         type="button"
-        className="no-drag flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 p-1 text-blue-600 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
-        style={{ cursor: "pointer" }}
+        className="no-drag flex h-8 w-8 items-center justify-center rounded-lg p-1 focus:outline-none focus:ring-2 create-action-button"
+        style={{
+          cursor: "pointer",
+          backgroundColor: "rgb(255 247 237)", // bg-orange-50
+          color: "rgb(234 88 12)", // text-orange-600
+          border: "1px solid rgb(251 146 60)", // border-orange-300
+        }}
       >
-        <HiPlus className="size-5" />
+        <HiPlus
+          className="size-5 no-theme-change"
+          style={{ color: "rgb(234 88 12)" }}
+        />
         <span className="sr-only">创建</span>
       </button>
 
@@ -1454,7 +1454,7 @@ const CreateActionDropdown: FC = function () {
                 onClick={(e) => handleMenuItemClick(e, "创建日程")}
               >
                 <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600 p-3 text-white shadow-md transition-transform group-hover:scale-110">
-                  <HiCalendar className="size-8" />
+                  <FaRegCalendarCheck className="size-8" />
                 </div>
                 <h4 className="text-base font-semibold text-gray-900 dark:text-white">
                   创建日程

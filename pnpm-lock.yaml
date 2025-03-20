@@ -41,6 +41,9 @@ importers:
       react-calendar:
         specifier: ^5.1.0
         version: 5.1.0(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-clock:
+        specifier: ^5.1.0
+        version: 5.1.0(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-icons:
         specifier: ^4.10.1
         version: 4.12.0(react@18.3.1)
@@ -3153,6 +3156,16 @@ packages:
 
   react-calendar@5.1.0:
     resolution: {integrity: sha512-09o/rQHPZGEi658IXAJtWfra1N69D1eFnuJ3FQm9qUVzlzNnos1+GWgGiUeSs22QOpNm32aoVFOimq0p3Ug9Eg==}
+    peerDependencies:
+      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
+  react-clock@5.1.0:
+    resolution: {integrity: sha512-DKmr29VOK6M8wpbzGUZZa9PwGnG9uC6QXtDLwGwcc2r3vdS/HxNhf5xMMjudXLk7m096mNJQf7AgfjiDpzAYYw==}
     peerDependencies:
       '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -7651,6 +7664,16 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       warning: 4.0.3
+    optionalDependencies:
+      '@types/react': 18.3.18
+
+  react-clock@5.1.0(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@wojtekmaj/date-utils': 1.5.1
+      clsx: 2.1.1
+      get-user-locale: 2.3.2
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.3.18
 

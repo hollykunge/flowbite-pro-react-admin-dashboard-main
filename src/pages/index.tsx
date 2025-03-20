@@ -1,33 +1,35 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { Calendar } from "antd";
+import "antd/dist/reset.css";
+import type { Dayjs } from "dayjs";
 import { Card, Modal } from "flowbite-react";
 import type { FC } from "react";
-import { useMemo, useState } from "react";
-import { Calendar } from "antd";
-import type { Dayjs } from "dayjs";
-import "antd/dist/reset.css";
+import { useEffect, useMemo, useState } from "react";
+import { AiTwotoneSetting } from "react-icons/ai";
 import {
-  PiSunHorizonDuotone,
-  PiSunDimDuotone,
-  PiMoonStarsDuotone,
+  PiBookOpenDuotone,
   PiCalendarCheckDuotone,
+  PiChatTeardropDuotone,
   PiListChecksDuotone,
+  PiListNumbersDuotone,
+  PiMoonStarsDuotone,
   PiRocketLaunchDuotone,
+  PiSunDimDuotone,
+  PiSunHorizonDuotone,
 } from "react-icons/pi";
 import NavbarSidebarLayout from "../layouts/navbar-sidebar";
-import { PiChatTeardropDuotone } from "react-icons/pi";
-import { PiListNumbersDuotone } from "react-icons/pi";
-import { PiBookOpenDuotone } from "react-icons/pi";
-import { AiTwotoneSetting } from "react-icons/ai";
 
 import {
-  HiOutlineVideoCamera,
-  HiOutlineClock,
-  HiOutlineChatBubbleBottomCenterText,
   HiOutlineBookOpen,
+  HiOutlineChatBubbleBottomCenterText,
+  HiOutlineClock,
   HiOutlineCube,
   HiOutlineDocument,
-  HiOutlineCog,
+  HiOutlineVideoCamera,
 } from "react-icons/hi2";
+
+import Clock from "react-clock";
+import "react-clock/dist/Clock.css";
 
 /**
  * AI智慧屏页面组件
@@ -53,7 +55,11 @@ const DashboardPage: FC = function () {
             <div className="w-full md:w-1/2 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <DateCard />
-                <TodoCard />
+                <AnalogClockCard />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <CommonAppsCard />
+                <TaskReminderCard />
               </div>
               <div>
                 <MessageSummaryCard />
@@ -85,6 +91,9 @@ const DateCard: FC = function () {
 
   const today = useMemo(() => {
     const date = selectedDate;
+    // 农历日期信息（模拟数据）
+    const lunarInfo = ["正月", "初一"];
+
     return {
       year: date.getFullYear(),
       month: date.getMonth() + 1,
@@ -92,6 +101,10 @@ const DateCard: FC = function () {
       weekday: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][
         date.getDay()
       ],
+      lunar: {
+        month: lunarInfo[0],
+        day: lunarInfo[1],
+      },
     };
   }, [selectedDate]);
 
@@ -101,16 +114,33 @@ const DateCard: FC = function () {
         className="text-center cursor-pointer bg-blue-50 hover:bg-blue-100 dark:bg-blue-900 dark:hover:bg-blue-800 transition-colors"
         onClick={() => setIsOpen(true)}
       >
-        <div className="flex flex-col items-center space-y-4">
-          <PiCalendarCheckDuotone
-            className="text-blue-500 dark:text-blue-400"
-            size={48}
-          />
-          <div className="text-blue-900 dark:text-blue-100">
-            <div className="text-lg font-semibold">
-              {today.year}年{today.month}月{today.day}日
+        <div className="flex flex-col items-center h-full justify-between">
+          {/* 顶部：月份和星期 */}
+          <div className="text-blue-900 dark:text-blue-100 w-full text-center border-b border-blue-200 dark:border-blue-700 pb-2">
+            <div className="text-base">
+              {today.year}年{today.month}月 {today.weekday}
             </div>
-            <div className="text-base">{today.weekday}</div>
+          </div>
+
+          {/* 中间：日期主体部分 */}
+          <div className="flex items-center justify-center my-3 relative">
+            <span className="text-7xl font-bold text-blue-700 dark:text-blue-300">
+              {today.day}
+            </span>
+
+            {/* 右侧：农历日期 - 垂直排列 */}
+            <div className="flex flex-col ml-4 text-sm text-blue-600 dark:text-blue-400 border-l border-blue-200 dark:border-blue-700 pl-3">
+              <span>{today.lunar.month}</span>
+              <span>{today.lunar.day}</span>
+            </div>
+          </div>
+
+          {/* 底部：图标 */}
+          <div className="w-full pt-2 border-t border-blue-200 dark:border-blue-700">
+            <PiCalendarCheckDuotone
+              className="text-blue-500 dark:text-blue-400 mx-auto"
+              size={24}
+            />
           </div>
         </div>
       </Card>
@@ -128,6 +158,82 @@ const DateCard: FC = function () {
         </Modal.Body>
       </Modal>
     </>
+  );
+};
+
+/**
+ * 模拟表盘卡片组件
+ */
+const AnalogClockCard: FC = function () {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // 获取当日工作信息
+  const getDailyTask = () => {
+    const hour = time.getHours();
+    if (hour >= 6 && hour < 9) {
+      return "早会讨论";
+    } else if (hour >= 9 && hour < 12) {
+      return "核心开发";
+    } else if (hour >= 12 && hour < 14) {
+      return "午休时间";
+    } else if (hour >= 14 && hour < 18) {
+      return "项目研讨";
+    } else if (hour >= 18 && hour < 20) {
+      return "总结汇报";
+    } else {
+      return "休息时间";
+    }
+  };
+
+  const dailyTask = getDailyTask();
+
+  return (
+    <Card className="text-center bg-purple-50 hover:bg-purple-100 dark:bg-purple-900 dark:hover:bg-purple-800 transition-colors cursor-pointer">
+      <div className="flex flex-col items-center space-y-4">
+        <div className="relative">
+          {/* 时钟外框装饰 */}
+          <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-purple-200 to-blue-200 dark:from-purple-700 dark:to-blue-700 opacity-50 blur-sm"></div>
+
+          <div className="relative">
+            <Clock
+              value={time}
+              size={125}
+              renderNumbers={true}
+              renderMinuteMarks={true}
+              renderHourMarks={true}
+              hourHandWidth={4}
+              minuteHandWidth={3}
+              secondHandWidth={1.5}
+              hourHandLength={55}
+              minuteHandLength={75}
+              secondHandLength={85}
+              hourHandOppositeLength={12}
+              minuteHandOppositeLength={12}
+              secondHandOppositeLength={15}
+              className="dark:invert"
+            />
+          </div>
+        </div>
+
+        <div className="text-purple-900 dark:text-purple-100 w-full">
+          <div className="text-base font-medium border-t border-purple-200 dark:border-purple-700 pt-2 mt-1">
+            当前阶段
+          </div>
+          <div className="text-lg font-bold text-purple-600 dark:text-purple-300 flex items-center justify-center gap-2">
+            <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            {dailyTask}
+          </div>
+        </div>
+      </div>
+    </Card>
   );
 };
 
@@ -481,6 +587,136 @@ const WorkPlanCard: FC = function () {
               </a>
             </div>
           </div>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+/**
+ * 常用应用卡片组件
+ */
+const CommonAppsCard: FC = function () {
+  const apps = [
+    {
+      name: "邮件系统",
+      icon: (
+        <HiOutlineChatBubbleBottomCenterText className="size-6 text-blue-500" />
+      ),
+      color: "blue",
+    },
+    {
+      name: "协同编辑",
+      icon: <HiOutlineDocument className="size-6 text-green-500" />,
+      color: "green",
+    },
+    {
+      name: "评审系统",
+      icon: <HiOutlineVideoCamera className="size-6 text-purple-500" />,
+      color: "purple",
+    },
+    {
+      name: "知识库",
+      icon: <HiOutlineBookOpen className="size-6 text-orange-500" />,
+      color: "orange",
+    },
+  ];
+
+  return (
+    <Card className="bg-white dark:bg-gray-800 h-full">
+      <div className="flex flex-col justify-between h-full">
+        <div>
+          <div className="flex items-center gap-1 mb-4">
+            <HiOutlineCube className="size-5 text-gray-500 dark:text-gray-400" />
+            <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
+              常用应用
+            </h5>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {apps.map((app, index) => (
+              <button
+                key={index}
+                className="flex flex-col items-center justify-center p-3 rounded-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors group"
+              >
+                <div
+                  className={`p-2 rounded-full bg-${app.color}-50 dark:bg-${app.color}-900/30 mb-2 group-hover:scale-110 transition-transform`}
+                >
+                  {app.icon}
+                </div>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {app.name}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 text-xs text-center text-gray-500 dark:text-gray-400">
+          点击图标快速访问应用
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+/**
+ * 任务提醒卡片组件
+ */
+const TaskReminderCard: FC = function () {
+  const tasks = [
+    {
+      title: "XXX归零会",
+      time: "10:30",
+      priority: "高",
+      priorityColor: "red",
+    },
+    {
+      title: "XXX项目评审",
+      time: "14:00",
+      priority: "中",
+      priorityColor: "yellow",
+    },
+    {
+      title: "数字化周报提交",
+      time: "17:30",
+      priority: "中",
+      priorityColor: "yellow",
+    },
+  ];
+
+  return (
+    <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30 overflow-hidden [&>div]:!p-0 h-full">
+      <div className="p-4 flex flex-col h-full">
+        <div className="flex items-center gap-2 mb-3">
+          <HiOutlineClock className="size-5 text-orange-500 dark:text-orange-400" />
+          <h5 className="text-lg font-semibold text-gray-900 dark:text-white">
+            工作提醒
+          </h5>
+        </div>
+
+        <div className="flex-1 overflow-auto pr-1 space-y-2">
+          {tasks.map((task, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between p-2 rounded-lg bg-white/60 dark:bg-gray-800/60 hover:bg-white dark:hover:bg-gray-800 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <div
+                  className={`size-2 rounded-full bg-${task.priorityColor}-500`}
+                ></div>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {task.title}
+                </span>
+              </div>
+              <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                {task.time}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-3 pt-3 border-t border-orange-100 dark:border-orange-900/30 text-xs text-center text-orange-600 dark:text-orange-400 flex items-center justify-center gap-1">
+          <span className="inline-block w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse"></span>
+          今日待办任务 <span className="font-semibold">{tasks.length}</span> 项
         </div>
       </div>
     </Card>
