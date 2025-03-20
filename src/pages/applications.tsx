@@ -10,14 +10,17 @@ import {
   HiClipboardCheck,
   HiChatAlt2,
   HiCheck,
+  HiOutlineSearch,
+  HiStar,
+  HiOutlineDownload,
 } from "react-icons/hi";
-import { Button, Card, Modal } from "flowbite-react";
+import { Button, Card, Modal, Tabs } from "flowbite-react";
 import NavbarSidebarLayout from "../layouts/navbar-sidebar";
 
 /**
- * 应用页面组件
+ * 应用页面组件 - 苹果应用商店风格
  *
- * 展示可用的应用卡片列表，用户可以打开应用、添加新应用或管理现有应用
+ * 展示可用的应用卡片列表，用户可以浏览、下载和管理应用
  */
 const ApplicationsPage: FC = function () {
   // 应用列表状态
@@ -29,6 +32,10 @@ const ApplicationsPage: FC = function () {
       icon: HiCalendar,
       color: "blue",
       isAdded: true,
+      rating: 4.8,
+      downloads: "10万+",
+      developer: "Flowbite 团队",
+      category: "效率工具",
     },
     {
       id: 2,
@@ -37,6 +44,10 @@ const ApplicationsPage: FC = function () {
       icon: HiDocumentText,
       color: "green",
       isAdded: true,
+      rating: 4.6,
+      downloads: "5万+",
+      developer: "Flowbite 团队",
+      category: "效率工具",
     },
     {
       id: 3,
@@ -45,6 +56,10 @@ const ApplicationsPage: FC = function () {
       icon: HiChartBar,
       color: "purple",
       isAdded: false,
+      rating: 4.5,
+      downloads: "3万+",
+      developer: "Flowbite 团队",
+      category: "商务",
     },
     {
       id: 4,
@@ -53,6 +68,10 @@ const ApplicationsPage: FC = function () {
       icon: HiClock,
       color: "orange",
       isAdded: false,
+      rating: 4.3,
+      downloads: "2万+",
+      developer: "Flowbite 团队",
+      category: "效率工具",
     },
     {
       id: 5,
@@ -61,6 +80,10 @@ const ApplicationsPage: FC = function () {
       icon: HiClipboardCheck,
       color: "red",
       isAdded: true,
+      rating: 4.7,
+      downloads: "8万+",
+      developer: "Flowbite 团队",
+      category: "效率工具",
     },
     {
       id: 6,
@@ -69,8 +92,15 @@ const ApplicationsPage: FC = function () {
       icon: HiChatAlt2,
       color: "teal",
       isAdded: false,
+      rating: 4.4,
+      downloads: "15万+",
+      developer: "Flowbite 团队",
+      category: "社交",
     },
   ]);
+
+  // 活动标签页
+  const [activeTab, setActiveTab] = useState("featured");
 
   // 设置模态框状态
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -108,79 +138,329 @@ const ApplicationsPage: FC = function () {
     return colorMap[color] || colorMap["gray"];
   };
 
+  // 筛选已添加和未添加的应用
+  const installedApps = applications.filter((app) => app.isAdded);
+  const uninstalledApps = applications.filter((app) => !app.isAdded);
+
   return (
     <NavbarSidebarLayout>
-      <div className="px-4 pt-6">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-            应用中心
-          </h1>
-          <Button color="primary" className="flex items-center gap-x-2">
-            <HiOutlinePlus className="text-xl" />
-            添加应用
-          </Button>
+      <div>
+        {/* 应用商店顶部区域 */}
+        <div className="mb-6 flex flex-col space-y-4 bg-green-500 dark:bg-green-900/30">
+          <div className="flex items-center justify-between mb-4 px-4 pt-6">
+            <h1 className="text-2xl font-bold text-white dark:text-white sm:text-3xl">
+              应用商店
+            </h1>
+            <div className="flex items-center space-x-2">
+              <Button color="primary" className="flex items-center gap-x-2">
+                <HiOutlinePlus className="text-xl" />
+                添加应用
+              </Button>
+            </div>
+          </div>
+
+          {/* 标签页导航 */}
+          <Tabs.Group
+            style="underline"
+            className="border-b border-gray-200 dark:border-gray-700 px-4 py-2"
+          >
+            <Tabs.Item
+              active={activeTab === "featured"}
+              title="精选"
+              className="text-white dark:text-white"
+              onClick={() => setActiveTab("featured")}
+            />
+            <Tabs.Item
+              active={activeTab === "installed"}
+              title="已安装"
+              className="text-white dark:text-white"
+              onClick={() => setActiveTab("installed")}
+            />
+            <Tabs.Item
+              active={activeTab === "categories"}
+              title="分类"
+              className="text-white dark:text-white"
+              onClick={() => setActiveTab("categories")}
+            />
+            <Tabs.Item
+              active={activeTab === "updates"}
+              title="更新"
+              className="text-white dark:text-white"
+              onClick={() => setActiveTab("updates")}
+            />
+          </Tabs.Group>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {applications.map((app) => (
-            <Card key={app.id} className="overflow-hidden">
-              <div className="flex justify-between items-start">
-                <div className="flex items-center">
+        {/* 精选推荐应用区域 */}
+        {activeTab === "featured" && (
+          <>
+            <div className="mb-1 px-4">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                推荐应用
+              </h2>
+              <div className="space-y-4">
+                {applications.slice(0, 4).map((app) => (
                   <div
-                    className={`flex items-center justify-center size-12 rounded-lg ${getColorClass(app.color)}`}
+                    key={app.id}
+                    className="flex items-start p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
                   >
-                    <app.icon className="size-6" />
+                    <div
+                      className={`flex items-center justify-center size-16 rounded-xl mr-4 ${getColorClass(app.color)}`}
+                    >
+                      <app.icon className="size-8" />
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start">
+                        <h5 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
+                          {app.name}
+                        </h5>
+                        <div className="flex items-center">
+                          <HiStar className="text-yellow-400 size-5" />
+                          <span className="ml-1 text-sm font-medium">
+                            {app.rating}
+                          </span>
+                          <span className="mx-1 text-gray-400">•</span>
+                          <span className="text-sm text-gray-500">
+                            {app.downloads}
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                        {app.description}
+                      </p>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-500">
+                          {app.category}
+                        </span>
+                        <div className="flex gap-2">
+                          <button
+                            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                            onClick={() => handleOpenSettings(app)}
+                          >
+                            <HiOutlineCog className="size-5" />
+                          </button>
+                          <Button
+                            size="sm"
+                            color={app.isAdded ? "success" : "primary"}
+                            className="flex items-center justify-center gap-x-1"
+                            onClick={() => handleToggleAddApp(app.id)}
+                          >
+                            {app.isAdded ? (
+                              <>
+                                <HiCheck className="size-4" />
+                                <span>已安装</span>
+                              </>
+                            ) : (
+                              <>
+                                <HiOutlineDownload className="size-4" />
+                                <span>安装</span>
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <h5 className="ml-3 text-lg font-medium text-gray-900 dark:text-white">
-                    {app.name}
-                  </h5>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-8 px-4">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                效率工具
+              </h2>
+              <div className="space-y-4">
+                {applications
+                  .filter((app) => app.category === "效率工具")
+                  .map((app) => (
+                    <div
+                      key={app.id}
+                      className="flex items-start p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
+                    >
+                      <div
+                        className={`flex items-center justify-center size-16 rounded-xl mr-4 ${getColorClass(app.color)}`}
+                      >
+                        <app.icon className="size-8" />
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start">
+                          <h5 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
+                            {app.name}
+                          </h5>
+                          <div className="flex items-center">
+                            <HiStar className="text-yellow-400 size-5" />
+                            <span className="ml-1 text-sm font-medium">
+                              {app.rating}
+                            </span>
+                            <span className="mx-1 text-gray-400">•</span>
+                            <span className="text-sm text-gray-500">
+                              {app.downloads}
+                            </span>
+                          </div>
+                        </div>
+
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                          {app.description}
+                        </p>
+
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-500">
+                            {app.category}
+                          </span>
+                          <div className="flex gap-2">
+                            <button
+                              className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                              onClick={() => handleOpenSettings(app)}
+                            >
+                              <HiOutlineCog className="size-5" />
+                            </button>
+                            <Button
+                              size="sm"
+                              color={app.isAdded ? "success" : "primary"}
+                              className="flex items-center justify-center gap-x-1"
+                              onClick={() => handleToggleAddApp(app.id)}
+                            >
+                              {app.isAdded ? (
+                                <>
+                                  <HiCheck className="size-4" />
+                                  <span>已安装</span>
+                                </>
+                              ) : (
+                                <>
+                                  <HiOutlineDownload className="size-4" />
+                                  <span>安装</span>
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* 已安装应用区域 */}
+        {activeTab === "installed" && (
+          <div className="mb-8 px-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              已安装应用 ({installedApps.length})
+            </h2>
+            <div className="space-y-4">
+              {installedApps.map((app) => (
+                <div
+                  key={app.id}
+                  className="flex items-start p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
+                >
+                  <div
+                    className={`flex items-center justify-center size-16 rounded-xl mr-4 ${getColorClass(app.color)}`}
+                  >
+                    <app.icon className="size-8" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start">
+                      <h5 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
+                        {app.name}
+                      </h5>
+                      <div className="flex items-center">
+                        <HiStar className="text-yellow-400 size-5" />
+                        <span className="ml-1 text-sm font-medium">
+                          {app.rating}
+                        </span>
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                      {app.description}
+                    </p>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500">
+                        {app.category}
+                      </span>
+                      <div className="flex gap-2">
+                        <button
+                          className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                          onClick={() => handleOpenSettings(app)}
+                        >
+                          <HiOutlineCog className="size-5" />
+                        </button>
+                        <Button
+                          size="sm"
+                          color="gray"
+                          className="flex items-center justify-center gap-x-1"
+                          onClick={() => handleToggleAddApp(app.id)}
+                        >
+                          <span>卸载</span>
+                        </Button>
+                        <Button
+                          size="sm"
+                          color="primary"
+                          className="flex items-center justify-center gap-x-1"
+                          onClick={() =>
+                            (window.location.href = `/${app.name.toLowerCase().replace(/\s+/g, "")}`)
+                          }
+                        >
+                          <HiOutlineExternalLink className="size-4" />
+                          <span>打开</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <button
-                  onClick={() => handleOpenSettings(app)}
-                  className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                >
-                  <HiOutlineCog className="size-5" />
-                </button>
-              </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                {app.description}
+        {/* 分类区域 */}
+        {activeTab === "categories" && (
+          <div className="mb-8 px-4">
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                应用分类
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {["效率工具", "商务", "社交", "设计", "开发", "财务"].map(
+                  (category) => (
+                    <Card
+                      key={category}
+                      className="text-center hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all"
+                    >
+                      <h3 className="font-medium text-gray-900 dark:text-white">
+                        {category}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {category === "效率工具" ? "4个应用" : "1个应用"}
+                      </p>
+                    </Card>
+                  ),
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 更新区域 */}
+        {activeTab === "updates" && (
+          <div className="mb-8 px-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              可用更新
+            </h2>
+            <Card>
+              <p className="text-center py-8 text-gray-500 dark:text-gray-400">
+                当前所有应用均为最新版本
               </p>
-
-              <div className="mt-3 flex gap-2">
-                <Button
-                  size="sm"
-                  color={app.isAdded ? "success" : "gray"}
-                  className="flex-1 flex items-center justify-center gap-x-1"
-                  onClick={() => handleToggleAddApp(app.id)}
-                >
-                  {app.isAdded ? (
-                    <>
-                      <HiCheck className="size-4" />
-                      <span>已应用</span>
-                    </>
-                  ) : (
-                    <>
-                      <HiOutlinePlus className="size-4" />
-                      <span>添加应用</span>
-                    </>
-                  )}
-                </Button>
-                <Button
-                  size="sm"
-                  color="primary"
-                  className="flex-1 flex items-center justify-center gap-x-1"
-                  onClick={() =>
-                    (window.location.href = `/${app.name.toLowerCase().replace(/\s+/g, "")}`)
-                  }
-                >
-                  <HiOutlineExternalLink className="size-4" />
-                  <span>打开应用</span>
-                </Button>
-              </div>
             </Card>
-          ))}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* 应用设置模态框 */}
@@ -188,18 +468,38 @@ const ApplicationsPage: FC = function () {
         <Modal.Header>{currentApp?.name} 设置</Modal.Header>
         <Modal.Body>
           <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="app-name"
-                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-              >
-                应用名称
-              </label>
-              <input
-                id="app-name"
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                defaultValue={currentApp?.name}
-              />
+            <div className="flex items-center mb-4">
+              {currentApp && (
+                <div
+                  className={`flex items-center justify-center size-16 rounded-xl ${currentApp ? getColorClass(currentApp.color) : ""}`}
+                >
+                  {currentApp && <currentApp.icon className="size-8" />}
+                </div>
+              )}
+              <div className="ml-4">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                  {currentApp?.name}
+                </h3>
+                <div className="flex items-center mt-1">
+                  <span className="text-sm text-gray-500">
+                    {currentApp?.developer}
+                  </span>
+                  <span className="mx-1 text-gray-400">•</span>
+                  <span className="text-sm text-gray-500">
+                    {currentApp?.category}
+                  </span>
+                </div>
+                <div className="flex items-center mt-1">
+                  <HiStar className="text-yellow-400 size-4" />
+                  <span className="ml-1 text-sm font-medium">
+                    {currentApp?.rating}
+                  </span>
+                  <span className="mx-1 text-gray-400">•</span>
+                  <span className="text-sm text-gray-500">
+                    {currentApp?.downloads} 次下载
+                  </span>
+                </div>
+              </div>
             </div>
 
             <div>
@@ -214,6 +514,7 @@ const ApplicationsPage: FC = function () {
                 rows={3}
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
                 defaultValue={currentApp?.description}
+                readOnly
               />
             </div>
 
@@ -229,7 +530,7 @@ const ApplicationsPage: FC = function () {
                 htmlFor="app-added"
                 className="ml-2 text-sm font-medium text-gray-900 dark:text-white"
               >
-                添加到我的应用
+                安装到我的应用
               </label>
             </div>
 

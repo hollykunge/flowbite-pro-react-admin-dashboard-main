@@ -622,6 +622,14 @@ const ExampleNavbar: FC = function () {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(!isLargeScreen());
+  // 添加科工蓝色主题状态
+  const [techBlueActive, setTechBlueActive] = useState(false);
+
+  // 初始化读取科工蓝色主题状态
+  useEffect(() => {
+    const techBlue = localStorage.getItem("techBlueTheme") === "true";
+    setTechBlueActive(techBlue);
+  }, []);
 
   // 监听窗口大小变化，调整侧边栏状态
   useEffect(() => {
@@ -691,7 +699,7 @@ const ExampleNavbar: FC = function () {
               <HiSearch className="mr-2 size-4" />
               <span>搜索...</span>
             </button>
-            <div className="ml-2 hidden md:block">
+            <div className="ml-2 hidden items-center md:flex">
               <CreateActionDropdown />
             </div>
           </div>
@@ -699,17 +707,21 @@ const ExampleNavbar: FC = function () {
           {/* 右侧功能区域 */}
           <div className="flex items-center justify-end lg:gap-2">
             <Button
-              outline
-              gradientDuoTone="purpleToPink"
               size="xs"
-              className="no-drag mr-2 hover:text-white group"
+              className={`no-drag mr-2 group ${
+                techBlueActive
+                  ? "bg-blue-700 text-white hover:bg-blue-800 shadow-md"
+                  : "bg-gray-200 text-gray-900 hover:bg-gray-300 border-0 font-medium"
+              }`}
             >
               <img
                 src="/images/logo-bailing.svg"
                 alt="百灵 Logo"
-                className="mr-1 w-5 h-5"
+                className={`mr-1 w-5 h-5 ${techBlueActive ? "filter brightness-150" : ""}`}
               />
-              <span className="text-purple-500 group-hover:text-white">
+              <span
+                className={`${techBlueActive ? "text-white font-medium" : "text-gray-900 font-medium"}`}
+              >
                 AI助手
               </span>
             </Button>
@@ -720,7 +732,7 @@ const ExampleNavbar: FC = function () {
               <span className="sr-only">搜索</span>
               <HiSearch className="size-5" />
             </button>
-            <div className="no-drag md:hidden">
+            <div className="flex items-center md:hidden">
               <CreateActionDropdown />
             </div>
             <div className="no-drag">
@@ -1086,8 +1098,7 @@ const NewMentionIcon: FC = function () {
     >
       <path
         fillRule="evenodd"
-        d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"
-        clipRule="evenodd"
+        d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2V5a2 2 0 00-2-2H5zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"
       ></path>
     </svg>
   );
@@ -1290,53 +1301,95 @@ const AppDrawerDropdown: FC = function () {
   );
 };
 
-// 创建按钮下拉组件
+// 添加CreateActionDropdown组件
 const CreateActionDropdown: FC = function () {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  // 组件加载时的调试信息
+  useEffect(() => {
+    console.log("CreateActionDropdown组件已加载", new Date().toISOString());
+    return () => {
+      console.log("CreateActionDropdown组件已卸载", new Date().toISOString());
+    };
+  }, []);
+
+  // 监控模态框状态变化
+  useEffect(() => {
+    console.log(
+      "模态框状态变化为:",
+      isModalOpen ? "打开" : "关闭",
+      new Date().toISOString(),
+    );
+  }, [isModalOpen]);
 
   // 打开模态框
-  const openModal = () => {
+  const openModal = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("创建按钮被点击", new Date().toISOString());
     setIsModalOpen(true);
   };
 
   // 关闭模态框
   const closeModal = () => {
+    console.log("关闭模态框", new Date().toISOString());
     setIsModalOpen(false);
   };
 
-  // 处理创建操作
-  const handleAction = (action: string) => {
-    console.log(`创建操作: ${action}`);
+  // 菜单项点击处理
+  const handleMenuItemClick = (e: React.MouseEvent, itemName: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log(`点击了菜单项: ${itemName}`, new Date().toISOString());
     closeModal();
   };
+
+  console.log("CreateActionDropdown渲染中，模态框状态:", isModalOpen);
 
   return (
     <>
       <button
+        ref={triggerRef}
         onClick={openModal}
-        className="no-drag h-7 rounded-lg p-1.5 flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white dark:bg-orange-600 dark:hover:bg-orange-700"
+        onMouseDown={(e) => e.stopPropagation()}
+        onMouseUp={(e) => e.stopPropagation()}
+        type="button"
+        className="no-drag flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 p-1 text-blue-600 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+        style={{ cursor: "pointer" }}
       >
+        <HiPlus className="size-5" />
         <span className="sr-only">创建</span>
-        <HiPlus className="size-4 text-white dark:text-white" />
       </button>
 
-      {/* 创建选项模态框 */}
+      {/* 创建模态框 */}
       <div
-        className={`${
-          isModalOpen ? "fixed" : "hidden"
-        } inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50 p-4 backdrop-blur-sm`}
+        className={`${isModalOpen ? "fixed" : "hidden"} inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50 p-4 backdrop-blur-sm transition-opacity duration-300 ease-in-out`}
       >
-        <div className="mx-auto w-full max-w-md overflow-hidden rounded-xl bg-white/95 shadow-xl transition-all dark:bg-gray-800/95">
+        <div
+          ref={modalRef}
+          className="no-drag mx-auto w-full max-w-lg overflow-hidden rounded-2xl bg-white/95 shadow-2xl transition-all duration-300 ease-in-out dark:bg-gray-800/95 dark:border dark:border-gray-700"
+          style={{
+            transform: isModalOpen ? "scale(1)" : "scale(0.95)",
+            opacity: isModalOpen ? 1 : 0,
+          }}
+        >
           {/* 模态框头部 */}
-          <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+          <div className="border-b border-gray-200 p-5 dark:border-gray-700">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                创建
-              </h3>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md">
+                  <HiPlus className="size-5" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  创建
+                </h3>
+              </div>
               <button
                 type="button"
                 onClick={closeModal}
-                className="rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+                className="rounded-full bg-gray-100 p-2 text-sm text-gray-500 transition-all hover:bg-gray-200 hover:text-gray-700 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
               >
                 <HiX className="size-5" />
                 <span className="sr-only">关闭</span>
@@ -1345,91 +1398,70 @@ const CreateActionDropdown: FC = function () {
           </div>
 
           {/* 模态框内容 */}
-          <div className="p-4">
-            <div className="grid grid-cols-1 gap-3">
+          <div className="p-6">
+            <div className="grid grid-cols-2 gap-5">
               <button
-                onClick={() => handleAction("对话")}
-                className="flex items-center rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+                type="button"
+                className="group flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white p-5 text-center transition-all hover:border-blue-200 hover:bg-blue-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-800 dark:hover:bg-gray-700"
+                onClick={(e) => handleMenuItemClick(e, "创建群组")}
               >
-                <div className="mr-3 flex size-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300">
-                  <HiUserAdd className="size-5" />
+                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 p-3 text-white shadow-md transition-transform group-hover:scale-110">
+                  <HiUserGroup className="size-8" />
                 </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                    创建对话
-                  </h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    开始与联系人的新对话
-                  </p>
-                </div>
+                <h4 className="text-base font-semibold text-gray-900 dark:text-white">
+                  创建群组
+                </h4>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  创建新的工作群组
+                </p>
               </button>
 
               <button
-                onClick={() => handleAction("群组")}
-                className="flex items-center rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+                type="button"
+                className="group flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white p-5 text-center transition-all hover:border-green-200 hover:bg-green-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-green-800 dark:hover:bg-gray-700"
+                onClick={(e) => handleMenuItemClick(e, "创建任务")}
               >
-                <div className="mr-3 flex size-10 items-center justify-center rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300">
-                  <HiUserGroup className="size-5" />
+                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-green-600 p-3 text-white shadow-md transition-transform group-hover:scale-110">
+                  <HiClipboardCheck className="size-8" />
                 </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                    创建群组
-                  </h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    创建多人协作群组
-                  </p>
-                </div>
+                <h4 className="text-base font-semibold text-gray-900 dark:text-white">
+                  创建任务
+                </h4>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  创建新的工作任务
+                </p>
               </button>
 
               <button
-                onClick={() => handleAction("任务")}
-                className="flex items-center rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+                type="button"
+                className="group flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white p-5 text-center transition-all hover:border-purple-200 hover:bg-purple-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-purple-800 dark:hover:bg-gray-700"
+                onClick={(e) => handleMenuItemClick(e, "创建文档")}
               >
-                <div className="mr-3 flex size-10 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300">
-                  <HiClipboardCheck className="size-5" />
+                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-purple-400 to-purple-600 p-3 text-white shadow-md transition-transform group-hover:scale-110">
+                  <HiDocumentAdd className="size-8" />
                 </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                    创建任务
-                  </h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    添加新的任务项目
-                  </p>
-                </div>
+                <h4 className="text-base font-semibold text-gray-900 dark:text-white">
+                  创建文档
+                </h4>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  创建新的文档资料
+                </p>
               </button>
 
               <button
-                onClick={() => handleAction("日程")}
-                className="flex items-center rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+                type="button"
+                className="group flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white p-5 text-center transition-all hover:border-amber-200 hover:bg-amber-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-amber-800 dark:hover:bg-gray-700"
+                onClick={(e) => handleMenuItemClick(e, "创建日程")}
               >
-                <div className="mr-3 flex size-10 items-center justify-center rounded-lg bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300">
-                  <HiCalendar className="size-5" />
+                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600 p-3 text-white shadow-md transition-transform group-hover:scale-110">
+                  <HiCalendar className="size-8" />
                 </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                    创建日程
-                  </h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    安排新的日程事项
-                  </p>
-                </div>
-              </button>
-
-              <button
-                onClick={() => handleAction("文档")}
-                className="flex items-center rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-              >
-                <div className="mr-3 flex size-10 items-center justify-center rounded-lg bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300">
-                  <HiDocumentAdd className="size-5" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                    创建文档
-                  </h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    新建文档或笔记
-                  </p>
-                </div>
+                <h4 className="text-base font-semibold text-gray-900 dark:text-white">
+                  创建日程
+                </h4>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  安排新的工作日程
+                </p>
               </button>
             </div>
           </div>

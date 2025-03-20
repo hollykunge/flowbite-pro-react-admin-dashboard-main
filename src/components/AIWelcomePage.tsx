@@ -203,7 +203,7 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
   );
 
   return (
-    <div className="flex h-full w-full flex-col items-center relative overflow-y-auto overflow-x-hidden text-gray-800 dark:text-gray-200">
+    <div className="flex h-full w-full flex-col items-center relative overflow-y-auto overflow-x-hidden text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-900">
       <BackgroundCanvas isDarkMode={isDarkMode} />
 
       <div className="flex flex-col items-center w-full h-full relative">
