@@ -1,6 +1,15 @@
 import type { FC } from "react";
-import { useState } from "react";
-import { PiBirdDuotone } from "react-icons/pi";
+import { useEffect, useRef, useState } from "react";
+import {
+  HiArrowRight,
+  HiFlag,
+  HiOutlineDotsVertical,
+  HiOutlinePencil,
+  HiOutlineTrash,
+  HiPaperClip,
+  HiReply,
+} from "react-icons/hi";
+import { PiPushPinFill } from "react-icons/pi";
 import type { MessageSecurityLevel } from "./MessageInput";
 
 /**
@@ -11,7 +20,7 @@ import type { MessageSecurityLevel } from "./MessageInput";
  * @property {string} time - 消息发送时间
  * @property {string} message - 消息内容
  * @property {string} [status] - 消息状态（如"已发送"、"已读"等）
- * @property {string} [messageType] - 消息类型（"text", "image", "file", "voice", "video", "location", "link", "vote", "task"）
+ * @property {string} [messageType] - 消息类型（"text", "image", "file", "voice", "video", "location", "link", "vote", "task", "relay"）
  * @property {boolean} [isOwn] - 是否为用户自己发送的消息
  * @property {object} [replyTo] - 引用回复的消息
  * @property {string[]} [reactions] - 消息的表情反应列表
@@ -26,6 +35,8 @@ import type { MessageSecurityLevel } from "./MessageInput";
  * @property {() => void} [onCancelEdit] - 取消编辑事件处理函数
  * @property {boolean} [isEdited] - 消息是否被编辑过
  * @property {MessageSecurityLevel} [securityLevel] - 消息密级
+ * @property {() => void} [onPin] - 置顶消息事件处理函数
+ * @property {string} [id] - 消息DOM元素ID
  */
 interface ChatMessageProps {
   avatarSrc: string;
@@ -42,7 +53,8 @@ interface ChatMessageProps {
     | "location"
     | "link"
     | "vote"
-    | "task";
+    | "task"
+    | "relay";
   isOwn?: boolean;
   replyTo?: {
     sender: string;
@@ -60,6 +72,8 @@ interface ChatMessageProps {
   onCancelEdit?: () => void;
   isEdited?: boolean;
   securityLevel?: MessageSecurityLevel;
+  onPin?: () => void;
+  id?: string;
 }
 
 /**
@@ -92,12 +106,37 @@ const ChatMessage: FC<ChatMessageProps> = ({
   onCancelEdit,
   isEdited = false,
   securityLevel = "非密",
+  onPin,
+  id,
 }) => {
   // 编辑状态
   const [isEditing, setIsEditing] = useState(false);
   const [editedMessage, setEditedMessage] = useState(message);
   // 添加下拉菜单状态
   const [showDropdown, setShowDropdown] = useState(false);
+  // 添加菜单引用
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // 点击外部关闭下拉菜单
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showDropdown &&
+        dropdownRef.current &&
+        buttonRef.current &&
+        !dropdownRef.current.contains(event.target as Node) &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropdown]);
 
   // 处理编辑按钮点击
   const handleEditClick = () => {
@@ -529,6 +568,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
   return (
     <div
       className={`flex items-start gap-2.5 ${isOwn ? "flex-row-reverse" : ""}`}
+      id={id}
     >
       {!isOwn && (
         <img
@@ -589,95 +629,40 @@ const ChatMessage: FC<ChatMessageProps> = ({
           </span>
         </div>
       </div>
-      <div
-        className="relative"
-        onMouseEnter={() => setShowDropdown(true)}
-        onMouseLeave={() => setShowDropdown(false)}
-      >
+      <div className="relative">
         <button
-          id="dropdownMenuIconButton"
-          data-dropdown-toggle="dropdownDots"
-          data-dropdown-placement="bottom-start"
+          ref={buttonRef}
+          onClick={() => setShowDropdown(!showDropdown)}
           className="inline-flex items-center self-center p-2 text-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full focus:outline-none dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 transition-all duration-200"
           type="button"
         >
-          <svg
-            className="size-4"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 4 15"
-          >
-            <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
-          </svg>
+          <HiOutlineDotsVertical className="size-4" />
         </button>
         {showDropdown && (
           <div
-            className="absolute z-10 w-40 divide-y divide-gray-100 rounded-lg bg-white shadow-lg border border-gray-100 dark:divide-gray-600 dark:bg-gray-700 dark:border-gray-600"
-            style={{
-              top: "0",
-              right: isOwn ? "100%" : "auto",
-              left: isOwn ? "auto" : "100%",
-              marginLeft: isOwn ? "-8px" : "8px",
-              marginRight: isOwn ? "8px" : "-8px",
-              transform: "translateY(-25%)",
-            }}
+            ref={dropdownRef}
+            className="absolute right-0 top-full z-10 mt-1 w-40 rounded-lg bg-white p-2 shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 message-dropdown"
           >
-            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-              <li>
-                <button
-                  onClick={handleAIAssistant}
-                  className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  <PiBirdDuotone className="mr-1 size-4 text-purple-500" />
-                  AI助手
-                </button>
-              </li>
-              {onCopy && (
-                <li>
-                  <button
-                    onClick={() => handleMenuItemClick(onCopy)}
-                    className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  >
-                    <svg
-                      className="w-4 h-4 mr-2 text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                      ></path>
-                    </svg>
-                    复制
-                  </button>
-                </li>
-              )}
+            <ul className="space-y-1 text-sm">
               {onReply && (
                 <li>
                   <button
                     onClick={() => handleMenuItemClick(onReply)}
-                    className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
-                    <svg
-                      className="w-4 h-4 mr-2 text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
-                      ></path>
-                    </svg>
-                    引用
+                    <HiReply className="size-4 text-gray-600 dark:text-gray-400" />
+                    <span>回复</span>
+                  </button>
+                </li>
+              )}
+              {onPin && (
+                <li>
+                  <button
+                    onClick={() => handleMenuItemClick(onPin)}
+                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <PiPushPinFill className="size-4 text-gray-600 dark:text-gray-400" />
+                    <span>置顶消息</span>
                   </button>
                 </li>
               )}
@@ -685,23 +670,21 @@ const ChatMessage: FC<ChatMessageProps> = ({
                 <li>
                   <button
                     onClick={() => handleMenuItemClick(onForward)}
-                    className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
-                    <svg
-                      className="w-4 h-4 mr-2 text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17 8l4 4m0 0l-4 4m4-4H3"
-                      ></path>
-                    </svg>
-                    转发
+                    <HiArrowRight className="size-4 text-gray-600 dark:text-gray-400" />
+                    <span>转发</span>
+                  </button>
+                </li>
+              )}
+              {onCopy && (
+                <li>
+                  <button
+                    onClick={() => handleMenuItemClick(onCopy)}
+                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <HiPaperClip className="size-4 text-gray-600 dark:text-gray-400" />
+                    <span>复制</span>
                   </button>
                 </li>
               )}
@@ -709,23 +692,21 @@ const ChatMessage: FC<ChatMessageProps> = ({
                 <li>
                   <button
                     onClick={() => handleMenuItemClick(handleEditClick)}
-                    className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
-                    <svg
-                      className="w-4 h-4 mr-2 text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                      ></path>
-                    </svg>
-                    编辑
+                    <HiOutlinePencil className="size-4 text-gray-600 dark:text-gray-400" />
+                    <span>编辑</span>
+                  </button>
+                </li>
+              )}
+              {onReport && (
+                <li>
+                  <button
+                    onClick={() => handleMenuItemClick(onReport)}
+                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <HiFlag className="size-4 text-gray-600 dark:text-gray-400" />
+                    <span>举报</span>
                   </button>
                 </li>
               )}
@@ -733,23 +714,10 @@ const ChatMessage: FC<ChatMessageProps> = ({
                 <li>
                   <button
                     onClick={() => handleMenuItemClick(onDelete)}
-                    className="flex items-center w-full px-4 py-2 text-left text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600"
+                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
-                    <svg
-                      className="w-4 h-4 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      ></path>
-                    </svg>
-                    删除
+                    <HiOutlineTrash className="size-4" />
+                    <span>删除</span>
                   </button>
                 </li>
               )}

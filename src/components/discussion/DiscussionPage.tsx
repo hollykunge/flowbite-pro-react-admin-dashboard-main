@@ -1,8 +1,13 @@
+import { Button, Label, Modal, Textarea } from "flowbite-react";
 import type { ChangeEvent, FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { BiSolidMessageSquareDots } from "react-icons/bi";
 import { HiBadgeCheck, HiCog, HiSearch, HiUserAdd } from "react-icons/hi";
-import { PiNotificationFill } from "react-icons/pi";
+import {
+  PiNotificationFill,
+  PiPlusCircleFill,
+  PiPushPinFill,
+} from "react-icons/pi";
 import {
   RiContactsBookFill,
   RiGovernmentFill,
@@ -52,6 +57,34 @@ const DiscussionPage: FC = function () {
     groupId: number;
     name: string;
   } | null>(null);
+
+  // 接龙参与相关状态
+  const [showRelayParticipateModal, setShowRelayParticipateModal] =
+    useState(false);
+  const [relayParticipateContent, setRelayParticipateContent] = useState("");
+  const [currentRelayId, setCurrentRelayId] = useState<number | null>(null);
+  const [relayTitle, setRelayTitle] = useState("");
+
+  // 话题置顶相关状态
+  const [pinnedTopic, setPinnedTopic] = useState<{
+    title: string;
+    content: string;
+    creator: string;
+    createdAt: string;
+    isPinned: boolean;
+    messageId?: number;
+  } | null>({
+    title: "API集成兼容性问题讨论",
+    content:
+      "讨论如何解决当前版本与旧系统协议的兼容性问题，确保数据正确传输和处理",
+    creator: "李四",
+    createdAt: "2023-05-20",
+    isPinned: true,
+  });
+
+  const [showTopicForm, setShowTopicForm] = useState<boolean>(false);
+  const [newTopicTitle, setNewTopicTitle] = useState<string>("");
+  const [newTopicContent, setNewTopicContent] = useState<string>("");
 
   // 禁用外部框架的垂直滚动
   useEffect(() => {
@@ -838,13 +871,176 @@ const DiscussionPage: FC = function () {
   // 处理接龙参与
   const handleRelayParticipate = (relayId: number) => {
     console.log(`参与接龙 ID: ${relayId}`);
-    // 在实际应用中，这里可以打开一个模态框让用户输入接龙内容
+    // 打开模态框让用户输入接龙内容
+    setCurrentRelayId(relayId);
+    setRelayParticipateContent("");
+
+    // 获取当前接龙的标题
+    const relay = discussions.find(
+      (msg) => msg.id === relayId && msg.relayData,
+    );
+    if (relay && relay.relayData) {
+      setRelayTitle(relay.relayData.title);
+    } else {
+      setRelayTitle("");
+    }
+
+    setShowRelayParticipateModal(true);
+  };
+
+  // 提交接龙参与内容
+  const handleSubmitRelayParticipate = () => {
+    if (!relayParticipateContent.trim() || !currentRelayId) return;
+
+    // 找到对应的接龙消息
+    const updatedDiscussions = discussions.map((msg) => {
+      if (msg.id === currentRelayId && msg.relayData) {
+        // 创建新的参与者
+        const newParticipant = {
+          id: msg.relayData.participants.length + 1,
+          name: "我", // 当前用户名
+          avatar: "/images/users/michael-gough.png", // 当前用户头像
+          content: relayParticipateContent,
+          time: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        };
+
+        // 更新接龙数据
+        return {
+          ...msg,
+          relayData: {
+            ...msg.relayData,
+            participants: [...msg.relayData.participants, newParticipant],
+            totalParticipants: msg.relayData.totalParticipants + 1,
+          },
+        };
+      }
+      return msg;
+    });
+
+    // 更新消息列表
+    setDiscussions(updatedDiscussions);
+
+    // 关闭模态框并清空内容
+    setShowRelayParticipateModal(false);
+    setRelayParticipateContent("");
+    setCurrentRelayId(null);
+  };
+
+  // 取消接龙参与
+  const handleCancelRelayParticipate = () => {
+    setShowRelayParticipateModal(false);
+    setRelayParticipateContent("");
+    setCurrentRelayId(null);
   };
 
   // 处理接龙点击
   const handleRelayClick = (relayId: number) => {
     console.log(`点击了接龙 ID: ${relayId}`);
     // 这里可以添加查看接龙详情的逻辑
+  };
+
+  // 处理话题置顶/取消置顶
+  const handleTogglePinTopic = () => {
+    if (pinnedTopic) {
+      setPinnedTopic({
+        ...pinnedTopic,
+        isPinned: !pinnedTopic.isPinned,
+      });
+    }
+  };
+
+  // 处理创建新话题
+  const handleCreateTopic = () => {
+    if (newTopicTitle.trim() && newTopicContent.trim()) {
+      setPinnedTopic({
+        title: newTopicTitle,
+        content: newTopicContent,
+        creator: "我", // 当前用户
+        createdAt: new Date().toLocaleDateString(),
+        isPinned: true,
+      });
+      setShowTopicForm(false);
+      setNewTopicTitle("");
+      setNewTopicContent("");
+    }
+  };
+
+  // 处理取消创建话题
+  const handleCancelCreateTopic = () => {
+    setShowTopicForm(false);
+    setNewTopicTitle("");
+    setNewTopicContent("");
+  };
+
+  // 处理消息操作
+  const handleMessageActions = (id: number, action: string) => {
+    switch (action) {
+      case "reply":
+        handleReplyMessage(id);
+        break;
+      case "forward":
+        handleForwardMessage(id);
+        break;
+      case "copy":
+        handleCopyMessage(id);
+        break;
+      case "report":
+        handleReportMessage(id);
+        break;
+      case "delete":
+        handleDeleteMessage(id);
+        break;
+      case "pin":
+        handlePinMessage(id);
+        break;
+      default:
+        break;
+    }
+  };
+
+  /**
+   * 处理置顶消息
+   * @param {number} id 消息ID
+   */
+  const handlePinMessage = (id: number) => {
+    const messageToPinned = discussions.find((msg) => msg.id === id);
+    if (messageToPinned) {
+      setPinnedTopic({
+        title:
+          messageToPinned.messageType === "text"
+            ? "置顶消息"
+            : `置顶${messageToPinned.messageType === "image" ? "图片" : messageToPinned.messageType === "file" ? "文件" : messageToPinned.messageType === "voice" ? "语音" : "消息"}`,
+        content: messageToPinned.content,
+        creator: messageToPinned.sender,
+        createdAt: messageToPinned.time,
+        isPinned: true,
+        messageId: messageToPinned.id,
+      });
+
+      // 滚动到顶部，显示置顶消息
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop = 0;
+      }
+    }
+  };
+
+  /**
+   * 滚动到原始消息位置
+   * @param {number} messageId 消息ID
+   */
+  const scrollToOriginalMessage = (messageId: number) => {
+    const messageElement = document.getElementById(`message-${messageId}`);
+    if (messageElement) {
+      messageElement.scrollIntoView({ behavior: "smooth" as ScrollBehavior });
+      // 给消息添加一个闪烁高亮效果
+      messageElement.classList.add("highlight-message");
+      setTimeout(() => {
+        messageElement.classList.remove("highlight-message");
+      }, 2000);
+    }
   };
 
   return (
@@ -1351,6 +1547,154 @@ const DiscussionPage: FC = function () {
                     </div>
                   ) : (
                     <div className="min-h-full rounded-lg p-4">
+                      {/* 话题置顶 */}
+                      {pinnedTopic && pinnedTopic.isPinned && (
+                        <div className="sticky top-0 z-10 mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center">
+                              <PiPushPinFill className="mr-2 size-5 text-blue-500 dark:text-blue-400" />
+                              <h3 className="text-md font-medium text-gray-900 dark:text-white">
+                                {pinnedTopic.title}
+                              </h3>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={handleTogglePinTopic}
+                                className="rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                                title={
+                                  pinnedTopic.isPinned ? "取消置顶" : "置顶话题"
+                                }
+                              >
+                                <PiPushPinFill className="size-4" />
+                              </button>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {pinnedTopic.content}
+                          </p>
+                          <div className="mt-2 flex items-center text-xs text-gray-500 dark:text-gray-400">
+                            <span>
+                              由 {pinnedTopic.creator} 创建于{" "}
+                              {pinnedTopic.createdAt}
+                            </span>
+                            {pinnedTopic.messageId && (
+                              <button
+                                onClick={() =>
+                                  scrollToOriginalMessage(
+                                    pinnedTopic.messageId!,
+                                  )
+                                }
+                                className="ml-2 text-blue-500 hover:underline dark:text-blue-400"
+                              >
+                                查看原始消息
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 创建话题表单 */}
+                      {showTopicForm && (
+                        <div className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                          <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-md font-medium text-gray-900 dark:text-white">
+                              创建新话题
+                            </h3>
+                            <button
+                              onClick={handleCancelCreateTopic}
+                              className="rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                              title="关闭"
+                            >
+                              <svg
+                                className="size-4"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                          <div className="space-y-3">
+                            <div>
+                              <label
+                                htmlFor="topic-title"
+                                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+                              >
+                                话题标题
+                              </label>
+                              <input
+                                type="text"
+                                id="topic-title"
+                                value={newTopicTitle}
+                                onChange={(e) =>
+                                  setNewTopicTitle(e.target.value)
+                                }
+                                placeholder="请输入话题标题"
+                                className="w-full rounded-lg border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="topic-content"
+                                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+                              >
+                                话题内容
+                              </label>
+                              <textarea
+                                id="topic-content"
+                                value={newTopicContent}
+                                onChange={(e) =>
+                                  setNewTopicContent(e.target.value)
+                                }
+                                placeholder="请输入话题内容"
+                                rows={3}
+                                className="w-full rounded-lg border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                              />
+                            </div>
+                            <div className="flex justify-end space-x-2">
+                              <button
+                                onClick={handleCancelCreateTopic}
+                                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                              >
+                                取消
+                              </button>
+                              <button
+                                onClick={handleCreateTopic}
+                                className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800"
+                                disabled={
+                                  !newTopicTitle.trim() ||
+                                  !newTopicContent.trim()
+                                }
+                              >
+                                创建
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 没有置顶话题时显示创建按钮 */}
+                      {(!pinnedTopic || !pinnedTopic.isPinned) &&
+                        !showTopicForm && (
+                          <div className="mb-4 flex justify-center">
+                            <button
+                              onClick={() => setShowTopicForm(true)}
+                              className="flex items-center rounded-lg border border-dashed border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                            >
+                              <PiPlusCircleFill className="mr-1.5 size-5 text-gray-500 dark:text-gray-400" />
+                              创建会话话题
+                            </button>
+                          </div>
+                        )}
+
                       {/* 消息列表 - 支持丰富的消息类型 */}
                       {discussions.map((msg) =>
                         msg.messageType === "file" ? (
@@ -1519,6 +1863,7 @@ const DiscussionPage: FC = function () {
                         ) : (
                           <ChatMessage
                             key={msg.id}
+                            id={`message-${msg.id}`}
                             avatarSrc={msg.avatarSrc}
                             senderName={msg.sender}
                             time={msg.time}
@@ -1541,6 +1886,7 @@ const DiscussionPage: FC = function () {
                             onEdit={() => handleEditMessage(msg.id)}
                             onSaveEdit={handleSaveEdit}
                             onCancelEdit={handleCancelEdit}
+                            onPin={() => handlePinMessage(msg.id)}
                           />
                         ),
                       )}
@@ -1647,6 +1993,67 @@ const DiscussionPage: FC = function () {
           </div>
         </div>
       </div>
+
+      {/* 接龙参与模态框 */}
+      <Modal
+        show={showRelayParticipateModal}
+        onClose={handleCancelRelayParticipate}
+        size="md"
+      >
+        <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
+          <span className="text-lg font-medium text-gray-900 dark:text-white">
+            参与接龙：{relayTitle}
+          </span>
+        </Modal.Header>
+        <Modal.Body className="p-6">
+          <div className="space-y-4">
+            <div className="mb-4 p-3 bg-purple-50 rounded-lg dark:bg-purple-900/20">
+              <p className="text-sm text-purple-800 dark:text-purple-200">
+                请输入您的接龙内容，内容将展示在接龙卡片中。
+              </p>
+            </div>
+            <div>
+              <Label
+                htmlFor="relay-content"
+                className="mb-2 flex justify-between"
+              >
+                <span>接龙内容</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {relayParticipateContent.length}/200字
+                </span>
+              </Label>
+              <Textarea
+                id="relay-content"
+                rows={4}
+                placeholder="请输入您的接龙内容..."
+                required
+                value={relayParticipateContent}
+                onChange={(e) => {
+                  // 限制最多200字
+                  if (e.target.value.length <= 200) {
+                    setRelayParticipateContent(e.target.value);
+                  }
+                }}
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+              />
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="border-t border-gray-200 !p-6 dark:border-gray-700">
+          <div className="flex w-full items-center justify-end space-x-3">
+            <Button color="light" onClick={handleCancelRelayParticipate}>
+              取消
+            </Button>
+            <Button
+              color="purple"
+              onClick={handleSubmitRelayParticipate}
+              disabled={!relayParticipateContent.trim()}
+            >
+              提交接龙
+            </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
     </NavbarSidebarLayout>
   );
 };
