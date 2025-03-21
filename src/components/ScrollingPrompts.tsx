@@ -38,14 +38,10 @@ const ScrollingPrompts: FC<ScrollingPromptsProps> = memo(
         animation: scrollRight 30s linear infinite;
       }
       
-      /* 纯渐变效果，移除模糊 */
+      /* 设置为透明背景 */
       .prompt-container {
         position: relative;
-        background-color: white;
-      }
-      
-      .dark .prompt-container {
-        background-color: rgb(17, 24, 39);
+        background-color: transparent;
       }
       
       .prompt-container::before,
@@ -62,26 +58,26 @@ const ScrollingPrompts: FC<ScrollingPromptsProps> = memo(
       .prompt-container::before {
         left: 0;
         background: linear-gradient(to right, 
-          rgba(255, 255, 255, 1), 
+          rgba(255, 255, 255, 0.3), 
           rgba(255, 255, 255, 0));
       }
       
       .prompt-container::after {
         right: 0;
         background: linear-gradient(to left, 
-          rgba(255, 255, 255, 1), 
+          rgba(255, 255, 255, 0.3), 
           rgba(255, 255, 255, 0));
       }
       
       .dark .prompt-container::before {
         background: linear-gradient(to right, 
-          rgba(17, 24, 39, 1), 
+          rgba(17, 24, 39, 0.3), 
           rgba(17, 24, 39, 0));
       }
       
       .dark .prompt-container::after {
         background: linear-gradient(to left, 
-          rgba(17, 24, 39, 1), 
+          rgba(17, 24, 39, 0.3), 
           rgba(17, 24, 39, 0));
       }
       

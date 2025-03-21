@@ -70,9 +70,11 @@ module.exports = {
     extend: {
       height: {
         120: "30rem",
+        150: "40rem",
       },
       width: {
         120: "30rem",
+        150: "40rem",
       },
       zIndex: {
         "-5": "-5",
