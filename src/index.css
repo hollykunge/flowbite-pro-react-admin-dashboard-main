@@ -15,6 +15,40 @@ body,
   padding: 0;
 }
 
+/* 确保背景可见 */
+.absolute.inset-0.-z-10 {
+  z-index: -10;
+  position: fixed;
+  pointer-events: none;
+}
+
+/* 自定义旋转动画 */
+@keyframes spin-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse-slower {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 40s linear infinite;
+}
+
+.animate-spin-reverse-slower {
+  animation: spin-reverse-slower 45s linear infinite;
+}
+
 /* 消息高亮效果 */
 @keyframes highlight-pulse {
   0% {

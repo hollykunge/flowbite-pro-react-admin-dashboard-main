@@ -26,7 +26,7 @@ import { Dropdown, Select } from "flowbite-react";
 
 import AISettingsModal from "./AISettingsModal";
 import ChatHistoryDrawer from "./ChatHistoryDrawer";
-import BackgroundCanvas from "./BackgroundCanvas";
+import BackgroundSVG from "./BackgroundSVG";
 import ScrollingPrompts from "./ScrollingPrompts";
 import AppGrid from "./AppGrid";
 import AIInputBox from "./AIInputBox";
@@ -203,10 +203,10 @@ const AIWelcomePage: FC<AIWelcomePageProps> = ({
   );
 
   return (
-    <div className="flex h-full w-full flex-col items-center relative overflow-y-auto overflow-x-hidden text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-900">
-      <BackgroundCanvas isDarkMode={isDarkMode} />
+    <div className="flex h-full w-full flex-col items-center relative overflow-y-auto overflow-x-hidden text-gray-800 dark:text-gray-200 bg-transparent dark:bg-transparent">
+      <BackgroundSVG isDarkMode={isDarkMode} />
 
-      <div className="flex flex-col items-center w-full h-full relative">
+      <div className="flex flex-col items-center w-full h-full relative z-10">
         {/* 悬浮导航栏 */}
         <div className="w-full max-w-5xl mx-auto px-4 mt-6 mb-2 z-20">
           <div className="flex items-center justify-between p-2 bg-transparent backdrop-blur-sm rounded-xl">

@@ -68,6 +68,15 @@ module.exports = {
       ],
     },
     extend: {
+      height: {
+        120: "30rem",
+      },
+      width: {
+        120: "30rem",
+      },
+      zIndex: {
+        "-5": "-5",
+      },
       keyframes: {
         "scroll-left": {
           "0%": { transform: "translateX(0)" },
@@ -85,11 +94,21 @@ module.exports = {
           "90%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(0)" },
         },
+        "spin-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        "spin-reverse-slower": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(-360deg)" },
+        },
       },
       animation: {
         "scroll-left": "scroll-left 30s linear infinite",
         "scroll-right": "scroll-right 30s linear infinite",
         "prompt-scroll": "prompt-scroll 2.5s ease-in-out",
+        "spin-slow": "spin-slow 40s linear infinite",
+        "spin-reverse-slower": "spin-reverse-slower 45s linear infinite",
       },
     },
   },
