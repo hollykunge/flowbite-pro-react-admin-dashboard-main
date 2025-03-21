@@ -1002,6 +1002,24 @@ const DiscussionPage: FC = function () {
   };
 
   /**
+   * 从消息创建话题
+   * @param {number} id 消息ID
+   */
+  const handleCreateTopicFromMessage = (id: number) => {
+    const messageToCreateTopic = discussions.find((msg) => msg.id === id);
+    if (messageToCreateTopic) {
+      setNewTopicTitle(`来自 ${messageToCreateTopic.sender} 的话题`);
+      setNewTopicContent(messageToCreateTopic.content);
+      setShowTopicForm(true);
+
+      // 滚动到顶部，显示话题创建表单
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop = 0;
+      }
+    }
+  };
+
+  /**
    * 处理置顶消息
    * @param {number} id 消息ID
    */
@@ -1739,14 +1757,14 @@ const DiscussionPage: FC = function () {
                           />
                         ) : msg.messageType === "vote" && msg.voteData ? (
                           <div key={msg.id} className="mb-4">
-                            <div className="flex items-start mb-2">
+                            <div className="flex items-start">
                               <img
                                 className="size-8 rounded-full mr-2"
                                 src={msg.avatarSrc}
                                 alt={`${msg.sender}的头像`}
                               />
                               <div className="flex flex-col">
-                                <div className="flex items-center">
+                                <div className="flex items-center mb-1">
                                   <span className="text-sm font-medium text-gray-900 dark:text-white mr-2">
                                     {msg.sender}
                                   </span>
@@ -1772,14 +1790,14 @@ const DiscussionPage: FC = function () {
                           </div>
                         ) : msg.messageType === "task" && msg.taskData ? (
                           <div key={msg.id} className="mb-4">
-                            <div className="flex items-start mb-2">
+                            <div className="flex items-start">
                               <img
                                 className="size-8 rounded-full mr-2"
                                 src={msg.avatarSrc}
                                 alt={`${msg.sender}的头像`}
                               />
                               <div className="flex flex-col">
-                                <div className="flex items-center">
+                                <div className="flex items-center mb-1">
                                   <span className="text-sm font-medium text-gray-900 dark:text-white mr-2">
                                     {msg.sender}
                                   </span>
@@ -1818,14 +1836,14 @@ const DiscussionPage: FC = function () {
                           </div>
                         ) : msg.messageType === "relay" && msg.relayData ? (
                           <div key={msg.id} className="mb-4">
-                            <div className="flex items-start mb-2">
+                            <div className="flex items-start">
                               <img
                                 className="size-8 rounded-full mr-2"
                                 src={msg.avatarSrc}
                                 alt={`${msg.sender}的头像`}
                               />
                               <div className="flex flex-col">
-                                <div className="flex items-center">
+                                <div className="flex items-center mb-1">
                                   <span className="text-sm font-medium text-gray-900 dark:text-white mr-2">
                                     {msg.sender}
                                   </span>
@@ -1887,6 +1905,9 @@ const DiscussionPage: FC = function () {
                             onSaveEdit={handleSaveEdit}
                             onCancelEdit={handleCancelEdit}
                             onPin={() => handlePinMessage(msg.id)}
+                            onCreateTopic={() =>
+                              handleCreateTopicFromMessage(msg.id)
+                            }
                           />
                         ),
                       )}

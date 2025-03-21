@@ -5,6 +5,10 @@ import { HiOutlinePhotograph } from "react-icons/hi";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { FiFile } from "react-icons/fi";
 import { AiOutlineAudio } from "react-icons/ai";
+import { RiRobot2Line } from "react-icons/ri";
+import { BiPoll } from "react-icons/bi";
+import { BsListOl } from "react-icons/bs";
+import { BsCalendarCheck } from "react-icons/bs";
 
 /**
  * 消息密级类型
@@ -125,6 +129,42 @@ const MessageInput: FC<MessageInputProps> = ({
             >
               <AiOutlineAudio className="size-5" />
               <span className="sr-only">录制语音</span>
+            </button>
+            <button
+              type="button"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              title="AI写作"
+            >
+              <img
+                src="/images/logo-bailing.svg"
+                alt="百灵 AI写作"
+                className="size-5"
+              />
+              <span className="sr-only">AI写作</span>
+            </button>
+            <button
+              type="button"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              title="投票"
+            >
+              <BiPoll className="size-5" />
+              <span className="sr-only">投票</span>
+            </button>
+            <button
+              type="button"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              title="接龙"
+            >
+              <BsListOl className="size-5" />
+              <span className="sr-only">接龙</span>
+            </button>
+            <button
+              type="button"
+              className="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              title="创建任务"
+            >
+              <BsCalendarCheck className="size-5" />
+              <span className="sr-only">创建任务</span>
             </button>
           </div>
 

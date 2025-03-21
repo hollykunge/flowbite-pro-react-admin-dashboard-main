@@ -1,6 +1,6 @@
 import { Avatar, Badge, Progress, Tooltip } from "flowbite-react";
 import { FC, useState } from "react";
-import { HiCheckCircle, HiThumbUp } from "react-icons/hi";
+import { HiCheckCircle, HiThumbUp, HiChartBar, HiClock } from "react-icons/hi";
 
 export interface VoteOption {
   id: number;
@@ -61,76 +61,96 @@ const ChatVoteCard: FC<ChatVoteCardProps> = ({
   };
 
   return (
-    <div className="w-full max-w-lg rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 p-4">
+    <div className="w-full max-w-lg rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800 p-4 hover:shadow-lg transition-shadow duration-300">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-2">
-          <Badge color="purple" className="px-2.5 py-1">
+          <Badge
+            color="blue"
+            className="px-2.5 py-1 bg-blue-100 dark:bg-blue-900/40"
+          >
             <span className="flex items-center gap-1">
-              <HiThumbUp className="h-3.5 w-3.5" />
+              <HiChartBar className="h-3.5 w-3.5" />
               投票
             </span>
           </Badge>
-          {deadline && (
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              截止日期: {deadline}
-            </span>
-          )}
         </div>
+        {deadline && (
+          <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+            <HiClock className="mr-1 h-3 w-3" />
+            截止: {deadline}
+          </div>
+        )}
       </div>
 
-      <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-white">
+      <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
         {title}
       </h3>
 
       {description && (
-        <p className="mb-3 text-sm text-gray-600 dark:text-gray-300">
+        <p className="mb-4 text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/40 p-2 rounded-md border-l-4 border-blue-300 dark:border-blue-700">
           {description}
         </p>
       )}
 
-      <div className="space-y-3 mb-4">
+      <div className="space-y-3.5 mb-4">
         {localOptions.map((option) => (
           <div
             key={option.id}
-            className={`relative rounded-lg border border-gray-200 dark:border-gray-700 ${
+            className={`relative rounded-lg border ${
               !localHasVoted
-                ? "hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                : ""
+                ? "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 transition-colors duration-200"
+                : option.voted
+                  ? "border-blue-300 dark:border-blue-700"
+                  : "border-gray-200 dark:border-gray-700"
             } ${
               option.voted
-                ? "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
-                : ""
+                ? "bg-blue-50 dark:bg-blue-900/20 shadow-sm"
+                : !localHasVoted
+                  ? "hover:bg-gray-50 dark:hover:bg-gray-700/60"
+                  : ""
             }`}
             onClick={() => !localHasVoted && handleVote(option.id)}
           >
-            <div className="p-3">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium text-gray-900 dark:text-white">
+            <div className="p-3.5">
+              <div className="flex items-center justify-between mb-2">
+                <span
+                  className={`text-sm font-medium ${option.voted ? "text-blue-700 dark:text-blue-400" : "text-gray-900 dark:text-white"}`}
+                >
                   {option.text}
                 </span>
-                <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                <span
+                  className={`text-xs font-medium rounded-full px-2 py-0.5 ${
+                    option.voted
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400"
+                      : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                  }`}
+                >
                   {calculatePercentage(option.votes)}%
                 </span>
               </div>
               <div className="w-full">
                 <Progress
                   progress={calculatePercentage(option.votes)}
-                  color={option.voted ? "purple" : "blue"}
-                  size="sm"
+                  color={option.voted ? "blue" : "gray"}
+                  size="md"
+                  className="rounded-full"
                 />
               </div>
-              <div className="mt-1 flex items-center justify-between">
+              <div className="mt-1.5 flex items-center justify-between">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   {option.votes} 票
                 </span>
                 {option.voted && (
-                  <HiCheckCircle className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                  <span className="flex items-center text-xs text-blue-600 dark:text-blue-400">
+                    <HiCheckCircle className="h-3.5 w-3.5 mr-1" />
+                    已投票
+                  </span>
                 )}
               </div>
             </div>
 
             {!localHasVoted && (
-              <Tooltip content="点击投票">
+              <Tooltip content="点击投票" placement="left">
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-900/0 hover:bg-gray-900/5 dark:hover:bg-gray-700/30 rounded-lg transition-all duration-200"></div>
               </Tooltip>
             )}
@@ -140,12 +160,16 @@ const ChatVoteCard: FC<ChatVoteCardProps> = ({
 
       <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-2">
-          <Avatar img={creatorAvatar} size="xs" rounded />
+          <Avatar img={creatorAvatar} size="xs" rounded bordered />
           <span className="text-xs text-gray-500 dark:text-gray-400">
-            由 {creatorName} 创建
+            由{" "}
+            <span className="font-medium text-gray-700 dark:text-gray-300">
+              {creatorName}
+            </span>{" "}
+            创建
           </span>
         </div>
-        <span className="text-xs text-gray-500 dark:text-gray-400">
+        <span className="text-xs bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-1 rounded-full font-medium">
           {totalVotes + (localHasVoted && !hasVoted ? 1 : 0)} 人参与
         </span>
       </div>

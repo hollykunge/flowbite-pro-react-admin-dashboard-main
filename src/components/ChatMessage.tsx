@@ -9,7 +9,7 @@ import {
   HiPaperClip,
   HiReply,
 } from "react-icons/hi";
-import { PiPushPinFill } from "react-icons/pi";
+import { PiPushPinFill, PiPlusCircleFill } from "react-icons/pi";
 import type { MessageSecurityLevel } from "./MessageInput";
 
 /**
@@ -36,6 +36,7 @@ import type { MessageSecurityLevel } from "./MessageInput";
  * @property {boolean} [isEdited] - 消息是否被编辑过
  * @property {MessageSecurityLevel} [securityLevel] - 消息密级
  * @property {() => void} [onPin] - 置顶消息事件处理函数
+ * @property {() => void} [onCreateTopic] - 创建话题事件处理函数
  * @property {string} [id] - 消息DOM元素ID
  */
 interface ChatMessageProps {
@@ -73,6 +74,7 @@ interface ChatMessageProps {
   isEdited?: boolean;
   securityLevel?: MessageSecurityLevel;
   onPin?: () => void;
+  onCreateTopic?: () => void;
   id?: string;
 }
 
@@ -107,6 +109,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
   isEdited = false,
   securityLevel = "非密",
   onPin,
+  onCreateTopic,
   id,
 }) => {
   // 编辑状态
@@ -663,6 +666,17 @@ const ChatMessage: FC<ChatMessageProps> = ({
                   >
                     <PiPushPinFill className="size-4 text-gray-600 dark:text-gray-400" />
                     <span>置顶消息</span>
+                  </button>
+                </li>
+              )}
+              {onCreateTopic && (
+                <li>
+                  <button
+                    onClick={() => handleMenuItemClick(onCreateTopic)}
+                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <PiPlusCircleFill className="size-4 text-gray-600 dark:text-gray-400" />
+                    <span>创建话题</span>
                   </button>
                 </li>
               )}

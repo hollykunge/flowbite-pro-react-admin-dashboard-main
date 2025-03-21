@@ -92,25 +92,27 @@ const BackgroundCanvas: FC<BackgroundCanvasProps> = memo(
         ctx.fillStyle = glow;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // 绘制网格线 - 只在右下角四分之一区域
-        const gridStartX = canvas.width * 0.5;
-        const gridStartY = canvas.height * 0.5;
+        // 绘制全屏蓝色网格线
+        const gridSize = 40; // 网格大小
+        const gridColor = isDarkMode
+          ? "rgba(59, 130, 246, 0.1)"
+          : "rgba(59, 130, 246, 0.07)"; // 蓝色网格线
 
         ctx.lineWidth = 1;
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+        ctx.strokeStyle = gridColor;
 
         // 水平网格线
-        for (let y = gridStartY; y < canvas.height; y += 50) {
+        for (let y = 0; y <= canvas.height; y += gridSize) {
           ctx.beginPath();
-          ctx.moveTo(gridStartX, y);
+          ctx.moveTo(0, y);
           ctx.lineTo(canvas.width, y);
           ctx.stroke();
         }
 
         // 垂直网格线
-        for (let x = gridStartX; x < canvas.width; x += 50) {
+        for (let x = 0; x <= canvas.width; x += gridSize) {
           ctx.beginPath();
-          ctx.moveTo(x, gridStartY);
+          ctx.moveTo(x, 0);
           ctx.lineTo(x, canvas.height);
           ctx.stroke();
         }
