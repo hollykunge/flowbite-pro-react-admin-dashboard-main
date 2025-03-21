@@ -486,11 +486,14 @@ const ExampleNavbar: FC = function () {
     setIsSearchModalOpen(false);
   };
 
+  // 搜索类型状态
+  const [searchType, setSearchType] = useState<string>("all");
+
   // 处理搜索提交
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // 这里可以添加搜索逻辑
-    console.log("搜索查询:", searchQuery);
+    console.log("搜索查询:", searchQuery, "搜索类型:", searchType);
     closeSearchModal();
   };
 
@@ -517,7 +520,7 @@ const ExampleNavbar: FC = function () {
                 className="mr-2 h-7 sm:h-8"
               />
               <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-                云雀
+                易知云雀
               </span>
             </Navbar.Brand>
           </div>
@@ -611,6 +614,88 @@ const ExampleNavbar: FC = function () {
                   <span className="sr-only">关闭</span>
                 </button>
               </div>
+
+              {/* 搜索类型选择 */}
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSearchType("all")}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    searchType === "all"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  全部
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSearchType("message")}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    searchType === "message"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  消息
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSearchType("conversation")}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    searchType === "conversation"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  会话
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSearchType("task")}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    searchType === "task"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  任务
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSearchType("project")}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    searchType === "project"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  项目
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSearchType("file")}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    searchType === "file"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  文件
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSearchType("person")}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    searchType === "person"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-200"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  人员
+                </button>
+              </div>
+
               <div className="mt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <button
@@ -624,7 +709,12 @@ const ExampleNavbar: FC = function () {
                     type="button"
                     className="flex items-center justify-center rounded-lg border border-gray-200 px-5 py-2.5 text-center text-sm font-medium text-gray-900 shadow-sm transition-all hover:bg-gray-100 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
                     onClick={() => {
-                      console.log("AI搜索:", searchQuery);
+                      console.log(
+                        "AI搜索:",
+                        searchQuery,
+                        "搜索类型:",
+                        searchType,
+                      );
                       closeSearchModal();
                     }}
                   >
