@@ -9,7 +9,7 @@ import {
   HiPaperClip,
   HiReply,
 } from "react-icons/hi";
-import { PiPushPinFill, PiPlusCircleFill } from "react-icons/pi";
+import { PiPlusCircleFill, PiPushPinFill } from "react-icons/pi";
 import type { MessageSecurityLevel } from "./MessageInput";
 
 /**
@@ -20,7 +20,7 @@ import type { MessageSecurityLevel } from "./MessageInput";
  * @property {string} time - 消息发送时间
  * @property {string} message - 消息内容
  * @property {string} [status] - 消息状态（如"已发送"、"已读"等）
- * @property {string} [messageType] - 消息类型（"text", "image", "file", "voice", "video", "location", "link", "vote", "task", "relay"）
+ * @property {string} [messageType] - 消息类型（"text", "image", "file", "voice", "video", "location", "link", "vote", "task", "relay", "knowledge", "document", "notice"）
  * @property {boolean} [isOwn] - 是否为用户自己发送的消息
  * @property {object} [replyTo] - 引用回复的消息
  * @property {string[]} [reactions] - 消息的表情反应列表
@@ -55,7 +55,10 @@ interface ChatMessageProps {
     | "link"
     | "vote"
     | "task"
-    | "relay";
+    | "relay"
+    | "knowledge"
+    | "document"
+    | "notice";
   isOwn?: boolean;
   replyTo?: {
     sender: string;

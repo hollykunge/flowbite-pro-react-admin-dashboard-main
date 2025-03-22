@@ -2,21 +2,26 @@ import { Button, Label, Modal, Textarea } from "flowbite-react";
 import type { ChangeEvent, FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { BiSolidMessageSquareDots } from "react-icons/bi";
-import { HiBadgeCheck, HiCog, HiSearch, HiUserAdd } from "react-icons/hi";
+import {
+  HiBadgeCheck,
+  HiCheck,
+  HiCog,
+  HiOutlineExclamation,
+  HiSearch,
+  HiUserAdd,
+} from "react-icons/hi";
 import {
   PiNotificationFill,
   PiPlusCircleFill,
   PiPushPinFill,
 } from "react-icons/pi";
-import {
-  RiContactsBookFill,
-  RiGovernmentFill,
-  RiGroup2Line,
-  RiListCheck2,
-} from "react-icons/ri";
+import { RiContactsBookFill, RiGroup2Line, RiListCheck2 } from "react-icons/ri";
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
+import ChatDocumentCard from "../ChatDocumentCard";
 import ChatFileMessage from "../ChatFileMessage";
+import ChatKnowledgeCard from "../ChatKnowledgeCard";
 import ChatMessage from "../ChatMessage";
+import ChatNoticeCard from "../ChatNoticeCard";
 import ChatRelayCard from "../ChatRelayCard";
 import ChatTaskCard from "../ChatTaskCard";
 import ChatVoiceMessage from "../ChatVoiceMessage";
@@ -25,6 +30,15 @@ import type { MessageSecurityLevel } from "../MessageInput";
 import MessageInput from "../MessageInput";
 import SettingsDrawer from "../SettingsDrawer";
 import ContactsTab from "./ContactsTab";
+import {
+  defaultPinnedTopic,
+  discussionListData,
+  messagesData,
+  platformGroupMessagesData,
+} from "./mockData";
+import OfficialGroupDetails from "./OfficialGroupDetails";
+import OrganizationMembersList from "./OrganizationMembersList";
+import TopicForm from "./TopicForm";
 import { MessageType } from "./types";
 
 /**
@@ -66,25 +80,37 @@ const DiscussionPage: FC = function () {
   const [relayTitle, setRelayTitle] = useState("");
 
   // 话题置顶相关状态
-  const [pinnedTopic, setPinnedTopic] = useState<{
-    title: string;
-    content: string;
-    creator: string;
-    createdAt: string;
-    isPinned: boolean;
-    messageId?: number;
-  } | null>({
-    title: "API集成兼容性问题讨论",
-    content:
-      "讨论如何解决当前版本与旧系统协议的兼容性问题，确保数据正确传输和处理",
-    creator: "李四",
-    createdAt: "2023-05-20",
-    isPinned: true,
-  });
+  const [pinnedTopic, setPinnedTopic] = useState(defaultPinnedTopic);
 
   const [showTopicForm, setShowTopicForm] = useState<boolean>(false);
-  const [newTopicTitle, setNewTopicTitle] = useState<string>("");
-  const [newTopicContent, setNewTopicContent] = useState<string>("");
+  const [topicTitle, setTopicTitle] = useState<string>("");
+  const [topicContent, setTopicContent] = useState<string>("");
+
+  // 添加进群通知弹窗相关状态
+  const [showGroupNotice, setShowGroupNotice] = useState(false);
+  const [groupNoticeContent, setGroupNoticeContent] = useState<{
+    title: string;
+    content: string;
+    type: "welcome" | "rules" | "announcement" | "event";
+    importance: "normal" | "important" | "urgent";
+  } | null>(null);
+
+  // 添加已确认用户信息
+  const [confirmedUsers, setConfirmedUsers] = useState<
+    Array<{
+      id: number;
+      name: string;
+      avatar: string;
+      time: string;
+    }>
+  >([
+    {
+      id: 1,
+      name: "张三",
+      avatar: "/images/users/neil-sims.png",
+      time: "2023-09-15 15:30",
+    },
+  ]);
 
   // 禁用外部框架的垂直滚动
   useEffect(() => {
@@ -126,411 +152,9 @@ const DiscussionPage: FC = function () {
     target.dataset["scrollTimer"] = newTimerId.toString();
   };
 
-  // 模拟的研讨会话列表数据 - 更新为新的格式
-  const [discussionList, setDiscussionList] = useState([
-    {
-      id: 1,
-      name: "张小明",
-      avatar: "/images/users/roberta-casas.png",
-      lastMessage: "正在输入...",
-      time: "18:05",
-      unread: 0,
-      status: "online",
-      isTyping: true,
-      category: "recent",
-      members: 5,
-      tag: "团队",
-      securityLevel: "非密" as MessageSecurityLevel,
-    },
-    {
-      id: 2,
-      name: "李华",
-      avatar: "/images/users/leslie-livingston.png",
-      lastMessage: "好的，我们可以做到！",
-      time: "14:23",
-      unread: 0,
-      status: "online",
-      category: "recent",
-      members: 2,
-      tag: "私聊",
-      securityLevel: "秘密" as MessageSecurityLevel,
-    },
-    {
-      id: 3,
-      name: "王强",
-      avatar: "/images/users/neil-sims.png",
-      lastMessage: "语音消息",
-      time: "10:02",
-      unread: 4,
-      status: "offline",
-      isVoiceMessage: true,
-      category: "recent",
-      members: 3,
-      tag: "项目",
-      securityLevel: "机密" as MessageSecurityLevel,
-    },
-    {
-      id: 4,
-      name: "赵敏",
-      avatar: "/images/users/michael-gough.png",
-      lastMessage: "没关系，我会从车站取回物品并带回办公室。",
-      time: "07:45",
-      unread: 0,
-      status: "online",
-      category: "recent",
-      members: 0,
-      tag: "",
-      securityLevel: "非密" as MessageSecurityLevel,
-    },
-    {
-      id: 5,
-      name: "陈静",
-      avatar: "/images/users/bonnie-green.png",
-      lastMessage: "发送了一张照片",
-      time: "15h",
-      unread: 0,
-      status: "offline",
-      isPhoto: true,
-      category: "recent",
-      members: 0,
-      tag: "",
-      securityLevel: "秘密" as MessageSecurityLevel,
-    },
-    {
-      id: 6,
-      name: "XXX研究室",
-      avatar: "/images/users/zuzhi.png",
-      lastMessage: "🎉 太棒了，我们走吧！",
-      time: "16h",
-      unread: 0,
-      status: "online",
-      isGroup: true,
-      category: "recent",
-      members: 0,
-      tag: "",
-      securityLevel: "非密" as MessageSecurityLevel,
-    },
-    {
-      id: 7,
-      name: "XXX研究室党支部",
-      avatar: "/images/users/dangzhibu.png",
-      lastMessage: "是的，我们可以做到！",
-      time: "18h",
-      unread: 0,
-      status: "offline",
-      isGroup: true,
-      category: "recent",
-      members: 0,
-      tag: "",
-      securityLevel: "机密" as MessageSecurityLevel,
-    },
-    {
-      id: 9,
-      name: "XXX研究室工会",
-      avatar: "/images/users/gonghui.png",
-      lastMessage: "语音消息",
-      time: "2d",
-      unread: 0,
-      status: "offline",
-      isVoiceMessage: true,
-      isGroup: true,
-      category: "recent",
-      members: 0,
-      tag: "",
-      securityLevel: "秘密" as MessageSecurityLevel,
-    },
-    {
-      id: 10,
-      name: "吴鑫",
-      avatar: "/images/users/robert-brown.png",
-      lastMessage: "好久不见，最近怎么样兄弟？",
-      time: "1w",
-      unread: 0,
-      status: "offline",
-      category: "recent",
-      members: 0,
-      tag: "",
-      securityLevel: "非密" as MessageSecurityLevel,
-    },
-    {
-      id: 11,
-      name: "项目管理群",
-      avatar: "/images/users/joseph-mcfall.png",
-      lastMessage: "我们下个月再做吧",
-      time: "04.03.2025",
-      unread: 0,
-      status: "online",
-      isGroup: true,
-      category: "recent",
-      members: 0,
-      tag: "",
-      securityLevel: "机密" as MessageSecurityLevel,
-    },
-  ]);
-
-  // 模拟的研讨消息数据 - 更新为适配ChatMessage组件的格式并丰富消息类型
-  const [discussions, setDiscussions] = useState<MessageType[]>([
-    {
-      id: 1,
-      sender: "张三",
-      avatarSrc: "/images/users/bonnie-green.png",
-      content: "大家好，我们今天讨论一下项目进度",
-      time: "10:30",
-      status: "已读",
-      messageType: "text",
-      securityLevel: "非密",
-    },
-    {
-      id: 2,
-      sender: "李四",
-      avatarSrc: "/images/users/jese-leos.png",
-      content: "好的，我这边的模块已经完成了80%",
-      time: "10:32",
-      status: "已读",
-      messageType: "text",
-      securityLevel: "非密",
-    },
-    {
-      id: 3,
-      sender: "王五",
-      avatarSrc: "/images/users/thomas-lean.png",
-      content: "我负责的部分遇到了一些问题，需要大家帮忙",
-      time: "10:35",
-      status: "已读",
-      messageType: "text",
-      securityLevel: "非密",
-    },
-    {
-      id: 4,
-      sender: "我",
-      avatarSrc: "/images/users/michael-gough.png",
-      content: "我可以帮忙解决，请详细说明一下问题",
-      time: "10:36",
-      status: "已读",
-      messageType: "text",
-      isOwn: true,
-      securityLevel: "非密",
-    },
-    {
-      id: 5,
-      sender: "王五",
-      avatarSrc: "/images/users/thomas-lean.png",
-      content: "主要是API集成部分出现了兼容性问题",
-      time: "10:38",
-      status: "已读",
-      messageType: "text",
-      securityLevel: "非密",
-    },
-    {
-      id: 6,
-      sender: "张三",
-      avatarSrc: "/images/users/bonnie-green.png",
-      content: "项目进度评估投票",
-      time: "10:39",
-      status: "已读",
-      messageType: "vote",
-      securityLevel: "非密",
-      voteData: {
-        title: "使用哪个设计方案？",
-        description: "请团队成员投票选择产品原型最终采用的设计方案",
-        options: [
-          { id: 1, text: "方案一：XXX设计方案", votes: 4 },
-          { id: 2, text: "方案二：XXX设计方案", votes: 6 },
-          { id: 3, text: "方案三：XXX设计方案", votes: 3 },
-          { id: 4, text: "方案四：XXX设计方案", votes: 2 },
-        ],
-        totalVotes: 15,
-        deadline: "2023-05-30 18:00",
-        hasVoted: false,
-      },
-    },
-    {
-      id: 7,
-      sender: "王五",
-      avatarSrc: "/images/users/thomas-lean.png",
-      content: "../images/kanban/task-1.jpg",
-      time: "10:40",
-      status: "已读",
-      messageType: "image",
-      securityLevel: "非密",
-    },
-    {
-      id: 8,
-      sender: "我",
-      avatarSrc: "/images/users/michael-gough.png",
-      content: "我看到问题了，这是版本不匹配导致的",
-      time: "10:41",
-      status: "已读",
-      messageType: "text",
-      isOwn: true,
-      replyTo: {
-        sender: "王五",
-        message: "主要是API集成部分出现了兼容性问题",
-      },
-      securityLevel: "非密",
-    },
-    {
-      id: 9,
-      sender: "李四",
-      avatarSrc: "/images/users/jese-leos.png",
-      content: "API集成兼容性修复任务",
-      time: "10:42",
-      status: "已读",
-      messageType: "task",
-      securityLevel: "非密",
-      taskData: {
-        title: "XXX分系统概要设计",
-        description:
-          "解决当前版本与旧系统协议的兼容性问题，确保数据正确传输和处理",
-        dueDate: "2023-05-25",
-        priority: "high",
-        status: "in-progress",
-        progress: 30,
-        assignees: [
-          { id: 1, name: "张三", avatar: "/images/users/bonnie-green.png" },
-          { id: 2, name: "李四", avatar: "/images/users/jese-leos.png" },
-          { id: 3, name: "王五", avatar: "/images/users/thomas-lean.png" },
-          { id: 4, name: "赵六", avatar: "/images/users/neil-sims.png" },
-          { id: 5, name: "钱七", avatar: "/images/users/robert-brown.png" },
-        ],
-        tags: ["API", "优先级高", "兼容性", "后端"],
-      },
-    },
-    {
-      id: 10,
-      sender: "李四",
-      avatarSrc: "/images/users/jese-leos.png",
-      content: "项目文档.pdf",
-      time: "10:45",
-      status: "已读",
-      messageType: "file",
-      securityLevel: "非密",
-    },
-    {
-      id: 11,
-      sender: "张三",
-      avatarSrc: "/images/users/bonnie-green.png",
-      content: "语音说明 (0:30)",
-      time: "10:47",
-      status: "已读",
-      messageType: "voice",
-      securityLevel: "非密",
-    },
-    {
-      id: 12,
-      sender: "我",
-      avatarSrc: "/images/users/michael-gough.png",
-      content: "我已经修复了API问题，大家可以更新代码测试一下",
-      time: "10:50",
-      status: "已读",
-      messageType: "text",
-      isOwn: true,
-      securityLevel: "非密",
-    },
-    {
-      id: 13,
-      sender: "李四",
-      avatarSrc: "/images/users/jese-leos.png",
-      content: "太好了，我马上测试",
-      time: "10:52",
-      status: "已读",
-      messageType: "text",
-      replyTo: {
-        sender: "我",
-        message: "我已经修复了API问题，大家可以更新代码测试一下",
-      },
-      securityLevel: "非密",
-    },
-    {
-      id: 14,
-      sender: "张三",
-      avatarSrc: "/images/users/bonnie-green.png",
-      content: "这是我们的项目时间线，请大家查看一下",
-      time: "10:56",
-      status: "已读",
-      messageType: "text",
-      replyTo: {
-        sender: "张三",
-        message: "../images/users/neil-sims.png",
-      },
-      securityLevel: "非密",
-    },
-    {
-      id: 15,
-      sender: "我",
-      avatarSrc: "/images/users/michael-gough.png",
-      content: "语音消息 (3:42)",
-      time: "11:00",
-      status: "已读",
-      messageType: "voice",
-      isOwn: true,
-      securityLevel: "非密",
-    },
-    {
-      id: 16,
-      sender: "我",
-      avatarSrc: "/images/users/michael-gough.png",
-      content: "Flowbite Terms & Conditions.pdf",
-      time: "11:05",
-      status: "已读",
-      messageType: "file",
-      isOwn: true,
-      securityLevel: "非密",
-    },
-    {
-      id: 17,
-      sender: "我",
-      avatarSrc: "/images/users/michael-gough.png",
-      content: "../images/kanban/task-2.jpg",
-      time: "11:10",
-      status: "已读",
-      messageType: "image",
-      isOwn: true,
-      securityLevel: "非密",
-    },
-    {
-      id: 18,
-      sender: "张三",
-      avatarSrc: "/images/users/bonnie-green.png",
-      content: "五一假期出行计划接龙",
-      time: "11:15",
-      status: "已读",
-      messageType: "relay",
-      securityLevel: "非密",
-      relayData: {
-        title: "五一假期出行计划接龙",
-        description: "请大家填写各自的五一假期出行计划，便于统筹安排",
-        deadline: "2023-04-25 18:00",
-        participants: [
-          {
-            id: 1,
-            name: "张三",
-            avatar: "/images/users/bonnie-green.png",
-            content: "计划去杭州西湖，4月30日至5月2日",
-            time: "11:15",
-          },
-          {
-            id: 2,
-            name: "李四",
-            avatar: "/images/users/jese-leos.png",
-            content: "计划去上海，5月1日至5月3日",
-            time: "11:20",
-          },
-          {
-            id: 3,
-            name: "王五",
-            avatar: "/images/users/thomas-lean.png",
-            content: "计划去北京，4月29日至5月4日",
-            time: "11:25",
-          },
-        ],
-        totalParticipants: 3,
-        maxParticipants: 10,
-        status: "ongoing",
-        tags: ["假期", "出行", "接龙"],
-      },
-    },
-  ]);
+  // 初始化状态使用模拟数据
+  const [discussionList, setDiscussionList] = useState(discussionListData);
+  const [discussions, setDiscussions] = useState(messagesData);
 
   // 处理回复消息
   const handleReplyMessage = (id: number) => {
@@ -706,7 +330,50 @@ const DiscussionPage: FC = function () {
   const handleSelectDiscussion = (id: number) => {
     setActiveDiscussionId(id);
     setRightPanelType("message");
-    // 在实际应用中，这里应该根据id加载对应的消息记录
+
+    // 如果选择的是平台专业建设群(ID为8)，则加载专门的消息列表并显示进群通知
+    if (id === 8) {
+      setDiscussions(platformGroupMessagesData);
+
+      // 设置并显示进群通知
+      setGroupNoticeContent({
+        title: "平台专业建设群 - 群规则",
+        content:
+          "欢迎加入平台专业建设群！\n\n1. 本群用于讨论平台建设相关专业技术问题\n2. 请勿发布与主题无关的内容\n3. 重要文档和知识将固定在群置顶区\n4. 技术讨论请尽量提供详细信息和上下文\n5. 群内分享的资料仅限群内成员使用",
+        type: "rules",
+        importance: "important",
+      });
+      setShowGroupNotice(true);
+    } else if (id === 7) {
+      // 工会群
+      setDiscussions(messagesData);
+
+      // 设置并显示进群通知
+      setGroupNoticeContent({
+        title: "工会群 - 欢迎",
+        content:
+          "欢迎加入工会群！\n\n本群用于分享工会活动信息和员工福利相关事项。\n\n近期活动：\n- 10月15日：秋季团建活动\n- 11月5日：员工生日会",
+        type: "welcome",
+        importance: "normal",
+      });
+      setShowGroupNotice(true);
+    } else if (id === 6) {
+      // 党支部群
+      setDiscussions(messagesData);
+
+      // 设置并显示进群通知
+      setGroupNoticeContent({
+        title: "党支部群 - 公告",
+        content:
+          "欢迎加入党支部群！\n\n本群用于党建工作交流和学习。\n\n请注意：\n- 每周三晚7点：线上学习\n- 每月第一个周五：组织生活会",
+        type: "announcement",
+        importance: "important",
+      });
+      setShowGroupNotice(true);
+    } else {
+      // 其他会话使用通用消息列表
+      setDiscussions(messagesData);
+    }
   };
 
   // 消息操作处理函数
@@ -899,7 +566,7 @@ const DiscussionPage: FC = function () {
         const newParticipant = {
           id: msg.relayData.participants.length + 1,
           name: "我", // 当前用户名
-          avatar: "/images/users/michael-gough.png", // 当前用户头像
+          avatar: "/images/users/jese-leos.png", // 当前用户头像，使用本地图片
           content: relayParticipateContent,
           time: new Date().toLocaleTimeString([], {
             hour: "2-digit",
@@ -954,51 +621,26 @@ const DiscussionPage: FC = function () {
 
   // 处理创建新话题
   const handleCreateTopic = () => {
-    if (newTopicTitle.trim() && newTopicContent.trim()) {
+    if (topicTitle.trim() && topicContent.trim()) {
       setPinnedTopic({
-        title: newTopicTitle,
-        content: newTopicContent,
+        title: topicTitle,
+        content: topicContent,
         creator: "我", // 当前用户
         createdAt: new Date().toLocaleDateString(),
         isPinned: true,
+        messageId: 0, // 新创建的话题没有关联消息
       });
       setShowTopicForm(false);
-      setNewTopicTitle("");
-      setNewTopicContent("");
+      setTopicTitle("");
+      setTopicContent("");
     }
   };
 
   // 处理取消创建话题
   const handleCancelCreateTopic = () => {
     setShowTopicForm(false);
-    setNewTopicTitle("");
-    setNewTopicContent("");
-  };
-
-  // 处理消息操作
-  const handleMessageActions = (id: number, action: string) => {
-    switch (action) {
-      case "reply":
-        handleReplyMessage(id);
-        break;
-      case "forward":
-        handleForwardMessage(id);
-        break;
-      case "copy":
-        handleCopyMessage(id);
-        break;
-      case "report":
-        handleReportMessage(id);
-        break;
-      case "delete":
-        handleDeleteMessage(id);
-        break;
-      case "pin":
-        handlePinMessage(id);
-        break;
-      default:
-        break;
-    }
+    setTopicTitle("");
+    setTopicContent("");
   };
 
   /**
@@ -1008,8 +650,8 @@ const DiscussionPage: FC = function () {
   const handleCreateTopicFromMessage = (id: number) => {
     const messageToCreateTopic = discussions.find((msg) => msg.id === id);
     if (messageToCreateTopic) {
-      setNewTopicTitle(`来自 ${messageToCreateTopic.sender} 的话题`);
-      setNewTopicContent(messageToCreateTopic.content);
+      setTopicTitle(`来自 ${messageToCreateTopic.sender} 的话题`);
+      setTopicContent(messageToCreateTopic.content);
       setShowTopicForm(true);
 
       // 滚动到顶部，显示话题创建表单
@@ -1058,6 +700,24 @@ const DiscussionPage: FC = function () {
       setTimeout(() => {
         messageElement.classList.remove("highlight-message");
       }, 2000);
+    }
+  };
+
+  // 处理关闭群通知弹窗
+  const handleCloseGroupNotice = () => {
+    setShowGroupNotice(false);
+
+    // 添加当前用户到已确认列表
+    if (groupNoticeContent) {
+      setConfirmedUsers((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          name: "当前用户",
+          avatar: "/images/users/jese-leos.png", // 使用本地头像图片
+          time: new Date().toLocaleString(),
+        },
+      ]);
     }
   };
 
@@ -1250,103 +910,13 @@ const DiscussionPage: FC = function () {
           <div className="flex h-full flex-1 flex-col overflow-hidden">
             {/* 官方群组内容 - 不需要标题栏 */}
             {rightPanelType === "officialGroup" && selectedOfficialGroup ? (
-              <div className="flex h-full flex-col overflow-hidden">
-                <div className="relative flex-1 overflow-y-auto overflow-x-hidden bg-transparent px-4 [scrollbar-width:thin] [&.scrolling]:opacity-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/0 hover:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600/0 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-300/50 dark:[&.scrolling]:[&::-webkit-scrollbar-thumb]:bg-gray-600/50 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1.5">
-                  <div className="min-h-full rounded-lg p-4">
-                    <div className="mb-6">
-                      <div className="flex justify-end mb-2">
-                        <button
-                          className="flex size-8 items-center justify-center rounded-full text-gray-500 transition-all hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 cursor-pointer"
-                          title="返回"
-                          onClick={() => {
-                            setRightPanelType("message");
-                            setSelectedOfficialGroup(null);
-                          }}
-                        >
-                          <svg
-                            className="size-5"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                      <div className="mb-4 flex items-center justify-center">
-                        <div className="flex size-24 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-500">
-                          <RiGovernmentFill className="size-12" />
-                        </div>
-                      </div>
-                      <h3 className="mb-2 text-center text-xl font-medium text-gray-900 dark:text-white">
-                        {selectedOfficialGroup.name}
-                      </h3>
-                      <p className="mb-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                        {selectedOfficialGroup.groupId * 20} 名成员
-                      </p>
-                      <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50/50 p-4 dark:border-gray-700 dark:bg-gray-800/30">
-                        <h4 className="mb-2 text-base font-medium text-gray-900 dark:text-white">
-                          群组介绍
-                        </h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          这是{selectedOfficialGroup.name}
-                          的官方群组，由系统管理员创建和维护。群组成员可以在此交流工作相关事宜，分享资源和信息。
-                          <br />
-                          <br />
-                          群组创建于2023年{selectedOfficialGroup.groupId}
-                          月，目前有{selectedOfficialGroup.groupId * 20}名成员。
-                          <br />
-                          <br />
-                          请遵守群组规则，保持良好的沟通氛围。
-                        </p>
-                      </div>
-                      <div className="flex justify-center gap-3">
-                        <button className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 cursor-pointer">
-                          进入群组
-                        </button>
-                      </div>
-                    </div>
-                    <div className="border-t border-gray-200 pt-4 dark:border-gray-700">
-                      <h4 className="mb-3 text-base font-medium text-gray-900 dark:text-white">
-                        最近活动
-                      </h4>
-                      <div className="space-y-3">
-                        {[...Array(3)].map((_, index) => (
-                          <div
-                            key={index}
-                            className="rounded-lg border border-gray-200 p-3 dark:border-gray-700"
-                          >
-                            <div className="mb-2 flex items-center gap-2">
-                              <img
-                                className="size-8 rounded-full object-cover"
-                                src={`https://flowbite.com/docs/images/people/profile-picture-${(index % 5) + 1}.jpg`}
-                                alt={`用户${index + 1}头像`}
-                              />
-                              <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                用户{index + 1}
-                              </span>
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
-                                {index + 1}小时前
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              分享了一个关于{selectedOfficialGroup.name}
-                              的重要通知，请大家查看并及时回复。
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <OfficialGroupDetails
+                selectedOfficialGroup={selectedOfficialGroup}
+                onBackClick={() => {
+                  setRightPanelType("message");
+                  setSelectedOfficialGroup(null);
+                }}
+              />
             ) : (
               <>
                 {/* 聊天头部 */}
@@ -1504,65 +1074,9 @@ const DiscussionPage: FC = function () {
                 >
                   {/* 组织成员列表 */}
                   {rightPanelType === "contact" && selectedOrganization ? (
-                    <div className="min-h-full rounded-lg p-4">
-                      <div className="mb-4">
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                          成员列表
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {selectedOrganization.departmentId ? 8 : 15} 名成员
-                        </p>
-                      </div>
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {Array.from({
-                          length: selectedOrganization.departmentId ? 8 : 15,
-                        }).map((_, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center gap-3 rounded-lg border border-gray-200 p-3 shadow-sm hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/60"
-                          >
-                            <div className="relative flex size-12 shrink-0 items-center justify-center">
-                              <img
-                                className="size-12 rounded-full object-cover shadow-sm ring-1 ring-gray-200/50 dark:ring-gray-700/50"
-                                src={`/images/users/${
-                                  [
-                                    "neil-sims.png",
-                                    "bonnie-green.png",
-                                    "michael-gough.png",
-                                    "lana-byrd.png",
-                                    "thomas-lean.png",
-                                    "helene-engels.png",
-                                    "robert-brown.png",
-                                    "leslie-livingston.png",
-                                    "joseph-mcfall.png",
-                                    "jese-leos.png",
-                                    "roberta-casas.png",
-                                  ][index % 11]
-                                }`}
-                                alt={`成员${index + 1}的头像`}
-                              />
-                              <span className="absolute bottom-0 right-0 size-3 rounded-full bg-green-500 ring-1 ring-white dark:ring-gray-800"></span>
-                            </div>
-                            <div>
-                              <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                                {selectedOrganization.name} 成员 {index + 1}
-                              </h4>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {index % 2 === 0 ? "在线" : "离线"}
-                              </p>
-                              <div className="mt-1 flex gap-1">
-                                <button className="rounded-md bg-blue-50 p-1 text-xs text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 cursor-pointer">
-                                  发消息
-                                </button>
-                                <button className="rounded-md bg-gray-50 p-1 text-xs text-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 cursor-pointer">
-                                  查看资料
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    <OrganizationMembersList
+                      selectedOrganization={selectedOrganization}
+                    />
                   ) : (
                     <div className="min-h-full rounded-lg p-4">
                       {/* 话题置顶 */}
@@ -1613,90 +1127,14 @@ const DiscussionPage: FC = function () {
 
                       {/* 创建话题表单 */}
                       {showTopicForm && (
-                        <div className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                          <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-md font-medium text-gray-900 dark:text-white">
-                              创建新话题
-                            </h3>
-                            <button
-                              onClick={handleCancelCreateTopic}
-                              className="rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                              title="关闭"
-                            >
-                              <svg
-                                className="size-4"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M6 18L18 6M6 6l12 12"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                          <div className="space-y-3">
-                            <div>
-                              <label
-                                htmlFor="topic-title"
-                                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
-                              >
-                                话题标题
-                              </label>
-                              <input
-                                type="text"
-                                id="topic-title"
-                                value={newTopicTitle}
-                                onChange={(e) =>
-                                  setNewTopicTitle(e.target.value)
-                                }
-                                placeholder="请输入话题标题"
-                                className="w-full rounded-lg border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                              />
-                            </div>
-                            <div>
-                              <label
-                                htmlFor="topic-content"
-                                className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
-                              >
-                                话题内容
-                              </label>
-                              <textarea
-                                id="topic-content"
-                                value={newTopicContent}
-                                onChange={(e) =>
-                                  setNewTopicContent(e.target.value)
-                                }
-                                placeholder="请输入话题内容"
-                                rows={3}
-                                className="w-full rounded-lg border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                              />
-                            </div>
-                            <div className="flex justify-end space-x-2">
-                              <button
-                                onClick={handleCancelCreateTopic}
-                                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
-                              >
-                                取消
-                              </button>
-                              <button
-                                onClick={handleCreateTopic}
-                                className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800"
-                                disabled={
-                                  !newTopicTitle.trim() ||
-                                  !newTopicContent.trim()
-                                }
-                              >
-                                创建
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+                        <TopicForm
+                          title={topicTitle}
+                          content={topicContent}
+                          onTitleChange={setTopicTitle}
+                          onContentChange={setTopicContent}
+                          onCreateTopic={handleCreateTopic}
+                          onCancel={handleCancelCreateTopic}
+                        />
                       )}
 
                       {/* 没有置顶话题时显示创建按钮 */}
@@ -1874,6 +1312,110 @@ const DiscussionPage: FC = function () {
                                   onRelayClick={(relayId) =>
                                     handleRelayClick(relayId)
                                   }
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ) : msg.messageType === "knowledge" &&
+                          msg.knowledgeData ? (
+                          <div key={msg.id} className="mb-4">
+                            <div className="flex items-start">
+                              <img
+                                className="size-8 rounded-full mr-2"
+                                src={msg.avatarSrc}
+                                alt={`${msg.sender}的头像`}
+                              />
+                              <div className="flex flex-col">
+                                <div className="flex items-center mb-1">
+                                  <span className="text-sm font-medium text-gray-900 dark:text-white mr-2">
+                                    {msg.sender}
+                                  </span>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {msg.time}
+                                  </span>
+                                </div>
+                                <ChatKnowledgeCard
+                                  title={msg.knowledgeData.title}
+                                  content={msg.knowledgeData.content}
+                                  category={msg.knowledgeData.category}
+                                  tags={msg.knowledgeData.tags}
+                                  author={msg.knowledgeData.author}
+                                  authorAvatar={msg.knowledgeData.authorAvatar}
+                                  createdAt={msg.knowledgeData.createdAt}
+                                  lastUpdated={msg.knowledgeData.lastUpdated}
+                                  viewCount={msg.knowledgeData.viewCount}
+                                  attachments={msg.knowledgeData.attachments}
+                                  relatedTopics={
+                                    msg.knowledgeData.relatedTopics
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ) : msg.messageType === "document" &&
+                          msg.documentData ? (
+                          <div key={msg.id} className="mb-4">
+                            <div className="flex items-start">
+                              <img
+                                className="size-8 rounded-full mr-2"
+                                src={msg.avatarSrc}
+                                alt={`${msg.sender}的头像`}
+                              />
+                              <div className="flex flex-col">
+                                <div className="flex items-center mb-1">
+                                  <span className="text-sm font-medium text-gray-900 dark:text-white mr-2">
+                                    {msg.sender}
+                                  </span>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {msg.time}
+                                  </span>
+                                </div>
+                                <ChatDocumentCard
+                                  title={msg.documentData.title}
+                                  fileType={msg.documentData.fileType}
+                                  fileSize={msg.documentData.fileSize}
+                                  pageCount={msg.documentData.pageCount}
+                                  lastEditor={msg.documentData.lastEditor}
+                                  lastEditorAvatar={
+                                    msg.documentData.lastEditorAvatar
+                                  }
+                                  lastEditTime={msg.documentData.lastEditTime}
+                                  collaborators={msg.documentData.collaborators}
+                                  status={msg.documentData.status}
+                                  version={msg.documentData.version}
+                                  commentCount={msg.documentData.commentCount}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ) : msg.messageType === "notice" && msg.noticeData ? (
+                          <div key={msg.id} className="mb-4">
+                            <div className="flex items-start">
+                              <img
+                                className="size-8 rounded-full mr-2"
+                                src={msg.avatarSrc}
+                                alt={`${msg.sender}的头像`}
+                              />
+                              <div className="flex flex-col">
+                                <div className="flex items-center mb-1">
+                                  <span className="text-sm font-medium text-gray-900 dark:text-white mr-2">
+                                    {msg.sender}
+                                  </span>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {msg.time}
+                                  </span>
+                                </div>
+                                <ChatNoticeCard
+                                  title={msg.noticeData.title}
+                                  content={msg.noticeData.content}
+                                  type={msg.noticeData.type}
+                                  importance={msg.noticeData.importance}
+                                  expireDate={msg.noticeData.expireDate}
+                                  attachments={msg.noticeData.attachments}
+                                  requireConfirmation={
+                                    msg.noticeData.requireConfirmation
+                                  }
+                                  confirmedBy={msg.noticeData.confirmedBy}
                                 />
                               </div>
                             </div>
@@ -2073,6 +1615,65 @@ const DiscussionPage: FC = function () {
               提交接龙
             </Button>
           </div>
+        </Modal.Footer>
+      </Modal>
+
+      {/* 进群通知弹窗 */}
+      <Modal
+        show={showGroupNotice}
+        onClose={handleCloseGroupNotice}
+        size="md"
+        className="z-50"
+      >
+        <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
+          <div className="flex items-center">
+            {groupNoticeContent?.type === "rules" && (
+              <span className="mr-2 rounded-lg bg-red-100 p-1 text-red-600 dark:bg-red-900/20 dark:text-red-400">
+                <HiOutlineExclamation className="h-5 w-5" />
+              </span>
+            )}
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+              {groupNoticeContent?.title}
+            </h3>
+          </div>
+        </Modal.Header>
+        <Modal.Body className="!p-6">
+          <div className="whitespace-pre-line text-base text-gray-500 dark:text-gray-400">
+            {groupNoticeContent?.content}
+          </div>
+
+          {confirmedUsers.length > 0 && (
+            <div className="mt-4 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
+              <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                已有 {confirmedUsers.length} 人确认
+              </div>
+              <div className="flex -space-x-2">
+                {confirmedUsers.slice(0, 5).map((user) => (
+                  <img
+                    key={user.id}
+                    src={user.avatar}
+                    alt={user.name}
+                    title={`${user.name} (${user.time})`}
+                    className="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800"
+                  />
+                ))}
+                {confirmedUsers.length > 5 && (
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-xs text-gray-600 font-medium border-2 border-white dark:bg-gray-700 dark:text-gray-300 dark:border-gray-800">
+                    +{confirmedUsers.length - 5}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer className="flex items-center justify-end border-t border-gray-200 !p-6 dark:border-gray-700">
+          <Button
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-sm transition-all duration-150"
+            onClick={handleCloseGroupNotice}
+          >
+            <HiCheck className="mr-1 h-4 w-4" />
+            我已阅读
+          </Button>
         </Modal.Footer>
       </Modal>
     </NavbarSidebarLayout>
